@@ -4,9 +4,11 @@ const dotenv = require('dotenv')
 const jwt = require('jsonwebtoken')
 const {createToken,findTokenByToken}=require('../controller/verificationToken')
 const {createResetToken,findResetTokenByToken}=require('../controller/resetToken')
+const {createCart}=require('../controller/cart')
+dotenv.config()
 
 const {sendEmailVerificationEmail,sendPasswordResetEmail}=require('../utils/emailSender')
-const ResetToken = require('../model/ResetToken')
+
 
 const signingKey = process.env.JWT_SECRET
 
@@ -91,6 +93,7 @@ const verify= async (req,res)=>{
     if(Token){
         user.verified=true;
         user.verificationCode = null;
+        await createCart(user._id);
         await user.save()
         res.status(200).json('email verified please login')
     }else{
