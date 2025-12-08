@@ -1,0 +1,43 @@
+<nav class="w-full font-roboto  flex justify-between items-center p-7 fixed flex-wrap bg-black/10 backdrop-blur-xl border-b border-white/10 shadow-lg z-200 ">
+    <div class="logo flex items-center gap-3">
+        <h1 class="logo-text font-bold text-4xl font-lobster text-orange-400">
+
+            OdogwuBites
+        </h1>
+    </div>
+    <div class="nav-links hidden md:flex flex gap-3 text-3xl">
+        <a routerLink="/" routerLinkActive="text-orange-400" [routerLinkActiveOptions]="{exact: true}">Home</a>
+        <a routerLink="/menu" routerLinkActive="text-orange-400">Menu</a>
+        <a routerLink="/about" routerLinkActive="text-orange-400">About</a>
+    </div>
+    <div class="buttons flex gap-5 hidden md:flex">
+        <a href="" class="pt-2 pl-3.5 pr-3.5 border-orange-400 border-2 rounded-xl">Login</a>
+        <a href="" class="p-2.5 pl-3 pr-3 bg-orange-400 rounded-xl">Sign Up</a>
+    </div>
+  
+        <div class="hambuger flex flex-col gap-1  md:hidden" *ngIf="!isMenuOpen"  (click)="toggleMenu()">
+            <span class=" block w-10 h-1.5 bg-white rounded-xl"></span>
+             <span class=" block w-10 h-1.5 bg-white rounded-xl"></span>
+              <span class=" block w-10 h-1.5 bg-white rounded-xl"></span>
+          
+            
+        </div>
+        <div class="close-hambuger flex flex-col gap-1  md:hidden" *ngIf="isMenuOpen"  (click)="toggleMenu()">
+             <span class=" block w-10 h-1.5 bg-white rounded-xl rotate-45"></span>
+             <span class=" block w-10 h-1.5 bg-white rounded-xl -rotate-45 -mt-1.5"></span>
+        </div>
+
+
+    <div class="mobile-menu flex flex-col w-dvw p-2 mt-3 rounded-b-2xl" *ngIf="isMenuOpen">
+        <div class="nav-links flex flex-col align-middle justify-items-center mb-3 text-center">
+            <a (click)="toggleMenu()" routerLink="" routerLinkActive="text-orange-400" [routerLinkActiveOptions]="{exact: true}" class="w-80 h-10 text-3xl" >Home</a>
+            <a (click)="toggleMenu()" routerLink="/menu" routerLinkActive="text-orange-400" class="w-80 h-10 text-3xl">Menu</a>
+            <a (click)="toggleMenu()" routerLink="/about" routerLinkActive="text-orange-400" class="w-80 h-10 text-3xl">About</a>
+        </div>
+
+        <div class="buttons flex gap-5 flex-col text-center">
+            <a (click)="toggleMenu()" href="" class="p-3 border-orange-400 border-2 rounded-xl text-2xl">Login</a>
+            <a (click)="toggleMenu()" href="" class="p-3 text-2xl bg-orange-400 rounded-xl">Sign Up</a>
+        </div>
+    </div>
+</nav>
