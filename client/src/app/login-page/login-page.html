@@ -1,0 +1,61 @@
+<section class="w-dvw min-h-[100dvh] bg-[url('https://res.cloudinary.com/dflsnes44/image/upload/v1766835963/login-page_ums3dx.png')] bg-no-repeat bg-cover flex flex-col items-center justify-center font-roboto">
+  
+  <div class="relative flex w-full max-w-5xl bg-black/20 backdrop-blur-[1.7px] rounded-[1.5rem] shadow-2xl overflow-hidden min-h-[600px]">
+    
+    <div 
+      class="absolute top-0 left-0 h-full w-full md:w-3/5 p-6 md:p-12 flex flex-col justify-between z-10 bg-white/30 backdrop-blur-[30px] border-r shadow-2xl border-white/30 transition-transform duration-700 ease-in-out"
+      [ngClass]="isLoginMode ? 'translate-x-0' : 'md:translate-x-[66.6%]'"
+      style="background: rgba(255,255,255,0.07);"
+    >
+      <div class="flex flex-col justify-center items-center mb-6">
+        <h1 class="logo-text font-bold text-4xl md:text-5xl font-lobster text-orange-400 drop-shadow-md">OdogwuBites</h1>
+      </div>  
+
+      <div class="flex-grow flex flex-col justify-center items-center text-center">
+        <h2 class="text-3xl md:text-4xl font-bold text-orange-400 mb-3 drop-shadow-sm">
+          {{ isLoginMode ? 'Sign in to Your Account' : 'Create Account' }}
+        </h2>
+        <div class="w-20 h-1.5 bg-orange-400 mb-4 rounded-full shadow-sm"></div>
+          <div *ngIf="!isLoginMode" class="flex flex-col items-center mb-4">
+            <div class="relative group cursor-pointer">
+              <div class="w-20 h-20 bg-white/20 rounded-full border-2 border-dashed border-yellow-400 flex items-center justify-center overflow-hidden">
+                <img *ngIf="profileImage" [src]="profileImage" class="absolute inset-0 w-full h-full object-cover rounded-full">
+                <span *ngIf="!profileImage" class="text-[1.8rem] text-yellow-500 font-bold uppercase">+</span>
+              </div>
+              <input type="file" (change)="onFileSelected($event)" class="absolute inset-0 opacity-0 cursor-pointer" accept="image/*">
+            </div>
+          </div>
+
+        <form class="w-full max-w-sm space-y-5" [formGroup]="form" (ngSubmit)="onSubmit()">
+          <div *ngIf="!isLoginMode" class="transition-opacity duration-500">
+             <input type="text" placeholder="Full Name" class="w-full px-5 py-3.5 bg-white/20 text-white placeholder-gray-300 rounded-2xl focus:outline-none focus:border-2 focus:border-orange-400" formControlName="username">
+          </div>
+          
+          <input type="email" placeholder="Email" class="w-full px-5 py-3.5 bg-white/20 text-white placeholder-gray-300 rounded-2xl focus:outline-none focus:border-2 focus:border-orange-400" formControlName="email">
+          <input type="password" placeholder="Password" class="w-full px-5 py-3.5 bg-white/20 text-white placeholder-gray-300 rounded-2xl focus:outline-none focus:border-2 focus:border-orange-400" formControlName="password">
+
+          <button type="submit" class="w-52 bg-orange-400 hover:bg-yellow-500 text-black font-bold py-3.5 rounded-full mt-6 uppercase text-sm tracking-wider shadow-lg">
+            {{ isLoginMode ? 'Sign In' : 'Sign Up' }}
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <div 
+      class="absolute top-0 right-0 h-full w-full md:w-2/5 bg-orange-400/90 text-white flex flex-col items-center justify-center p-12 text-center transition-transform duration-700 ease-in-out z-20 backdrop-blur-sm"
+      [ngClass]="isLoginMode ? 'translate-x-0' : 'md:-translate-x-[150%]'"
+    >
+      <h2 class="text-4xl md:text-5xl font-extrabold mb-4 drop-shadow-md">
+        {{ isLoginMode ? 'Welcome' : 'Hello Friend!' }}
+      </h2>
+      <div class="w-20 h-1.5 bg-white mb-8 rounded-full shadow-sm"></div>
+      <p class="text-lg md:text-xl font-light mb-12 drop-shadow-sm">
+        {{ isLoginMode ? 'Fill up your personal information and start your journey with us!' : 'Enter your personal details and start your journey with us today.' }}
+      </p>
+      <button (click)="toggleMode()" class="px-14 py-3.5 border-2 border-white rounded-full font-bold uppercase text-xs tracking-widest hover:bg-white hover:text-black transition-all">
+        {{ isLoginMode ? 'Sign Up' : 'Sign In' }}
+      </button>
+    </div>
+
+  </div>
+</section>

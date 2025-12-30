@@ -1,8 +1,8 @@
 <div class="app bg-black/90 min-h-screen text-white font-roboto">
-  <div class="header">
+  <div class="header" *ngIf="!isLoginRoute">
     <app-header></app-header>
   </div>
-  <div class="main-content pt-32">
+  <div class="main-content">
     <router-outlet></router-outlet>
   </div>
 </div>
