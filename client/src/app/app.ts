@@ -3,10 +3,11 @@ import { RouterOutlet, Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { Header } from './header/header';
 import { CommonModule } from '@angular/common';
+import { Cart } from "./cart/cart";
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, Header, CommonModule],
+  imports: [RouterOutlet, Header, CommonModule, Cart],
   templateUrl: './app.html',
   styleUrls: ['./app.css']
 })
