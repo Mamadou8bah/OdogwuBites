@@ -1,44 +1,70 @@
-<section class="py-2 flex flex-col justify-center items-center">
-    <div class="flex flex-col justify-center items-center relative">
-        <div class="h-[10rem] sm:h-[20rem] w-[90dvw] sm:w-[70dvw] overflow-hidden rounded-3xl">
-            <img class="object-cover" src="https://www.news-medical.net/images/news/ImageForNews_808838_17461258694907356.jpg" alt="">
-        </div>
-        <div class="w-[80dvw] sm:w-[60rem] bg-orange-400/10 backdrop-blur-2xl rounded-4xl flex flex-row justify-between p-3 px-8 absolute -bottom-5 sm:bottom-1.5">
-            <input type="text" placeholder="Search for food..." class="w-[80%] sm:w-[90%] border-r-2 pr-3 focus:outline-0" [(ngModel)]="searchInput" (ngModelChange)="onSearchChange()">
-            <div class="w-9 h-9">
-                <svg fill="white" viewBox="0 -0.24 28.423 28.423" id="_02_-_Search_Button" data-name="02 - Search Button" xmlns="http://www.w3.org/2000/svg" stroke="white" stroke-width="0.00028423"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path id="Path_215" data-name="Path 215" d="M14.953,2.547A12.643,12.643,0,1,0,27.6,15.19,12.649,12.649,0,0,0,14.953,2.547Zm0,2A10.643,10.643,0,1,1,4.31,15.19,10.648,10.648,0,0,1,14.953,4.547Z" transform="translate(-2.31 -2.547)" fill-rule="evenodd"></path> <path id="Path_216" data-name="Path 216" d="M30.441,28.789l-6.276-6.276a1,1,0,1,0-1.414,1.414L29.027,30.2a1,1,0,1,0,1.414-1.414Z" transform="translate(-2.31 -2.547)" fill-rule="evenodd"></path> </g></svg>
+<section class="min-h-screen bg-[#0b0e07] text-[#e9edc9] py-12 pt-32 px-4 flex flex-col items-center font-sans">
+    
+    <div class="text-center mb-10">
+        <h1 class="text-orange-400 text-5xl mb-2">Our Menu</h1>
+        <p class="text-gray-400 text-2xl tracking-wide">Discover our selection of handcrafted dishes</p>
+    </div>
+
+    <div class="relative w-full max-w-xl mb-12">
+        <div class="bg-[#1a1c15] border border-white/10 rounded-full flex items-center px-6 py-3 shadow-2xl focus-within:border-white/30 transition">
+            <input type="text" placeholder="Search for food..." 
+                class="bg-transparent w-full text-sm text-gray-300 focus:outline-none placeholder-gray-600" 
+                [(ngModel)]="searchInput" (ngModelChange)="onSearchChange()">
+            <div class="w-5 h-5 text-gray-500">
+                <svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"></path></svg>
             </div>
         </div>
     </div>
-     <div class="flex flex-nowrap md:flex-wrap overflow-x-auto md:overflow-visible gap-2 w-full py-3 pt-9 sm:pt-4 mt-2 scrollbar-hide items-center justify-start md:justify-center">
-            <a class="inline-flex px-6 py-2 rounded-4xl border-2 border-amber-400 shrink-0 whitespace-nowrap" (click)="toggleCategory('All')">All</a>
-            <a class="inline-flex px-6 py-2 rounded-4xl border-2 border-amber-400 shrink-0 whitespace-nowrap" (click)="toggleCategory('Pizza')">Pizza</a>
-            <a class="inline-flex px-6 py-2 rounded-4xl border-2 border-amber-400 shrink-0 whitespace-nowrap" (click)="toggleCategory('Burgers')">Burgers</a>
-            <a class="inline-flex px-6 py-2 rounded-4xl border-2 border-amber-400 shrink-0 whitespace-nowrap" (click)="toggleCategory('Chicken')">Chicken</a>
-            <a class="inline-flex px-6 py-2 rounded-4xl border-2 border-amber-400 shrink-0 whitespace-nowrap" (click)="toggleCategory('Rice Meals')">Rice Meals</a>
-            <a class="inline-flex px-6 py-2 rounded-4xl border-2 border-amber-400 shrink-0 whitespace-nowrap" (click)="toggleCategory('Pasta')">Pasta</a>
-            <a class="inline-flex px-6 py-2 rounded-4xl border-2 border-amber-400 shrink-0 whitespace-nowrap" (click)="toggleCategory('Shawarma & Wraps')">Shawarma & Wraps</a>
-            <a class="inline-flex px-6 py-2 rounded-4xl border-2 border-amber-400 shrink-0 whitespace-nowrap" (click)="toggleCategory('Sides')">Sides</a>
-            <a class="inline-flex px-6 py-2 rounded-4xl border-2 border-amber-400 shrink-0 whitespace-nowrap" (click)="toggleCategory('Desserts')">Desserts</a>
-            <a class="inline-flex px-6 py-2 rounded-4xl border-2 border-amber-400 shrink-0 whitespace-nowrap" (click)="toggleCategory('Drinks')">Drinks</a>
-        </div>
 
-        <section>
-            <div class="grid grid-cols-2 sm:flex sm:flex-row sm:justify-center sm:flex-wrap gap-3 w-full sm:w-[90dvw] p-3">
-                <div *ngFor="let item of filteredMenuItems" class="flex flex-col justify-start items-center w-full p-0 sm:w-[18rem] bg-[#292927] rounded-2xl overflow-hidden mb-3">
-                    <div class="w-full sm:h-[18rem]  h-[12rem]">
-                        <img class="w-full h-full object-cover" src="{{item.imageUrl}}" alt="">
-                    </div>
-                    <p class="font-bold text-[1.2rem] py-2">{{item.title}}</p>
-                    <p class="h-30 sm:h-20 text-gray-400 p-2">{{item.description}}</p>
-                    <p class="text-orange-400 font-bold mt-1">{{item.categoryName}}</p>
-                    <div class="flex flex-row justify-between items-center w-full">
-                        <p class="p-3 font-bold text-2xl">D{{item.price}}</p>
-                        <div class="rounded-2xl bg-orange-400 w-14 h-14 flex justify-center items-center text-4xl hover:cursor-pointer">
-                            +
-                        </div>
-                    </div>
+    <nav class="flex flex-nowrap overflow-x-auto gap-8 mb-16 no-scrollbar text-[0.9rem] font-bold tracking-[0.2em] uppercase text-gray-500 w-full justify-start md:justify-center px-4">
+        <a class="cursor-pointer text-orange-400 border-b-2 border-orange-400 pb-1 shrink-0" (click)="toggleCategory('All')">All</a>
+        <a class="cursor-pointer hover:text-gray-300 transition shrink-0" (click)="toggleCategory('Pizza')">Pizza</a>
+        <a class="cursor-pointer hover:text-gray-300 transition shrink-0" (click)="toggleCategory('Burgers')">Burgers</a>
+        <a class="cursor-pointer hover:text-gray-300 transition shrink-0" (click)="toggleCategory('Chicken')">Chicken</a>
+        <a class="cursor-pointer hover:text-gray-300 transition shrink-0" (click)="toggleCategory('Rice Meals')">Rice Meals</a>
+        <a class="cursor-pointer hover:text-gray-300 transition shrink-0" (click)="toggleCategory('Pasta')">Pasta</a>
+        <a class="cursor-pointer hover:text-gray-300 transition shrink-0" (click)="toggleCategory('Shawarma & Wraps')">Shawarma & Wraps</a>
+        <a class="cursor-pointer hover:text-gray-300 transition shrink-0" (click)="toggleCategory('Sides')">Sides</a>
+        <a class="cursor-pointer hover:text-gray-300 transition shrink-0" (click)="toggleCategory('Desserts')">Desserts</a>
+        <a class="cursor-pointer hover:text-gray-300 transition shrink-0" (click)="toggleCategory('Drinks')">Drinks</a>
+    </nav>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 w-full max-w-6xl">
+        <div *ngFor="let item of filteredMenuItems" 
+            class="group bg-[#161812] rounded-[2.5rem] overflow-hidden border border-white/5 hover:border-white/10 transition-all duration-300">
+            
+            <div class="relative h-64 overflow-hidden">
+                <img class="w-full h-full object-cover transition duration-700 group-hover:scale-105" [src]="item.imageUrl" [alt]="item.title">
+                <div class="absolute inset-0 bg-gradient-to-t from-[#161812] via-[#161812]/20 to-transparent"></div>
+            </div>
+
+            <div class="p-8 pt-0">
+                <h3 class="text-xl font-semibold mb-1 text-white">{{item.title}}</h3>
+                
+                <div class="flex gap-1 mb-3 text-yellow-600 text-[14px]">
+                    <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+                </div>
+
+                <p class="text-gray-500 text-sm leading-relaxed mb-6 line-clamp-2 min-h-[40px]">
+                    {{item.description}}
+                </p>
+
+                <p class="text-orange-200 text-[10px] uppercase tracking-widest mb-4 opacity-70">{{item.categoryName}}</p>
+
+                <div class="flex justify-between items-center pt-4 border-t border-white/5">
+                    <span class="text-xl font-bold text-white">D{{item.price}}</span>
+                    
+                    <button class="text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 hover:text-orange-200 transition-colors cursor-pointer">
+                        ORDER
+                    </button>
                 </div>
             </div>
-        </section>
+        </div>
+    </div>
 </section>
+
+<style>
+    /* Hides scrollbar but allows scrolling for categories on mobile */
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+</style>
