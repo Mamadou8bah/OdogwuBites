@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { CartItem,sampleCartItems } from '../data/cartItems';
+import { CartItem } from '../data/cartItems';
+import { CartService } from '../service/cart.service';
 
 @Component({
   selector: 'app-cart',
@@ -10,18 +11,31 @@ import { CartItem,sampleCartItems } from '../data/cartItems';
   standalone: true
 })
 export class Cart {
-  cartItems: CartItem[] = [];
   isCartOpen: boolean = true;
 
-  constructor() {
-    this.cartItems = sampleCartItems;
+  constructor(private cartService: CartService) {}
+
+  get cartItems(): CartItem[] {
+    return this.cartService.items;
   }
 
   get totalPrice(): number {
-    return this.cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
+    return this.cartService.totalPrice;
   }
   closeCart():void{
     this.isCartOpen=false;
+  }
+
+  increment(itemId: number): void {
+    this.cartService.increment(itemId);
+  }
+
+  decrement(itemId: number): void {
+    this.cartService.decrement(itemId);
+  }
+
+  remove(itemId: number): void {
+    this.cartService.remove(itemId);
   }
   
 

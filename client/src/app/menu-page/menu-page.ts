@@ -2,11 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MenuPageService } from '../service/menu-page-service';
+import { MenuDetails } from '../menu-details/menu-details';
 
 @Component({
   selector: 'app-menu-page',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, MenuDetails],
   templateUrl: './menu-page.html',
   styleUrls: ['./menu-page.css'],
 })
@@ -16,10 +17,15 @@ export class MenuPage implements OnInit {
   selectedCategory: string = 'All';
   searchInput: string = '';
 
+  clickedMenuItem: any = null;
+
   constructor(private menuPageService: MenuPageService) {}
 
   ngOnInit(): void {
     this.filterMenu();
+  }
+  toggleMenuDetails(item: any): void {
+    this.clickedMenuItem = item;
   }
 
   toggleCategory(category: string): void {

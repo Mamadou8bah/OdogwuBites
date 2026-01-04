@@ -1,10 +1,12 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Homepage as HomepageService } from '../service/homepage';
+import { CartService } from '../service/cart.service';
+import { MenuDetails } from '../menu-details/menu-details';
 
 @Component({
   selector: 'app-homepage',
-  imports: [CommonModule],
+  imports: [CommonModule, MenuDetails],
   templateUrl: './homepage.html',
   styleUrl: './homepage.css',
 })
@@ -16,7 +18,10 @@ export class Homepage {
 
   selectedCategory: string = 'All';
 
-  constructor(private homepageService: HomepageService) {
+  constructor(
+    private homepageService: HomepageService,
+    private cartService: CartService
+  ) {
     this.menuItems = this.homepageService.getMenuItems();
     this.firstMenuItems=this.homepageService.getMenuItems().slice(0,4);
     this.favoriteItems=this.homepageService.getFavoriteItems();
@@ -30,6 +35,18 @@ export class Homepage {
     } else {
       this.selectedMenuItems = this.homepageService.getMenuItems().filter(item => item.categoryName === category).slice(0,6);
     }
+  }
+
+  addToCart(menuItem: any, quantity: number = 1): void {
+    if (!menuItem) return;
+    if (menuItem.isAvailable === false) return;
+    this.cartService.addMenuItem(menuItem, quantity);
+  }
+
+  clickedMenuItem: any = null;
+
+  toggleMenuDetails(item: any): void {
+    this.clickedMenuItem = item;
   }
 
   
