@@ -39,6 +39,10 @@ export const routes: Routes = [
             {
                 path:'users',
                 component:Users
+            },
+            {
+                path:'orders',
+                component:Orders
             }
         ]
     }
