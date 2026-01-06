@@ -6,6 +6,7 @@ import { LoginPage } from './login-page/login-page';
 import { Dashboard } from './dashboard/dashboard';
 import { Cart } from './cart/cart';
 import { DashboardPage } from './dashboard-page/dashboard-page';
+import { Users } from './users/users';
 export const routes: Routes = [
     {
         path:'',
@@ -33,6 +34,10 @@ export const routes: Routes = [
             {
                 path:'',
                 component:DashboardPage
+            },
+            {
+                path:'users',
+                component:Users
             }
         ]
     }
