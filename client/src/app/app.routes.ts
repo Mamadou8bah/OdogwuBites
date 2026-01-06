@@ -7,6 +7,7 @@ import { Dashboard } from './dashboard/dashboard';
 import { Cart } from './cart/cart';
 import { DashboardPage } from './dashboard-page/dashboard-page';
 import { Users } from './users/users';
+import { Orders } from './orders/orders';
 export const routes: Routes = [
     {
         path:'',
