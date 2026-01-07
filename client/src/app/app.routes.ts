@@ -8,6 +8,7 @@ import { Cart } from './cart/cart';
 import { DashboardPage } from './dashboard-page/dashboard-page';
 import { Users } from './users/users';
 import { Orders } from './orders/orders';
+import { Products } from './products/products';
 export const routes: Routes = [
     {
         path:'',
@@ -43,6 +44,10 @@ export const routes: Routes = [
             {
                 path:'orders',
                 component:Orders
+            },
+            {
+                path:'products',
+                component:Products
             }
         ]
     }
