@@ -1,8 +1,58 @@
-<section class="">
-    <div class="sidebar">
+<section class="flex min-h-screen ">
+    <aside class="fixed inset-y-0 left-0 w-64 br-3 border-gray-500 shadow-md p-6 flex flex-col z-50">
+        <div class="logo flex items-center gap-3">
+            <h1 class="logo-text font-bold text-4xl font-lobster text-orange-400">
+                OdogwuBites
+            </h1>
+        </div>
         
-    </div>
-    <div class="">
-        <router-outlet></router-outlet>
-    </div>
+        <nav class="mt-10 flex-grow">
+            <ul class="space-y-4">
+                <li>
+                    <a routerLink="/dashboard" routerLinkActive="active-link" class="block text-lg  hover:text-orange-400">
+                        Dashboard
+                    </a>
+                </li>
+                <li>
+                    <a routerLink="/orders" routerLinkActive="active-link" class="block text-lg  hover:text-orange-400">
+                        Orders
+                    </a>
+                </li>
+                <li>
+                    <a routerLink="/products" routerLinkActive="active-link" class="block text-lg  hover:text-orange-400">
+                        Products
+                    </a>
+                </li>
+                <li>
+                    <a routerLink="/customers" routerLinkActive="active-link" class="block text-lg  hover:text-orange-400">
+                        Customers
+                    </a>
+                </li>
+                <li>
+                    <a routerLink="/settings" routerLinkActive="active-link" class="block text-lg  hover:text-orange-400">
+                        Settings
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <div class="mt-auto">
+            <div class="settings">
+                <a routerLink="/profile" class="block text-lg text-gray-700 hover:text-orange-400 mb-4">
+                    Profile
+                </a>
+            </div>
+            <button class="">
+                Logout
+            </button>
+
+
+        </div>
+    </aside>
+
+    <main class="flex-1 ml-64 min-h-screen">
+        <div class="p-8">
+            <router-outlet></router-outlet>
+        </div>
+    </main>
 </section>
