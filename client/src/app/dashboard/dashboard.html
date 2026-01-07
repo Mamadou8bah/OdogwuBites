@@ -1,58 +1,106 @@
-<section class="flex min-h-screen ">
-    <aside class="fixed inset-y-0 left-0 w-64 br-3 border-gray-500 shadow-md p-6 flex flex-col z-50">
-        <div class="logo flex items-center gap-3">
-            <h1 class="logo-text font-bold text-4xl font-lobster text-orange-400">
-                OdogwuBites
-            </h1>
-        </div>
-        
-        <nav class="mt-10 flex-grow">
-            <ul class="space-y-4">
-                <li>
-                    <a routerLink="/dashboard" routerLinkActive="active-link" class="block text-lg  hover:text-orange-400">
-                        Dashboard
-                    </a>
-                </li>
-                <li>
-                    <a routerLink="/orders" routerLinkActive="active-link" class="block text-lg  hover:text-orange-400">
-                        Orders
-                    </a>
-                </li>
-                <li>
-                    <a routerLink="/products" routerLinkActive="active-link" class="block text-lg  hover:text-orange-400">
-                        Products
-                    </a>
-                </li>
-                <li>
-                    <a routerLink="/customers" routerLinkActive="active-link" class="block text-lg  hover:text-orange-400">
-                        Customers
-                    </a>
-                </li>
-                <li>
-                    <a routerLink="/settings" routerLinkActive="active-link" class="block text-lg  hover:text-orange-400">
-                        Settings
-                    </a>
-                </li>
-            </ul>
-        </nav>
+<section class="flex min-h-screen bg-neutral-950 text-gray-100">
+  <aside class="fixed inset-y-0 left-0 w-64 border-r border-neutral-800 bg-neutral-900 shadow-2xl p-6 flex flex-col z-50">
+    
+    <div class="logo flex items-center gap-3 mb-10 px-2">
+      <h1 class="logo-text font-bold text-4xl font-lobster text-orange-400">
+        OdogwuBites
+      </h1>
+    </div>
 
-        <div class="mt-auto">
-            <div class="settings">
-                <a routerLink="/profile" class="block text-lg text-gray-700 hover:text-orange-400 mb-4">
-                    Profile
-                </a>
+    <nav class="flex-grow" aria-label="Main Navigation">
+      <ul class="space-y-2">
+        <li>
+          <a routerLink="/dashboard" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active-link bg-orange-500/10 text-orange-400" 
+             class="flex items-center gap-3 p-3 text-gray-400 rounded-xl transition-all hover:bg-neutral-800 hover:text-orange-400 focus-visible:ring-2 focus-visible:ring-orange-500 outline-none group">
+            <div class="w-8 h-8 flex-shrink-0">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" class="w-full h-full">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M13.1061 22H10.8939C7.44737 22 5.72409 22 4.54903 20.9882C3.37396 19.9764 3.13025 18.2827 2.64284 14.8952L2.36407 12.9579C1.98463 10.3208 1.79491 9.00229 2.33537 7.87495C2.87583 6.7476 4.02619 6.06234 6.32691 4.69181L7.71175 3.86687C9.80104 2.62229 10.8457 2 12 2C13.1543 2 14.199 2.62229 16.2882 3.86687L17.6731 4.69181C19.9738 6.06234 21.1242 6.7476 21.6646 7.87495C22.2051 9.00229 22.0154 10.3208 21.6359 12.9579L21.3572 14.8952C20.8697 18.2827 20.626 19.9764 19.451 20.9882C18.2759 22 16.5526 22 13.1061 22ZM8.39757 15.5532C8.64423 15.2204 9.11395 15.1506 9.44671 15.3973C10.1751 15.9371 11.0542 16.2498 12.0001 16.2498C12.946 16.2498 13.8251 15.9371 14.5535 15.3973C14.8863 15.1506 15.356 15.2204 15.6026 15.5532C15.8493 15.8859 15.7795 16.3557 15.4467 16.6023C14.4743 17.3231 13.2851 17.7498 12.0001 17.7498C10.7151 17.7498 9.5259 17.3231 8.55349 16.6023C8.22072 16.3557 8.15092 15.8859 8.39757 15.5532Z" fill="currentColor"></path>
+              </svg>
             </div>
-            <button class="">
-                Logout
-            </button>
+            <span class="text-lg font-medium">Home</span>
+          </a>
+        </li>
 
+        <li>
+          <a routerLink="orders" routerLinkActive="active-link bg-orange-500/10 text-orange-400" 
+             class="flex items-center gap-3 p-3 text-gray-400 rounded-xl transition-all hover:bg-neutral-800 hover:text-orange-400 focus-visible:ring-2 focus-visible:ring-orange-500 outline-none group">
+            <div class="w-8 h-8 flex-shrink-0">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" class="w-full h-full">
+                <path d="M7.5 18C8.32843 18 9 18.6716 9 19.5C9 20.3284 8.32843 21 7.5 21C6.67157 21 6 20.3284 6 19.5C6 18.6716 6.67157 18 7.5 18Z" stroke="currentColor" stroke-width="1.5"></path>
+                <path d="M16.5 18.0001C17.3284 18.0001 18 18.6716 18 19.5001C18 20.3285 17.3284 21.0001 16.5 21.0001C15.6716 21.0001 15 20.3285 15 19.5001C15 18.6716 15.6716 18.0001 16.5 18.0001Z" stroke="currentColor" stroke-width="1.5"></path>
+                <path d="M11 10.8L12.1429 12L15 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                <path d="M2 3L2.26121 3.09184C3.5628 3.54945 4.2136 3.77826 4.58584 4.32298C4.95808 4.86771 4.95808 5.59126 4.95808 7.03836V9.76C4.95808 12.7016 5.02132 13.6723 5.88772 14.5862C6.75412 15.5 8.14857 15.5 10.9375 15.5H12M16.2404 15.5C17.8014 15.5 18.5819 15.5 19.1336 15.0504C19.6853 14.6008 19.8429 13.8364 20.158 12.3075L20.6578 9.88275C21.0049 8.14369 21.1784 7.27417 20.7345 6.69708C20.2906 6.12 18.7738 6.12 17.0888 6.12H11.0235M4.95808 6.12H7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+              </svg>
+            </div>
+            <span class="text-lg font-medium">Orders</span>
+          </a>
+        </li>
 
+        <li>
+          <a routerLink="products" routerLinkActive="active-link bg-orange-500/10 text-orange-400" 
+             class="flex items-center gap-3 p-3 text-gray-400 rounded-xl transition-all hover:bg-neutral-800 hover:text-orange-400 focus-visible:ring-2 focus-visible:ring-orange-500 outline-none group">
+            <div class="w-8 h-8 flex-shrink-0">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" class="w-full h-full">
+                <path d="M16 8.75C15.59 8.75 15.25 8.41 15.25 8V4.5C15.25 3.42 14.58 2.75 13.5 2.75H10.5C9.42 2.75 8.75 3.42 8.75 4.5V8C8.75 8.41 8.41 8.75 8 8.75C7.59 8.75 7.25 8.41 7.25 8V4.5C7.25 2.59 8.59 1.25 10.5 1.25H13.5C15.41 1.25 16.75 2.59 16.75 4.5V8C16.75 8.41 16.41 8.75 16 8.75Z" fill="currentColor"></path>
+                <path d="M8.00082 17.78C7.59082 17.78 7.25082 17.44 7.25082 17.03C7.25082 16.61 7.59082 16.28 8.00082 16.28H19.7608C20.0608 16.28 20.2908 16.02 20.2608 15.72L19.5808 10.03C19.3408 8.09 19.0008 6.5 15.6008 6.5H8.40082C5.00082 6.5 4.66082 8.09 4.43082 10.03L3.53082 17.53C3.24082 19.99 4.00082 22 7.51082 22H16.4908C19.6508 22 20.5808 20.37 20.5308 18.25C20.5208 17.98 20.3008 17.78 20.0308 17.78H8.00082Z" fill="currentColor"></path>
+              </svg>
+            </div>
+            <span class="text-lg font-medium">Products</span>
+          </a>
+        </li>
+
+        <li>
+          <a routerLink="customers" routerLinkActive="active-link bg-orange-500/10 text-orange-400" 
+             class="flex items-center gap-3 p-3 text-gray-400 rounded-xl transition-all hover:bg-neutral-800 hover:text-orange-400 focus-visible:ring-2 focus-visible:ring-orange-500 outline-none group">
+            <div class="w-8 h-8 flex-shrink-0">
+              <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" viewBox="924 578 200 200" aria-hidden="true" class="w-full h-full" fill="currentColor">
+                <g> <path d="M984.585,638.942c0,13.999-9.609,25.348-21.462,25.348c-11.852,0-21.459-11.349-21.459-25.348 c0-13.998,9.607-25.346,21.459-25.346C974.976,613.596,984.585,624.944,984.585,638.942z"></path> <path d="M987.585,683.641c1.55-0.945,3.265-1.561,5.041-1.855c-3.606-5.088-6.161-10.546-7.637-17.078 c-0.404-2.387-3.672-2.667-6.102-0.687c-4.546,3.706-9.849,6.186-15.765,6.186c-6.03,0-11.577-2.399-16.024-6.414 c-1.419-1.282-3.51-1.476-5.143-0.479c-8.443,5.158-14.834,13.344-17.622,23.067c-0.749,2.605-0.223,5.42,1.411,7.588 c1.636,2.166,4.192,3.443,6.906,3.443h38.668C975.947,692.072,981.41,687.41,987.585,683.641z"></path> <path d="M1063.416,638.942c0,13.999,9.608,25.348,21.461,25.348c11.854,0,21.46-11.349,21.46-25.348 c0-13.998-9.606-25.346-21.46-25.346C1073.024,613.596,1063.416,624.944,1063.416,638.942z"></path> <path d="M1060.415,683.641c-1.55-0.945-3.266-1.561-5.041-1.855c3.606-5.088,6.161-10.546,7.637-17.078 c0.405-2.387,3.673-2.667,6.103-0.687c4.546,3.706,9.848,6.186,15.764,6.186c6.029,0,11.577-2.399,16.025-6.414 c1.419-1.282,3.509-1.476,5.142-0.479c8.444,5.158,14.836,13.344,17.622,23.067c0.748,2.605,0.223,5.42-1.41,7.588 c-1.637,2.166-4.192,3.443-6.905,3.443h-38.67C1072.053,692.072,1066.591,687.41,1060.415,683.641z"></path> <path d="M1082.475,725.451c-4.198-14.654-13.72-27.045-26.326-34.992c-2.487-1.566-5.715-1.313-7.921,0.631 c-6.766,5.959-15.138,9.506-24.228,9.506c-9.269,0-17.791-3.686-24.626-9.855c-2.182-1.971-5.393-2.268-7.902-0.734 c-12.977,7.924-22.799,20.504-27.082,35.445c-1.151,4.008-0.344,8.328,2.166,11.662c2.516,3.33,6.443,5.291,10.615,5.291h92.523 c4.173,0,8.103-1.955,10.618-5.291C1082.823,733.779,1083.626,729.463,1082.475,725.451z"></path> <path d="M1056.981,652.547c0,21.513-14.766,38.955-32.981,38.955c-18.214,0-32.979-17.442-32.979-38.955 c0-21.515,14.765-38.951,32.979-38.951C1042.216,613.596,1056.981,631.033,1056.981,652.547z"></path> </g>
+              </svg>
+            </div>
+            <span class="text-lg font-medium">Customers</span>
+          </a>
+        </li>
+
+        <li>
+          <a routerLink="delivery-men" routerLinkActive="active-link bg-orange-500/10 text-orange-400" 
+             class="flex items-center gap-3 p-3 text-gray-400 rounded-xl transition-all hover:bg-neutral-800 hover:text-orange-400 focus-visible:ring-2 focus-visible:ring-orange-500 outline-none group">
+            <div class="w-8 h-8 flex-shrink-0">
+              <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 486.293 486.292" aria-hidden="true" class="w-full h-full" fill="currentColor">
+                <g> <path d="M80.128,219.934C35.874,219.934,0,255.809,0,300.063s35.875,80.129,80.128,80.129c44.255,0,80.13-35.875,80.13-80.129 S124.383,219.934,80.128,219.934z M80.128,344.58c-24.546,0-44.516-19.97-44.516-44.517s19.97-44.517,44.516-44.517 c24.547,0,44.517,19.97,44.517,44.517S104.675,344.58,80.128,344.58z"></path> <path d="M406.162,219.934c-9.043,0-17.725,1.52-25.834,4.281l-22.039-34.332c4.744-3.493,9.6-6.639,14.439-9.18v-39.416 l-35.395,15.954l-32.83-51.138l-64.153-0.002l-11.788,9.813l53.814,17.525l24.184,37.672l-63.847,29.902l-62.425-41.176 L80.128,143.885v25.598l73.591,56.386l45.561,94.606h88.359l22.822-82.911c0,0,9.184-11.88,22.484-25.354l18.709,29.142 c-15.754,14.631-25.621,35.514-25.621,58.711c0,44.254,35.875,80.129,80.129,80.129c44.256,0,80.131-35.875,80.131-80.129 S450.418,219.934,406.162,219.934z M406.162,344.58c-24.545,0-44.516-19.97-44.516-44.517c0-10.533,3.684-20.217,9.822-27.847 l23.666,36.863l28.096-18.035l-22.562-35.147c1.803-0.224,3.633-0.351,5.494-0.351c24.547,0,44.518,19.97,44.518,44.517 S430.709,344.58,406.162,344.58z"></path> </g>
+              </svg>
+            </div>
+            <span class="text-lg font-medium">Delivery Men</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <div class="mt-auto pt-6 border-t border-neutral-800 space-y-2">
+      <a routerLink="/settings" routerLinkActive="text-white bg-neutral-800"
+         class="flex items-center gap-3 p-3 text-gray-400 rounded-xl transition-all hover:bg-neutral-800 hover:text-white outline-none focus-visible:ring-2 focus-visible:ring-orange-500">
+        <div class="w-6 h-6">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" class="w-full h-full">
+            <path d="M7.84308 3.80211C9.8718 2.6007 10.8862 2 12 2C13.1138 2 14.1282 2.6007 16.1569 3.80211L16.8431 4.20846C18.8718 5.40987 19.8862 6.01057 20.4431 7C21 7.98943 21 9.19084 21 11.5937V12.4063C21 14.8092 21 16.0106 20.4431 17C19.8862 17.9894 18.8718 18.5901 16.8431 19.7915L16.1569 20.1979C14.1282 21.3993 13.1138 22 12 22C10.8862 22 9.8718 21.3993 7.84308 20.1979L7.15692 19.7915C5.1282 18.5901 4.11384 17.9894 3.55692 17C3 16.0106 3 14.8092 3 12.4063V11.5937C3 9.19084 3 7.98943 3.55692 7C4.11384 6.01057 5.1282 5.40987 7.15692 4.20846L7.84308 3.80211Z" stroke="currentColor" stroke-width="1.5"></path>
+            <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.5"></circle>
+          </svg>
         </div>
-    </aside>
+        <span class="font-medium">Settings</span>
+      </a>
 
-    <main class="flex-1 ml-64 min-h-screen">
-        <div class="p-8">
-            <router-outlet></router-outlet>
+      <button class="w-full flex items-center gap-3 p-3 text-red-400 rounded-xl transition-all hover:bg-red-500/10 hover:text-red-300 outline-none focus-visible:ring-2 focus-visible:ring-red-500">
+        <div class="w-6 h-6">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" class="w-full h-full">
+            <path d="M8.90002 7.55999C9.21002 3.95999 11.06 2.48999 15.11 2.48999H15.24C19.71 2.48999 21.5 4.27999 21.5 8.74999V15.27C21.5 19.74 19.71 21.53 15.24 21.53H15.11C11.09 21.53 9.24002 20.08 8.91002 16.54" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+            <path d="M15 12H3.62" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+            <path d="M5.85 8.6499L2.5 11.9999L5.85 15.3499" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+          </svg>
         </div>
-    </main>
+        <span class="font-medium">Logout</span>
+      </button>
+    </div>
+  </aside>
+
+  <main class="flex-1 ml-64 p-8">
+    <router-outlet></router-outlet>
+  </main>
 </section>
