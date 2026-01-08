@@ -9,6 +9,8 @@ import { DashboardPage } from './dashboard-page/dashboard-page';
 import { Users } from './users/users';
 import { Orders } from './orders/orders';
 import { Products } from './products/products';
+import { Customers } from './customers/customers';
+import { DeliveryMen } from './delivery-men/delivery-men'
 export const routes: Routes = [
     {
         path:'',
@@ -48,6 +50,14 @@ export const routes: Routes = [
             {
                 path:'products',
                 component:Products
+            },
+            {
+                path:'customers',
+                component:Customers
+            },
+            {
+                path:'delivery-men',
+                component:DeliveryMen
             }
         ]
     }
