@@ -4,12 +4,7 @@
   ],
   "hints": {
     "disown-opener": "off",
-    "axe/forms": [
-      "default",
-      {
-        "label": "off"
-      }
-    ],
+    "axe/forms": "off",
     "axe/name-role-value": [
       "default",
       {

@@ -18,7 +18,7 @@ export class DeliveryMen {
   searchTerm = '';
   sortOrder: SortOrder = 'newest';
 
-  pageSize = 10;
+  pageSize = 10; 
   currentPage = 1;
 
   private readonly selectedIds = new Set<string>();

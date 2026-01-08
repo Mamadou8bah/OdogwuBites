@@ -1,1 +1,157 @@
-<p>products works!</p>
+<section class="space-y-4">
+    <div class="rounded-2xl border border-neutral-800 bg-neutral-900">
+        <div class="flex flex-wrap items-center justify-between gap-3 p-4">
+            <div class="flex flex-1 flex-wrap items-center gap-3">
+                <div class=" relative w-full max-w-sm">
+                    <span class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-gray-500">
+                        <svg
+							viewBox="0 0 24 24"
+							fill="none"
+							xmlns="http://www.w3.org/2000/svg"
+							aria-hidden="true"
+							class="h-5 w-5"
+						>
+							<path
+								d="M21 21L16.7 16.7"
+								stroke="currentColor"
+								stroke-width="1.5"
+								stroke-linecap="round"
+							/>
+							<path
+								d="M11 18C14.866 18 18 14.866 18 11C18 7.13401 14.866 4 11 4C7.13401 4 4 7.13401 4 11C4 14.866 7.13401 18 11 18Z"
+								stroke="currentColor"
+								stroke-width="1.5"
+							/>
+						</svg>
+                    </span>
+                    <input [(ngModel)]="searchTerm" type="text"
+                    placeholder="Search for menu items.."
+                    class="placeholder:text-[14px] w-full rounded-xl border border-neutral-800 bg-neutral-950 py-2.5 pl-10 pr-3 text-sm text-gray-100 placeholder:text-gray-500 outline-none"
+                    (input)="onSearchTermChange()">
+                </div>
+                <button
+					type="button"
+					(click)="exportVisibleToCsv()"
+					class="inline-flex items-center gap-2 rounded-xl border border-neutral-800 bg-neutral-950 px-4 py-2.5 text-sm text-gray-200 transition-colors hover:bg-neutral-900 focus-visible:ring-2 focus-visible:ring-orange-500 outline-none"
+				>
+					<span>Export</span>
+					<svg
+						viewBox="0 0 24 24"
+						fill="none"
+						xmlns="http://www.w3.org/2000/svg"
+						aria-hidden="true"
+						class="h-4 w-4 text-gray-400"
+					>
+						<path
+							d="M12.5535 16.5061C12.4114 16.6615 12.2106 16.75 12 16.75C11.7894 16.75 11.5886 16.6615 11.4465 16.5061L7.44648 12.1311C7.16698 11.8254 7.18822 11.351 7.49392 11.0715C7.79963 10.792 8.27402 10.8132 8.55352 11.1189L11.25 14.0682V3C11.25 2.58579 11.5858 2.25 12 2.25C12.4142 2.25 12.75 2.58579 12.75 3V14.0682L15.4465 11.1189C15.726 10.8132 16.2004 10.792 16.5061 11.0715C16.8118 11.351 16.833 11.8254 16.5535 12.1311L12.5535 16.5061Z"
+							fill="currentColor"
+						></path>
+						<path
+							d="M3.75 15C3.75 14.5858 3.41422 14.25 3 14.25C2.58579 14.25 2.25 14.5858 2.25 15V15.0549C2.24998 16.4225 2.24996 17.5248 2.36652 18.3918C2.48754 19.2919 2.74643 20.0497 3.34835 20.6516C3.95027 21.2536 4.70814 21.5125 5.60825 21.6335C6.47522 21.75 7.57754 21.75 8.94513 21.75H15.0549C16.4225 21.75 17.5248 21.75 18.3918 21.6335C19.2919 21.5125 20.0497 21.2536 20.6517 20.6516C21.2536 20.0497 21.5125 19.2919 21.6335 18.3918C21.75 17.5248 21.75 16.4225 21.75 15.0549V15C21.75 14.5858 21.4142 14.25 21 14.25C20.5858 14.25 20.25 14.5858 20.25 15C20.25 16.4354 20.2484 17.4365 20.1469 18.1919C20.0482 18.9257 19.8678 19.3142 19.591 19.591C19.3142 19.8678 18.9257 20.0482 18.1919 20.1469C17.4365 20.2484 16.4354 20.25 15 20.25H9C7.56459 20.25 6.56347 20.2484 5.80812 20.1469C5.07435 20.0482 4.68577 19.8678 4.40901 19.591C4.13225 19.3142 3.9518 18.9257 3.85315 18.1919C3.75159 17.4365 3.75 16.4354 3.75 15Z"
+							fill="currentColor"
+						></path>
+					</svg>
+				</button>
+
+            </div>
+            <div class="flex gap-2 justify-center items-center">
+                <select name="category" id="" class="rounded-xl border border-neutral-800 bg-neutral-950 px-3 py-2 text-sm text-gray-200 outline-none focus-visible:ring-2 focus-visible:ring-orange-500"
+					[(ngModel)]="selectedCategory" 
+        (ngModelChange)="onFilterByCategory()">
+                    <option value="all">All Categories</option>
+                    <option value="beverages">Beverages</option>
+                    <option value="snacks">Snacks</option>
+                    <option value="meals">Meals</option>
+                </select>
+
+								<button
+									type="button"
+									(click)="addMenuItem()"
+									aria-label="Add menu item"
+									class="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-orange-500 text-white transition-colors hover:bg-orange-600 focus-visible:ring-2 focus-visible:ring-orange-500 outline-none"
+								>
+									<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" class="h-5 w-5"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5"></circle> <path d="M15 12L12 12M12 12L9 12M12 12L12 9M12 12L12 15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path> </g></svg>
+								</button>
+
+            </div>
+        </div>
+
+    <div class="overflow-x-auto">
+        <table class="w-full table-auto border-collapse">
+            <thead class="bg-neutral-800">
+                <tr>
+                    <th class="whitespace-nowrap px-6 py-3 text-left text-sm font-medium text-gray-400">Image</th>
+                    <th class="whitespace-nowrap px-6 py-3 text-left text-sm font-medium text-gray-400">Name</th>
+                    <th class="whitespace-nowrap px-6 py-3 text-left text-sm font-medium text-gray-400">Price</th>
+                    <th class="whitespace-nowrap px-6 py-3 text-left text-sm font-medium text-gray-400">Category</th>
+                    <th class="whitespace-nowrap px-6 py-3 text-left text-sm font-medium text-gray-400">Status</th>
+                    <th class="whitespace-nowrap px-6 py-3 text-left text-sm font-medium text-gray-400">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Example row -->
+                <tr class="border-t border-neutral-800 hover:bg-neutral-800" *ngFor="let product of getVisibleProducts()">
+                    <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-200">
+                        <img src="{{product.imageUrl}}" alt="Product Image" class="h-[4rem] w-[4rem] rounded-full object-cover">
+                    </td>
+                    <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-200">{{product.title}}</td>
+                    <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-200">${{product.price}}</td>
+                    <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-200">{{product.categoryName}}</td>
+                    <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-200">
+                        <p *ngIf="product.isAvailable">Available</p>
+                        <p *ngIf="!product.isAvailable">Unavailable</p>
+                    </td>
+                    <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-200">
+							<button
+								type="button"
+								(click)="$event.stopPropagation()"
+								class="inline-flex h-9 w-9 items-center justify-center rounded-xl text-gray-300 transition-colors hover:text-gray-100 focus-visible:ring-2 focus-visible:ring-orange-500 outline-none"
+								aria-label="Actions"
+							>
+								<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" class="h-5 w-5"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M18 12H18.01M12 12H12.01M6 12H6.01M13 12C13 12.5523 12.5523 13 12 13C11.4477 13 11 12.5523 11 12C11 11.4477 11.4477 11 12 11C12.5523 11 13 11.4477 13 12ZM19 12C19 12.5523 18.5523 13 18 13C17.4477 13 17 12.5523 17 12C17 11.4477 17.4477 11 18 11C18.5523 11 19 11.4477 19 12ZM7 12C7 12.5523 6.55228 13 6 13C5.44772 13 5 12.5523 5 12C5 11.4477 5.44772 11 6 11C6.55228 11 7 11.4477 7 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>
+							</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div>
+        <div class="flex items-center justify-between gap-3 border-t border-neutral-800 p-4">
+            <div class="text-sm text-gray-500">
+                Page {{ currentPage }} of {{ getTotalPages() }}
+            </div>
+
+            <div class="flex items-center gap-2">
+                <button
+                    type="button"
+                    (click)="goPrev()"
+                    [disabled]="currentPage === 1"
+                    class="inline-flex items-center gap-2 rounded-xl border border-neutral-800 bg-neutral-950 px-4 py-2.5 text-sm text-gray-200 transition-colors hover:bg-neutral-900 focus-visible:ring-2 focus-visible:ring-orange-500 outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                    &lt;
+                </button>
+
+                <ng-container *ngFor="let button of getPageButtons()">
+                    <button
+                        type="button"
+                        (click)="goToPage(button)"
+                        [disabled]="button === currentPage"
+                        class="inline-flex items-center gap-2 rounded-xl border border-neutral-800 bg-orange-400 px-4 py-2.5 text-sm text-gray-200 transition-colors hover:bg-neutral-900 focus-visible:ring-2 focus-visible:ring-orange-500 outline-none disabled:cursor-not-allowed disabled:opacity-20"
+                    >
+                        {{ button }}
+                    </button>
+                </ng-container>
+                <button
+                    type="button"
+                    (click)="goNext()"
+                    [disabled]="currentPage === getTotalPages()"
+                    class="inline-flex items-center gap-2 rounded-xl border border-neutral-800 bg-neutral-950 px-4 py-2.5 text-sm text-gray-200 transition-colors hover:bg-neutral-900 focus-visible:ring-2 focus-visible:ring-orange-500 outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                    &gt;
+                </button>
+            </div>
+        </div>
+    </div>
+    </div>
+</section>
