@@ -48,6 +48,10 @@ export const routes: Routes = [
                 component:Orders
             },
             {
+                path:'orders/:id',
+                component:Orders
+            },
+            {
                 path:'products',
                 component:Products
             },
@@ -56,7 +60,15 @@ export const routes: Routes = [
                 component:Customers
             },
             {
+                path:'customers/:id',
+                component:Customers
+            },
+            {
                 path:'delivery-men',
+                component:DeliveryMen
+            },
+            {
+                path:'delivery-men/:id',
                 component:DeliveryMen
             }
         ]
