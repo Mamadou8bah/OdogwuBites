@@ -11,8 +11,16 @@
         <a routerLink="/about" routerLinkActive="text-orange-400">About</a>
     </div>
     <div class="buttons flex gap-5 hidden md:flex">
-        <a href="" class="pt-2 pl-3.5 pr-3.5 border-orange-400 border-2 rounded-xl">Login</a>
-        <a href="" class="p-2.5 pl-3 pr-3 bg-orange-400 rounded-xl">Sign Up</a>
+        <button (click)="cartService.toggleCart()" class="relative p-2 text-white hover:text-orange-400 transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+            </svg>
+            <span *ngIf="cartService.items.length > 0" class="absolute -top-1 -right-1 bg-orange-400 text-black text-[10px] font-bold h-5 w-5 flex items-center justify-center rounded-full">
+                {{cartService.items.length}}
+            </span>
+        </button>
+        <a routerLink="/login" class="pt-2 pl-3.5 pr-3.5 border-orange-400 border-2 rounded-xl">Login</a>
+        <a routerLink="/login" class="p-2.5 pl-3 pr-3 bg-orange-400 rounded-xl">Sign Up</a>
     </div>
   
         <div class="hambuger flex flex-col gap-1  md:hidden" *ngIf="!isMenuOpen"  (click)="toggleMenu()">
@@ -36,8 +44,8 @@
         </div>
 
         <div class="buttons flex gap-5 flex-col text-center">
-            <a (click)="toggleMenu()" href="" class="p-3 border-orange-400 border-2 rounded-xl text-2xl">Login</a>
-            <a (click)="toggleMenu()" href="" class="p-3 text-2xl bg-orange-400 rounded-xl">Sign Up</a>
+            <a (click)="toggleMenu()" routerLink="/login" class="p-3 border-orange-400 border-2 rounded-xl text-2xl">Login</a>
+            <a (click)="toggleMenu()" routerLink="/login" class="p-3 text-2xl bg-orange-400 rounded-xl">Sign Up</a>
         </div>
     </div>
 </nav>

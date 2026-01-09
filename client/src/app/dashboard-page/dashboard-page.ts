@@ -58,7 +58,7 @@ export class DashboardPage implements AfterViewInit {
     return [
       {
         title: 'Today revenue',
-        value: '₦2,000',
+        value: 'D2,000',
         delta: '+15% from yesterday',
         options: this.buildSparklineOptions(todayRevenueTrend, orangeLine, orangeFill),
       },

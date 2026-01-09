@@ -305,7 +305,7 @@ export const clients = [
     jobTitle: 'CEO',
     address: {
       street: '654 Startup Alley',
-      city: 'Austin',
+      city: 'Lamin Kerewan',
       state: 'TX',
       zipCode: '73301',
       country: 'USA'

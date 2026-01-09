@@ -1,11 +1,18 @@
-<div class="app bg-black/90 min-h-screen text-white font-roboto">
+<div class="app bg-black/90 min-h-screen text-white font-roboto overflow-x-hidden">
   <div class="header" *ngIf="!isLoginRoute">
     <app-header></app-header>
   </div>
   <div class="main-content">
     <router-outlet></router-outlet>
   </div>
-  <div class="cart flex flex-col items-center fixed top-0 z-[50000] right-2 w-[350px]">
-   <app-cart></app-cart>
+  <!-- Cart Backdrop -->
+  <div *ngIf="cartService.isCartOpen" 
+       class="fixed inset-0 bg-black/50 backdrop-blur-sm z-[49999] transition-opacity duration-300"
+       (click)="cartService.closeCart()">
+  </div>
+  <div class="cart flex flex-col items-center fixed top-0 z-[50000] right-0 h-full w-[400px] transition-transform duration-300 shadow-2xl"
+       [class.translate-x-full]="!cartService.isCartOpen"
+       [class.translate-x-0]="cartService.isCartOpen">
+   <app-cart class="w-full h-full"></app-cart>
   </div>
 </div>

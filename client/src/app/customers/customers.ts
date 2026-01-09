@@ -20,6 +20,8 @@ export class Customers {
   pageSize = 10;
   currentPage = 1;
 
+  openActionsForCustomerId: number | null = null;
+
   private readonly selectedIds = new Set<number>();
 
   get filteredCustomers(): Customer[] {
@@ -152,6 +154,25 @@ export class Customers {
 
   trackById(_: number, item: Customer): number {
     return item.id;
+  }
+
+  toggleActions(customerId: number): void {
+    this.openActionsForCustomerId = this.openActionsForCustomerId === customerId ? null : customerId;
+  }
+
+  closeActions(): void {
+    this.openActionsForCustomerId = null;
+  }
+
+  resetPayments(customer: Customer): void {
+    customer.totalPayments = 0;
+    this.closeActions();
+  }
+
+  removeCustomer(customer: Customer): void {
+    const idx = this.customers.indexOf(customer);
+    if (idx >= 0) (this.customers as Customer[]).splice(idx, 1);
+    this.closeActions();
   }
 
   private getRegistrationTime(customer: Customer): number {

@@ -22,6 +22,29 @@ export class DeliveryMen {
   currentPage = 1;
 
   private readonly selectedIds = new Set<string>();
+  isAddModalOpen = false;
+  isEditing = false;
+  selectedDriverId: string | null = null;
+
+  newDeliveryMan: any = {
+    name: '',
+    email: '',
+    phone: '',
+    status: 'active',
+    employmentType: 'full_time',
+    vehicle: {
+      type: 'motorcycle',
+      make: '',
+      model: '',
+      licensePlate: ''
+    },
+    address: {
+      street: '',
+      city: '',
+      state: 'NY',
+      zip: ''
+    }
+  };
 
   get filteredDeliveryMen(): DeliveryPerson[] {
     const query = this.searchTerm.trim().toLowerCase();
@@ -167,6 +190,98 @@ export class DeliveryMen {
   }
 
   addDeliveryMan(): void {
+    this.isEditing = false;
+    this.selectedDriverId = null;
+    this.isAddModalOpen = true;
+    this.resetNewDeliveryMan();
+  }
+
+  editDeliveryMan(driver: any): void {
+    this.isEditing = true;
+    this.selectedDriverId = driver.id;
+    this.newDeliveryMan = JSON.parse(JSON.stringify(driver)); // Deep copy
+    // Ensure nested objects exist if missing
+    if (!this.newDeliveryMan.vehicle) this.newDeliveryMan.vehicle = {};
+    if (!this.newDeliveryMan.address) this.newDeliveryMan.address = {};
+    this.isAddModalOpen = true;
+  }
+
+  deleteDeliveryMan(driver: any): void {
+    if (confirm(`Are you sure you want to remove ${driver.name}?`)) {
+      const index = deliveryPersonnel.findIndex(p => p.id === driver.id);
+      if (index !== -1) {
+        deliveryPersonnel.splice(index, 1);
+      }
+    }
+  }
+
+  closeAddModal(): void {
+    this.isAddModalOpen = false;
+  }
+
+  resetNewDeliveryMan(): void {
+    this.newDeliveryMan = {
+      name: '',
+      email: '',
+      phone: '',
+      status: 'active',
+      employmentType: 'full_time',
+      vehicle: {
+        type: 'motorcycle',
+        make: '',
+        model: '',
+        licensePlate: ''
+      },
+      address: {
+        street: '',
+        city: '',
+        state: 'NY',
+        zip: ''
+      }
+    };
+  }
+
+  saveDeliveryMan(): void {
+    if (this.newDeliveryMan.name && this.newDeliveryMan.email) {
+      if (this.isEditing && this.selectedDriverId) {
+        const index = deliveryPersonnel.findIndex(p => p.id === this.selectedDriverId);
+        if (index !== -1) {
+          deliveryPersonnel[index] = { ...deliveryPersonnel[index], ...this.newDeliveryMan };
+        }
+      } else {
+        // Find the highest ID number
+        const maxId = this.deliveryMen.reduce((max, p) => {
+          const num = parseInt(p.id.replace('DRV', ''));
+          return num > max ? num : max;
+        }, 0);
+        
+        const id = `DRV${(maxId + 1).toString().padStart(3, '0')}`;
+        const employeeId = `EMP2024${(maxId + 1).toString().padStart(3, '0')}`;
+        
+        const newEntry: any = {
+          ...this.newDeliveryMan,
+          id,
+          employeeId,
+          hireDate: new Date().toISOString().split('T')[0],
+          avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${this.newDeliveryMan.name}`,
+          performance: {
+            rating: 0,
+            totalDeliveries: 0,
+            onTimeRate: 0,
+            acceptanceRate: 0
+          },
+          earnings: {
+            total: 0,
+            lastMonth: 0,
+            thisMonth: 0,
+            pending: 0
+          }
+        };
+
+        deliveryPersonnel.unshift(newEntry);
+      }
+      this.closeAddModal();
+    }
   }
 
   trackById(_: number, item: DeliveryPerson): string {

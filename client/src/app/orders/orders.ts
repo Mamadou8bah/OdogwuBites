@@ -21,6 +21,8 @@ export class Orders {
   pageSize = 10;
   currentPage = 1;
 
+  openActionsForOrderId: number | null = null;
+
   private readonly selectedIds = new Set<number>();
 
   get filteredOrders(): Order[] {
@@ -191,6 +193,37 @@ export class Orders {
 
   trackByOrderId(_: number, item: Order): number {
     return item.orderId;
+  }
+
+  toggleActions(orderId: number): void {
+    this.openActionsForOrderId = this.openActionsForOrderId === orderId ? null : orderId;
+  }
+
+  closeActions(): void {
+    this.openActionsForOrderId = null;
+  }
+
+  canMarkCompleted(order: Order): boolean {
+    const s = (order.status ?? '').toLowerCase();
+    return s !== 'delivered' && s !== 'completed' && s !== 'canceled' && s !== 'cancelled';
+  }
+
+  canCancel(order: Order): boolean {
+    const s = (order.status ?? '').toLowerCase();
+    return s !== 'canceled' && s !== 'cancelled' && s !== 'delivered' && s !== 'completed';
+  }
+
+  markCompleted(order: Order): void {
+    if (!this.canMarkCompleted(order)) return;
+    order.status = 'delivered';
+    order.deliveryDate = new Date().toISOString();
+    this.closeActions();
+  }
+
+  cancelOrder(order: Order): void {
+    if (!this.canCancel(order)) return;
+    order.status = 'canceled';
+    this.closeActions();
   }
 
   private getOrderTime(order: Order): number {

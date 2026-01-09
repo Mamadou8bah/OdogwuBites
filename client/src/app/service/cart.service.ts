@@ -13,6 +13,7 @@ export type MenuItemLike = {
 })
 export class CartService {
   private _items: CartItem[] = [];
+  public isCartOpen: boolean = false;
 
   get items(): CartItem[] {
     return this._items;
@@ -22,12 +23,25 @@ export class CartService {
     return this._items.reduce((total, item) => total + item.price * item.quantity, 0);
   }
 
+  toggleCart(): void {
+    this.isCartOpen = !this.isCartOpen;
+  }
+
+  openCart(): void {
+    this.isCartOpen = true;
+  }
+
+  closeCart(): void {
+    this.isCartOpen = false;
+  }
+
   addMenuItem(menuItem: MenuItemLike, quantity: number = 1): void {
     const normalizedQuantity = Math.max(1, Math.floor(quantity || 1));
 
     const existing = this._items.find(i => i.name === menuItem.title);
     if (existing) {
       existing.quantity += normalizedQuantity;
+      this.openCart();
       return;
     }
 
@@ -44,6 +58,7 @@ export class CartService {
         imageUrl: menuItem.imageUrl,
       },
     ];
+    this.openCart();
   }
 
   increment(itemId: number): void {

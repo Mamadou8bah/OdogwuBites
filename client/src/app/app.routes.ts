@@ -11,6 +11,12 @@ import { Orders } from './orders/orders';
 import { Products } from './products/products';
 import { Customers } from './customers/customers';
 import { DeliveryMen } from './delivery-men/delivery-men'
+import { CustomerDetails } from './customer-details/customer-details';
+import { OrderDetails } from './order-details/order-details';
+import { DeliveryDetails } from './delivery-details/delivery-details';
+import { ProductDetails } from './product-details/product-details';
+import { SettingsPage } from './settings-page/settings-page';
+import { CheckoutPage } from './checkout-page/checkout-page';
 export const routes: Routes = [
     {
         path:'',
@@ -48,12 +54,12 @@ export const routes: Routes = [
                 component:Orders
             },
             {
-                path:'orders/:id',
-                component:Orders
-            },
-            {
                 path:'products',
                 component:Products
+            },
+            {
+                path:'products/:slug',
+                component:ProductDetails
             },
             {
                 path:'customers',
@@ -61,7 +67,7 @@ export const routes: Routes = [
             },
             {
                 path:'customers/:id',
-                component:Customers
+                component:CustomerDetails
             },
             {
                 path:'delivery-men',
@@ -69,7 +75,19 @@ export const routes: Routes = [
             },
             {
                 path:'delivery-men/:id',
-                component:DeliveryMen
+                component:DeliveryDetails
+            },
+            {
+                path:'orders/:id',
+                component:OrderDetails
+            },
+            {
+                path: 'settings',
+                component: SettingsPage
+            },
+            {
+                path: 'checkout',
+                component: CheckoutPage
             }
         ]
     }

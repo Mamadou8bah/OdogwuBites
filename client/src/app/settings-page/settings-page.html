@@ -1,0 +1,168 @@
+<section class="min-h-screen bg-neutral-950 text-gray-100 p-8">
+  <div class="max-w-4xl mx-auto">
+    <!-- Tabs Header -->
+    <div class="flex gap-8 mb-12 border-b border-neutral-800">
+      <button
+        (click)="setActiveTab('edit-profile')"
+        class="pb-4 text-lg font-medium transition-all relative"
+        [ngClass]="activeTab === 'edit-profile' ? 'text-orange-500' : 'text-gray-400 hover:text-gray-200'"
+      >
+        Edit Profile
+        <div
+          *ngIf="activeTab === 'edit-profile'"
+          class="absolute left-0 w-full bg-orange-500 active-tab-underline"
+        ></div>
+      </button>
+      <button
+        (click)="setActiveTab('preferences')"
+        class="pb-4 text-lg font-medium transition-all relative"
+        [ngClass]="activeTab === 'preferences' ? 'text-orange-500' : 'text-gray-400 hover:text-gray-200'"
+      >
+        Preferences
+        <div
+          *ngIf="activeTab === 'preferences'"
+          class="absolute left-0 w-full bg-orange-500 active-tab-underline"
+        ></div>
+      </button>
+    </div>
+
+    <div *ngIf="activeTab === 'edit-profile'" class="animate-fadeIn">
+      <!-- Profile Picture Section -->
+      <div class="flex flex-col items-center mb-12">
+        <div class="relative group">
+          <div class="w-48 h-48 rounded-full overflow-hidden border-4 border-neutral-800 shadow-2xl">
+            <img [src]="user.profileImage" alt="Profile Picture" class="w-full h-full object-cover">
+          </div>
+          <input type="file" #fileInput (change)="onFileSelected($event)" accept="image/*" class="hidden">
+          <button (click)="fileInput.click()" class="absolute bottom-2 right-2 p-3 bg-neutral-800 rounded-full border border-neutral-700 shadow-lg text-orange-500 hover:bg-neutral-700 transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Form Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8 mb-12">
+        <!-- Name -->
+        <div class="space-y-2">
+          <label class="block text-sm font-medium text-gray-400">Name</label>
+          <div class="relative">
+            <input type="text" [(ngModel)]="user.name" [disabled]="!editableFields['name']" class="w-full bg-neutral-900 border border-neutral-800 rounded-xl px-4 py-3 focus:outline-none focus:border-orange-500/50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+            <button (click)="toggleEdit('name')" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-orange-500 transition-colors">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Email -->
+        <div class="space-y-2">
+          <label class="block text-sm font-medium text-gray-400">Email</label>
+          <div class="relative">
+            <input type="email" [(ngModel)]="user.email" [disabled]="!editableFields['email']" class="w-full bg-neutral-900 border border-neutral-800 rounded-xl px-4 py-3 focus:outline-none focus:border-orange-500/50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+            <button (click)="toggleEdit('email')" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-orange-500 transition-colors">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Username -->
+        <div class="space-y-2">
+          <label class="block text-sm font-medium text-gray-400">Username</label>
+          <div class="relative">
+            <input type="text" [(ngModel)]="user.username" [disabled]="!editableFields['username']" class="w-full bg-neutral-900 border border-neutral-800 rounded-xl px-4 py-3 focus:outline-none focus:border-orange-500/50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+            <button (click)="toggleEdit('username')" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-orange-500 transition-colors">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Password -->
+        <div class="space-y-2">
+          <label class="block text-sm font-medium text-gray-400">Password</label>
+          <div class="relative">
+            <input type="password" [(ngModel)]="user.password" [disabled]="!editableFields['password']" class="w-full bg-neutral-900 border border-neutral-800 rounded-xl px-4 py-3 focus:outline-none focus:border-orange-500/50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+            <button (click)="toggleEdit('password')" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-orange-500 transition-colors">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Phone -->
+        <div class="space-y-2">
+          <label class="block text-sm font-medium text-gray-400">Phone</label>
+          <div class="relative">
+            <input type="text" [(ngModel)]="user.phone" [disabled]="!editableFields['phone']" class="w-full bg-neutral-900 border border-neutral-800 rounded-xl px-4 py-3 focus:outline-none focus:border-orange-500/50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+            <button (click)="toggleEdit('phone')" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-orange-500 transition-colors">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Address -->
+        <div class="space-y-2">
+          <label class="block text-sm font-medium text-gray-400">Address</label>
+          <div class="relative">
+            <input type="text" [(ngModel)]="user.address" [disabled]="!editableFields['address']" class="w-full bg-neutral-900 border border-neutral-800 rounded-xl px-4 py-3 focus:outline-none focus:border-orange-500/50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+            <button (click)="toggleEdit('address')" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-orange-500 transition-colors">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Birth Date -->
+        <div class="space-y-2">
+          <label class="block text-sm font-medium text-gray-400">Birth Date</label>
+          <div class="relative">
+            <input type="date" [(ngModel)]="user.birthDate" [disabled]="!editableFields['birthDate']" class="w-full bg-neutral-900 border border-neutral-800 rounded-xl px-4 py-3 focus:outline-none focus:border-orange-500/50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+            <button (click)="toggleEdit('birthDate')" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-orange-500 transition-colors">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Postal Code -->
+        <div class="space-y-2">
+          <label class="block text-sm font-medium text-gray-400">Postalcode</label>
+          <div class="relative">
+            <input type="text" [(ngModel)]="user.postalCode" [disabled]="!editableFields['postalCode']" class="w-full bg-neutral-900 border border-neutral-800 rounded-xl px-4 py-3 focus:outline-none focus:border-orange-500/50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+            <button (click)="toggleEdit('postalCode')" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-orange-500 transition-colors">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Save Button -->
+      <div class="flex justify-center">
+        <button
+          (click)="saveSettings()"
+          class="bg-orange-600 hover:bg-orange-700 text-white font-bold py-4 px-16 rounded-xl transition-all shadow-lg shadow-orange-600/20 active:scale-95 text-lg"
+        >
+          Save
+        </button>
+      </div>
+    </div>
+
+    <!-- Preferences Tab (Placeholder) -->
+    <div *ngIf="activeTab === 'preferences'" class="animate-fadeIn p-20 text-center text-gray-400">
+      <p class="text-xl">Preferences settings coming soon...</p>
+    </div>
+  </div>
+</section>

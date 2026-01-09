@@ -1,0 +1,153 @@
+        <section class="space-y-4">
+
+            <div class="flex items-center justify-between">
+                <a
+                    routerLink="/dashboard/customers"
+                    class="inline-flex items-center gap-2 rounded-xl border border-neutral-800 bg-neutral-950 px-4 py-2.5 text-sm text-gray-200 transition-colors hover:bg-neutral-900 focus-visible:ring-2 focus-visible:ring-orange-500 outline-none"
+                >
+                    <span>&lt; Back</span>
+                </a>
+            </div>
+
+            <div class=" border-neutral-800 bg-neutral-900 p-4 rounded-3xl flex flex-row gap-10 flex-wrap justify-center">
+                <div class=" flex flex-col items-center gap-4 bg-black/20 p-6 rounded-2xl w-[32rem] ">
+                    <div class="w-[12rem] h-[12rem]">
+                        <img src="{{customer.avatar}}" alt="">
+                    </div>
+                    <p class="text-[2.4rem] text-orange-400">{{customer.name}}</p>
+                </div>
+                <div class="grid grid-cols-2 w-[38rem] gap-6 bg-black/20 p-6 rounded-2xl text-center items-center"> 
+                    <div class="bg-neutral-900  rounded-2xl p-5 flex flex-col gap-2">
+                        <p class="text-orange-400">Client</p>
+                        <p>{{customer.name}}</p>
+                    </div>
+
+                    <div class="bg-neutral-900  rounded-2xl p-5 flex flex-col gap-2">
+                        <p class="text-orange-400">Email</p>
+                        <p>{{customer.email}}</p>
+                    </div>
+
+                    <div class="bg-neutral-900  rounded-2xl p-5 flex flex-col gap-2">
+                        <p class="text-orange-400">Phone</p>
+                        <p>{{customer.phone}}</p>
+                    </div>
+
+                    <div class="bg-neutral-900  rounded-2xl p-5 flex flex-col gap-2">
+                        <p class="text-orange-400">Address</p>
+                        <p>{{customer.address.street}}</p>
+                    </div>
+
+                    <div class="bg-neutral-900  rounded-2xl p-5 flex flex-col gap-2">
+                        <p class="text-orange-400">Total Payments</p>
+                        <p>{{customer.totalPayments}}</p>
+                    </div>
+
+                    <div class="bg-neutral-900  rounded-2xl p-5 flex flex-col gap-2">
+                        <p class="text-orange-400">Total Orders</p>
+                        <p>{{customer.orderFrequency}}</p>
+                    </div>
+                </div>
+
+                <div class="flex flex-col items-center gap-4 bg-black/20 p-6 rounded-2xl w-[32rem]">
+                    <p class="text-[2.2rem] text-orange-400">Orders</p>
+                    <div class="w-[100%] flex flex-col gap-3">
+                        <div *ngFor="let o of pagedOrders" class="w-[100%] rounded-2xl bg-neutral-900 px-3 py-2 flex flex-col g" >
+                            <p class="font-bold text-[0.9rem]">{{o.item}}</p>
+                            <div class="flex flex-row justify-between items-center w-[100%]">
+                                <div class="text-gray-400 text-[0.7rem]">
+                                    <p>{{o.item}}</p>
+                                    <p>D{{o.total}}</p>
+                                    <p>Wave</p>
+                                </div>
+                                <div class="flex flex-col text-[0.7rem] justify-between h-full">
+                                    <p>{{o.orderDate | date}}</p>
+                                    <p [ngClass]="{'text-green-500': o.status === 'delivered', 'text-red-500': o.status !== 'delivered'}">
+                                    {{o.status.toUpperCase()}}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <p *ngIf="orders.length === 0" class="text-gray-400 text-[0.9rem] text-center">
+                            No orders yet.
+                        </p>
+                    </div>
+
+                    <div *ngIf="orders.length > 0" class="w-full flex flex-row items-center justify-between mt-3">
+                        <button
+                            class="bg-neutral-900 px-4 py-2 rounded-xl text-[0.85rem]"
+                            (click)="goToPrevOrdersPage()"
+                            [disabled]="ordersPage <= 1"
+                            [ngClass]="{'opacity-50 cursor-not-allowed': ordersPage <= 1}">
+                            Prev
+                        </button>
+
+                        <p class="text-gray-400 text-[0.85rem]">
+                            Page {{ordersPage}} / {{ordersTotalPages}}
+                        </p>
+
+                        <button
+                            class="bg-neutral-900 px-4 py-2 rounded-xl text-[0.85rem]"
+                            (click)="goToNextOrdersPage()"
+                            [disabled]="ordersPage >= ordersTotalPages"
+                            [ngClass]="{'opacity-50 cursor-not-allowed': ordersPage >= ordersTotalPages}">
+                            Next
+                        </button>
+                    </div>
+                </div>
+                <div>
+                   
+                    <div *ngIf="customer" class="w-[38rem] mt-4 bg-black/20 p-4 rounded-2xl text-center">
+                        <p class="text-orange-400 text-[2.2rem]">Map</p>
+                        <div class="h-[23rem] rounded-xl overflow-hidden border border-white/10">
+                            <iframe
+                                *ngIf="safeMapUrl"
+                                width="100%"
+                                height="100%"
+                                style="border:0"
+                                loading="lazy"
+                                [src]="safeMapUrl">
+                            </iframe>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 flex flex-wrap items-center justify-end gap-3">
+                        <a
+                            routerLink="/dashboard/customers"
+                            class="inline-flex items-center gap-2 rounded-xl border border-neutral-800 bg-neutral-950 px-4 py-2.5 text-sm text-gray-200 transition-colors hover:bg-neutral-900 focus-visible:ring-2 focus-visible:ring-orange-500 outline-none"
+                        >
+                            Back to Customers
+                        </a>
+
+                        <a
+                            *ngIf="customer?.phone"
+                            [href]="'tel:' + customer.phone"
+                            class="inline-flex items-center gap-2 rounded-xl bg-orange-400 px-4 py-2.5 text-sm font-semibold text-black transition-colors hover:bg-orange-300 focus-visible:ring-2 focus-visible:ring-orange-500 outline-none"
+                        >
+                            Call
+                        </a>
+                        <span
+                            *ngIf="!customer?.phone"
+                            class="inline-flex items-center gap-2 rounded-xl bg-white/10 px-4 py-2.5 text-sm text-gray-400 opacity-60 cursor-not-allowed"
+                        >
+                            Call
+                        </span>
+
+                        <a
+                            *ngIf="customer?.email"
+                            [href]="'mailto:' + customer.email"
+                            class="inline-flex items-center gap-2 rounded-xl bg-white/10 px-4 py-2.5 text-sm text-gray-200 transition-colors hover:bg-white/15 focus-visible:ring-2 focus-visible:ring-orange-500 outline-none"
+                        >
+                            Email
+                        </a>
+                        <span
+                            *ngIf="!customer?.email"
+                            class="inline-flex items-center gap-2 rounded-xl bg-white/10 px-4 py-2.5 text-sm text-gray-400 opacity-60 cursor-not-allowed"
+                        >
+                            Email
+                        </span>
+                    </div>
+
+                </div>
+            </div>
+        </section>

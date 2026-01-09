@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
+import { CartService } from '../service/cart.service';
 
 @Component({
   selector: 'app-header',
@@ -11,6 +12,8 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
 export class Header {
 
   isMenuOpen: boolean = false;
+
+  constructor(public cartService: CartService) {}
 
   toggleMenu() {
     this.isMenuOpen = !this.isMenuOpen;

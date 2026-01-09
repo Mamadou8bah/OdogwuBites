@@ -4,6 +4,7 @@ import { filter } from 'rxjs/operators';
 import { Header } from './header/header';
 import { CommonModule } from '@angular/common';
 import { Cart } from "./cart/cart";
+import { CartService } from './service/cart.service';
 
 @Component({
   selector: 'app-root',
@@ -15,7 +16,7 @@ export class App {
   protected readonly title = signal('client');
   isLoginRoute: boolean = false;
 
-  constructor(private router: Router) { 
+  constructor(private router: Router, public cartService: CartService) { 
     this.router.events
       .pipe(filter(event => event instanceof NavigationEnd))
       .subscribe((event: NavigationEnd) => {

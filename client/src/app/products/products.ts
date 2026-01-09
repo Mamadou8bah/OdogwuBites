@@ -1,12 +1,13 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 
 import { menuItems } from '../data/menu-items';
 
 @Component({
   selector: 'app-products',
-  imports: [CommonModule,FormsModule],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './products.html',
   styleUrl: './products.css',
 })
@@ -14,35 +15,37 @@ export class Products {
   searchTerm: string = '';
   searchedProducts = menuItems;
 
-  selectedCategory: string = 'All';
+  selectedCategory: string = 'all';
 
   currentPage: number = 1;
   pageSize: number = 10;
 
+  showAddModal: boolean = false;
+  selectedFileName: string = '';
+  isEditing: boolean = false;
+  editingProductIndex: number = -1;
+
+  newProduct: any = {
+    title: '',
+    description: '',
+    price: 0,
+    categoryName: '',
+    imageUrl: '',
+    isAvailable: true
+  };
+
+  get categories(): string[] {
+    const unique = new Set<string>();
+    for (const item of menuItems) {
+      const name = (item as any)?.categoryName;
+      if (typeof name === 'string' && name.trim()) unique.add(name.trim());
+    }
+    return Array.from(unique).sort((a, b) => a.localeCompare(b));
+  }
 
   onSearchTermChange(): void {
-    const query = this.searchTerm.trim().toLowerCase();
-
-    if(!query){
-      return;
-    }
     this.currentPage = 1;
-    if (!query) {
-      this.searchedProducts = menuItems;
-      return;
-    }else{
-      this.searchedProducts = menuItems.filter(item =>{
-        const nameText = (item.title ?? '').toLowerCase();
-        const categoryText = (item.categoryName ?? '').toLowerCase();
-        return (
-          nameText.includes(query) ||
-          categoryText.includes(query)
-        );
-      })
-      ;
-    }
-
-    
+    this.applyFilters();
   }
 
   onFilterByCategory(): void {
@@ -52,14 +55,14 @@ export class Products {
 
   applyFilters():void{
     const query = this.searchTerm.trim().toLowerCase();
-  
-    this.searchedProducts = menuItems.filter(item => {
-     
-      const matchesSearch = item.title.toLowerCase().includes(query);
-    
-      const matchesCategory = this.selectedCategory === 'All' || 
-                              item.categoryName === this.selectedCategory;
+    const selected = (this.selectedCategory ?? 'all').trim();
 
+    this.searchedProducts = menuItems.filter((item: any) => {
+      const titleText = (item?.title ?? '').toString().toLowerCase();
+      const categoryText = (item?.categoryName ?? '').toString().toLowerCase();
+
+      const matchesSearch = !query || titleText.includes(query) || categoryText.includes(query);
+      const matchesCategory = selected === 'all' || (item?.categoryName ?? '') === selected;
       return matchesSearch && matchesCategory;
     });
   }
@@ -86,10 +89,79 @@ export class Products {
   }
 
   addMenuItem(): void {
-    // Intentionally empty: UI-only button for now.
+    this.isEditing = false;
+    this.showAddModal = true;
   }
 
-  getTotalPages():Number{
+  editProduct(product: any): void {
+    this.isEditing = true;
+    this.editingProductIndex = menuItems.indexOf(product);
+    this.newProduct = { ...product };
+    this.selectedFileName = ''; // Or handling if we want to show existing name
+    this.showAddModal = true;
+  }
+
+  deleteProduct(product: any): void {
+    if (confirm(`Are you sure you want to delete "${product.title}"?`)) {
+      const index = menuItems.indexOf(product);
+      if (index > -1) {
+        menuItems.splice(index, 1);
+        this.applyFilters();
+      }
+    }
+  }
+
+  closeModal(): void {
+    this.showAddModal = false;
+    this.selectedFileName = '';
+    this.isEditing = false;
+    this.editingProductIndex = -1;
+    this.resetForm();
+  }
+
+  onFileSelected(event: any): void {
+    const file = event.target.files[0];
+    if (file) {
+      this.selectedFileName = file.name;
+      this.newProduct.imageUrl = URL.createObjectURL(file);
+    }
+  }
+
+  resetForm(): void {
+    this.newProduct = {
+      title: '',
+      description: '',
+      price: 0,
+      categoryName: '',
+      imageUrl: '',
+      isAvailable: true
+    };
+  }
+
+  saveProduct(): void {
+    if (this.newProduct.title && this.newProduct.price) {
+      if (this.isEditing && this.editingProductIndex > -1) {
+        menuItems[this.editingProductIndex] = {
+          ...this.newProduct,
+          updatedAt: new Date().toISOString()
+        };
+        console.log('Product updated:', this.newProduct);
+      } else {
+        const productToSave = {
+          ...this.newProduct,
+          createdAt: new Date().toISOString(),
+          rating: 0
+        };
+        menuItems.unshift(productToSave);
+        console.log('New product added:', productToSave);
+      }
+      
+      this.applyFilters();
+      this.closeModal();
+    }
+  }
+
+  getTotalPages(): number {
     return Math.max(1, Math.ceil(this.searchedProducts.length / this.pageSize));
   }
 
@@ -123,6 +195,21 @@ export class Products {
   }
 
   goToPage(page:any):void{
-    this.currentPage = page;
+    if (typeof page !== 'number') return;
+    this.currentPage = Math.min(Math.max(1, page), this.getTotalPages() as number);
+  }
+
+  productSlug(product: any): string {
+    return this.toSlug(product?.title ?? '');
+  }
+
+  private toSlug(value: string): string {
+    return (value ?? '')
+      .trim()
+      .toLowerCase()
+      .replace(/['’]/g, '')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/-+/g, '-')
+      .replace(/^-|-$/g, '');
   }
 }

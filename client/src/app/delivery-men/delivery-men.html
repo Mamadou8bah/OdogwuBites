@@ -174,14 +174,24 @@
 							</span>
 						</td>
 						<td class="px-4 py-3 text-right">
-							<button
-								type="button"
-								(click)="$event.stopPropagation()"
-								class="inline-flex h-9 w-9 items-center justify-center rounded-xl text-gray-300 transition-colors hover:text-gray-100 focus-visible:ring-2 focus-visible:ring-orange-500 outline-none"
-								aria-label="Actions"
-							>
-								<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" class="h-5 w-5"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M18 12H18.01M12 12H12.01M6 12H6.01M13 12C13 12.5523 12.5523 13 12 13C11.4477 13 11 12.5523 11 12C11 11.4477 11.4477 11 12 11C12.5523 11 13 11.4477 13 12ZM19 12C19 12.5523 18.5523 13 18 13C17.4477 13 17 12.5523 17 12C17 11.4477 17.4477 11 18 11C18.5523 11 19 11.4477 19 12ZM7 12C7 12.5523 6.55228 13 6 13C5.44772 13 5 12.5523 5 12C5 11.4477 5.44772 11 6 11C6.55228 11 7 11.4477 7 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>
-							</button>
+							<div class="flex items-center justify-end gap-2">
+								<button
+									type="button"
+									(click)="$event.stopPropagation(); editDeliveryMan(d)"
+									class="p-2 rounded-lg text-gray-400 hover:text-orange-500 hover:bg-orange-500/10 transition-all duration-300"
+									aria-label="Edit Personnel"
+								>
+									<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
+								</button>
+								<button
+									type="button"
+									(click)="$event.stopPropagation(); deleteDeliveryMan(d)"
+									class="p-2 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-500/10 transition-all duration-300"
+									aria-label="Delete Personnel"
+								>
+									<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
+								</button>
+							</div>
 						</td>
                         
 					</tr>
@@ -241,3 +251,97 @@
 		</div>
 	</div>
 </section>
+
+<!-- Add Delivery Man Modal -->
+<div *ngIf="isAddModalOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+	<div class="bg-neutral-900 border border-neutral-800 w-full max-w-lg rounded-3xl overflow-hidden shadow-2xl overflow-y-auto max-h-[95vh]">
+		<div class="p-6">
+			<!-- Logo and Title -->
+			<div class="flex flex-col items-center gap-2 mb-8 text-center text-nowrap">
+				<h1 class="logo-text font-bold text-4xl font-lobster text-orange-400">
+					OdogwuBites
+				</h1>
+				<p class="text-gray-400 text-sm">{{ isEditing ? 'Edit Delivery Personnel' : 'Add New Delivery Personnel' }}</p>
+			</div>
+
+			<form (ngSubmit)="saveDeliveryMan()" #deliveryForm="ngForm" class="space-y-4">
+				<!-- Full Name -->
+				<div>
+					<label class="block text-sm font-medium text-gray-400 mb-1">Full Name</label>
+					<input type="text" name="name" [(ngModel)]="newDeliveryMan.name" required
+						placeholder="e.g. John Doe"
+						class="w-full rounded-xl border border-neutral-800 bg-neutral-950 py-2.5 px-4 text-sm text-gray-100 outline-none focus:border-orange-500">
+				</div>
+
+				<div class="grid grid-cols-2 gap-4">
+					<!-- Email -->
+					<div>
+						<label class="block text-sm font-medium text-gray-400 mb-1">Email</label>
+						<input type="email" name="email" [(ngModel)]="newDeliveryMan.email" required
+							placeholder="john@example.com"
+							class="w-full rounded-xl border border-neutral-800 bg-neutral-950 py-2.5 px-4 text-sm text-gray-100 outline-none focus:border-orange-500">
+					</div>
+					<!-- Phone -->
+					<div>
+						<label class="block text-sm font-medium text-gray-400 mb-1">Phone</label>
+						<input type="tel" name="phone" [(ngModel)]="newDeliveryMan.phone"
+							placeholder="+1 234..."
+							class="w-full rounded-xl border border-neutral-800 bg-neutral-950 py-2.5 px-4 text-sm text-gray-100 outline-none focus:border-orange-500">
+					</div>
+				</div>
+
+				<div class="grid grid-cols-2 gap-4">
+					<!-- Employment Type -->
+					<div>
+						<label class="block text-sm font-medium text-gray-400 mb-1">Employment</label>
+						<select name="employmentType" [(ngModel)]="newDeliveryMan.employmentType"
+							class="w-full rounded-xl border border-neutral-800 bg-neutral-950 py-2.5 px-4 text-sm text-gray-100 outline-none focus:border-orange-500">
+							<option value="full_time">Full Time</option>
+							<option value="part_time">Part Time</option>
+							<option value="contractor">Contractor</option>
+						</select>
+					</div>
+					<!-- Vehicle Type -->
+					<div>
+						<label class="block text-sm font-medium text-gray-400 mb-1">Vehicle</label>
+						<select name="vehicleType" [(ngModel)]="newDeliveryMan.vehicle.type"
+							class="w-full rounded-xl border border-neutral-800 bg-neutral-950 py-2.5 px-4 text-sm text-gray-100 outline-none focus:border-orange-500">
+							<option value="motorcycle">Motorcycle</option>
+							<option value="bicycle">Bicycle</option>
+							<option value="car">Car</option>
+							<option value="van">Van</option>
+						</select>
+					</div>
+				</div>
+
+				<!-- License Plate -->
+				<div>
+					<label class="block text-sm font-medium text-gray-400 mb-1">License Plate</label>
+					<input type="text" name="licensePlate" [(ngModel)]="newDeliveryMan.vehicle.licensePlate"
+						placeholder="e.g. ABC-123"
+						class="w-full rounded-xl border border-neutral-800 bg-neutral-950 py-2.5 px-4 text-sm text-gray-100 outline-none focus:border-orange-500">
+				</div>
+
+				<!-- Address (Compact) -->
+				<div>
+					<label class="block text-sm font-medium text-gray-400 mb-1">Street Address</label>
+					<input type="text" name="street" [(ngModel)]="newDeliveryMan.address.street"
+						placeholder="123 Delivery Lane"
+						class="w-full rounded-xl border border-neutral-800 bg-neutral-950 py-2.5 px-4 text-sm text-gray-100 outline-none focus:border-orange-500">
+				</div>
+
+				<!-- Footer Buttons -->
+				<div class="flex gap-3 pt-4">
+					<button type="button" (click)="closeAddModal()"
+						class="flex-1 px-6 py-3 border border-neutral-800 text-gray-400 font-bold rounded-2xl hover:bg-neutral-800 hover:text-white transition-all duration-300">
+						Cancel
+					</button>
+					<button type="submit" [disabled]="!deliveryForm.form.valid"
+						class="flex-1 px-6 py-3 bg-orange-500 text-white font-bold rounded-2xl hover:bg-orange-600 transition-all duration-300 disabled:opacity-50">
+						{{ isEditing ? 'Update Personnel' : 'Add Personnel' }}
+					</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>

@@ -802,7 +802,7 @@ export const orders = [
     tax: 23.20,
     deliveryFee: 15.00,
     serviceFee: 10.00,
-    discount: {
+    discount: { 
       type: 'restaurant_discount',
       amount: 10.00
     },
