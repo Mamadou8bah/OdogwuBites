@@ -1,22 +1,22 @@
-<section class="w-dvw min-h-[100dvh] bg-[url('https://res.cloudinary.com/dflsnes44/image/upload/v1766835963/login-page_ums3dx.png')] bg-no-repeat bg-cover flex flex-col items-center justify-center font-roboto">
+<section class="w-dvw min-h-[100dvh] px-4 py-10 md:px-0 md:py-0 bg-[url('https://res.cloudinary.com/dflsnes44/image/upload/v1766835963/login-page_ums3dx.png')] bg-no-repeat bg-cover flex flex-col items-center justify-center font-roboto">
   
-  <div class="relative flex w-full max-w-5xl bg-black/20 backdrop-blur-[1.7px] rounded-[1.5rem] shadow-2xl overflow-hidden min-h-[600px]">
+  <div class="relative flex flex-col md:flex-row w-full max-w-5xl bg-black/20 backdrop-blur-[1.7px] rounded-[1.5rem] shadow-2xl overflow-hidden min-h-0 md:min-h-[600px]"> 
     
     <div 
-      class="absolute top-0 left-0 h-full w-full md:w-3/5 p-6 md:p-12 flex flex-col justify-between z-10 bg-white/30 backdrop-blur-[30px] border-r shadow-2xl border-white/30 transition-transform duration-700 ease-in-out"
+      class="relative md:absolute top-0 left-0 h-auto md:h-full w-full md:w-3/5 p-3 md:p-12 flex flex-col justify-between z-10 bg-white/30 backdrop-blur-[30px] border-b md:border-b-0 md:border-r shadow-2xl border-white/30 transition-transform duration-700 ease-in-out"
       [ngClass]="isLoginMode ? 'translate-x-0' : 'md:translate-x-[66.6%]'"
       style="background: rgba(255,255,255,0.07);"
     >
-      <div class="flex flex-col justify-center items-center mb-6">
-        <h1 class="logo-text font-bold text-4xl md:text-5xl font-lobster text-orange-400 drop-shadow-md">OdogwuBites</h1>
+      <div class="flex flex-col justify-center items-center mb-3">
+        <h1 *ngIf="isLoginMode" class="logo-text font-bold text-4xl md:text-5xl font-lobster text-orange-400 drop-shadow-md">OdogwuBites</h1>
       </div>  
 
       <div class="flex-grow flex flex-col justify-center items-center text-center">
-        <h2 class="text-3xl md:text-4xl font-bold text-orange-400 mb-3 drop-shadow-sm">
+        <h2 class="text-3xl md:text-4xl font-bold text-orange-400 mb-2 drop-shadow-sm">
           {{ isLoginMode ? 'Sign in to Your Account' : 'Create Account' }}
         </h2>
         <div class="w-20 h-1.5 bg-orange-400 mb-4 rounded-full shadow-sm"></div>
-          <div *ngIf="!isLoginMode" class="flex flex-col items-center mb-4">
+          <div *ngIf="!isLoginMode" class="flex flex-col items-center mb-2">
             <div class="relative group cursor-pointer">
               <div class="w-20 h-20 bg-white/20 rounded-full border-2 border-dashed border-yellow-400 flex items-center justify-center overflow-hidden">
                 <img *ngIf="profileImage" [src]="profileImage" class="absolute inset-0 w-full h-full object-cover rounded-full">
@@ -26,23 +26,40 @@
             </div>
           </div>
 
-        <form class="w-full max-w-sm space-y-5" [formGroup]="form" (ngSubmit)="onSubmit()">
+        <form class="w-full max-w-sm space-y-2" [formGroup]="form" (ngSubmit)="onSubmit()">
+          <div *ngIf="errorMessage" class="w-full px-5 py-3 bg-white/20 text-red-200 rounded-2xl border border-white/20">
+            {{ errorMessage }}
+          </div>
+          <div *ngIf="successMessage" class="w-full px-5 py-3 bg-white/20 text-green-200 rounded-2xl border border-white/20">
+            {{ successMessage }}
+          </div>
+
           <div *ngIf="!isLoginMode" class="transition-opacity duration-500">
-             <input type="text" placeholder="Full Name" class="w-full px-5 py-3.5 bg-white/20 text-white placeholder-gray-300 rounded-2xl focus:outline-none focus:border-2 focus:border-orange-400" formControlName="username">
+             <input type="text" placeholder="e.g. Ebrima Jallow" class="w-full px-5 py-3.5 bg-white/20 text-white placeholder-gray-300 rounded-2xl focus:outline-none focus:border-2 focus:border-orange-400" formControlName="username">
+          </div>
+
+          <div *ngIf="!isLoginMode" class="transition-opacity duration-500">
+             <input type="text" placeholder="Address" class="w-full px-5 py-3.5 bg-white/20 text-white placeholder-gray-300 rounded-2xl focus:outline-none focus:border-2 focus:border-orange-400" formControlName="address">
           </div>
           
-          <input type="email" placeholder="Email" class="w-full px-5 py-3.5 bg-white/20 text-white placeholder-gray-300 rounded-2xl focus:outline-none focus:border-2 focus:border-orange-400" formControlName="email">
+          <input type="email" placeholder="e.g. ebrima@example.gm" class="w-full px-5 py-3.5 bg-white/20 text-white placeholder-gray-300 rounded-2xl focus:outline-none focus:border-2 focus:border-orange-400" formControlName="email">
           <input type="password" placeholder="Password" class="w-full px-5 py-3.5 bg-white/20 text-white placeholder-gray-300 rounded-2xl focus:outline-none focus:border-2 focus:border-orange-400" formControlName="password">
 
-          <button type="submit" class="w-52 bg-orange-400 hover:bg-yellow-500 text-black font-bold py-3.5 rounded-full mt-6 uppercase text-sm tracking-wider shadow-lg">
+          <div *ngIf="!isLoginMode" class="transition-opacity duration-500">
+            <input type="tel" placeholder="Phone" class="w-full px-5 py-3.5 bg-white/20 text-white placeholder-gray-300 rounded-2xl focus:outline-none focus:border-2 focus:border-orange-400" formControlName="phone">
+          </div>
+
+          <button *ngIf="!loading" type="submit" class="w-full sm:w-52 bg-orange-400 hover:bg-yellow-500 text-black font-bold py-3.5 rounded-full mt-6 uppercase text-sm tracking-wider shadow-lg">
             {{ isLoginMode ? 'Sign In' : 'Sign Up' }}
           </button>
+          <div *ngIf="loading" type="button" class=" loader w-full sm:w-52 bg-orange-400 hover:bg-yellow-500 text-black font-bold py-3.5 rounded-full mt-6 uppercase text-sm tracking-wider shadow-lg">
+          </div>
         </form>
       </div>
     </div>
 
     <div 
-      class="absolute top-0 right-0 h-full w-full md:w-2/5 bg-orange-400/90 text-white flex flex-col items-center justify-center p-12 text-center transition-transform duration-700 ease-in-out z-20 backdrop-blur-sm"
+      class="relative md:absolute top-0 right-0 h-auto md:h-full w-full md:w-2/5 bg-orange-400/90 text-white flex flex-col items-center justify-center p-6 md:p-12 text-center transition-transform duration-700 ease-in-out z-20 backdrop-blur-sm"
       [ngClass]="isLoginMode ? 'translate-x-0' : 'md:-translate-x-[150%]'"
     >
       <h2 class="text-4xl md:text-5xl font-extrabold mb-4 drop-shadow-md">

@@ -1,9 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-
-import { orders as ordersData } from '../data/order';
+import { OrderService } from '../service/order.service';
+import { AuthService } from '../service/auth.service';
 
 @Component({
   selector: 'app-orders',
@@ -12,18 +12,53 @@ import { orders as ordersData } from '../data/order';
   templateUrl: './orders.html',
   styleUrl: './orders.css',
 })
-export class Orders {
-  protected readonly orders = ordersData as unknown as Order[];
-
+export class Orders implements OnInit {
+  orders: Order[] = [];
   searchTerm = '';
   sortOrder: SortOrder = 'newest';
-
   pageSize = 10;
   currentPage = 1;
+  openActionsForOrderId: string | null = null;
+  selectedIds = new Set<string>();
+  loading = false;
 
-  openActionsForOrderId: number | null = null;
+  constructor(
+    private orderService: OrderService,
+    private authService: AuthService
+  ) {}
 
-  private readonly selectedIds = new Set<number>();
+  ngOnInit(): void {
+    this.fetchOrders();
+  }
+
+  fetchOrders(): void {
+    this.loading = true;
+    const user = this.authService.currentUser;
+    if (!user) return;
+
+    const request = user.role === 'admin' 
+      ? this.orderService.getAllOrders() 
+      : this.orderService.getOrdersByUserId(user._id);
+
+    request.subscribe({
+      next: (data: any[]) => {
+        this.orders = data.map(o => ({
+          ...o,
+          orderId: o._id,
+          clientName: o.user?.name || 'Unknown',
+          delivery: {
+            address: o.address,
+            driver: { name: o.deliveryStaff?.fullname || 'Unassigned' }
+          }
+        }));
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error(err);
+        this.loading = false;
+      }
+    });
+  }
 
   get filteredOrders(): Order[] {
     const query = this.searchTerm.trim().toLowerCase();
@@ -95,11 +130,11 @@ export class Orders {
     this.goToPage(this.currentPage + 1);
   }
 
-  isSelected(orderId: number): boolean {
+  isSelected(orderId: string): boolean {
     return this.selectedIds.has(orderId);
   }
 
-  toggleSelected(orderId: number, checked: boolean): void {
+  toggleSelected(orderId: string, checked: boolean): void {
     if (checked) this.selectedIds.add(orderId);
     else this.selectedIds.delete(orderId);
   }
@@ -161,7 +196,7 @@ export class Orders {
     if (s === 'confirmed' || s === 'preparing' || s === 'out_for_delivery') {
       return 'border-orange-500/30 bg-orange-500/15 text-orange-300';
     }
-    return 'border-neutral-700 bg-neutral-950 text-gray-300';
+    return 'border-white/10 bg-[#292927] text-gray-300';
   }
 
   exportVisibleToCsv(): void {
@@ -191,11 +226,11 @@ export class Orders {
     URL.revokeObjectURL(url);
   }
 
-  trackByOrderId(_: number, item: Order): number {
+  trackByOrderId(_: number, item: Order): string {
     return item.orderId;
   }
 
-  toggleActions(orderId: number): void {
+  toggleActions(orderId: string): void {
     this.openActionsForOrderId = this.openActionsForOrderId === orderId ? null : orderId;
   }
 
@@ -215,15 +250,24 @@ export class Orders {
 
   markCompleted(order: Order): void {
     if (!this.canMarkCompleted(order)) return;
-    order.status = 'delivered';
-    order.deliveryDate = new Date().toISOString();
-    this.closeActions();
+    this.orderService.deliverOrder(String(order.orderId)).subscribe({
+      next: () => {
+        order.status = 'delivered';
+        this.closeActions();
+      },
+      error: (err) => console.error(err)
+    });
   }
 
   cancelOrder(order: Order): void {
     if (!this.canCancel(order)) return;
-    order.status = 'canceled';
-    this.closeActions();
+    this.orderService.cancelOrder(String(order.orderId)).subscribe({
+      next: () => {
+        order.status = 'canceled';
+        this.closeActions();
+      },
+      error: (err) => console.error(err)
+    });
   }
 
   private getOrderTime(order: Order): number {
@@ -251,7 +295,7 @@ export class Orders {
 type SortOrder = 'newest' | 'oldest';
 
 type Order = {
-  orderId: number;
+  orderId: string;
   clientName?: string;
   orderDate?: string;
   deliveryDate?: string;

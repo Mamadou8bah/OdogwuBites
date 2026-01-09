@@ -1,63 +1,91 @@
 const ModemPay = require('modem-pay');
 const mongoose = require('mongoose');
 const Payment = require('../model/Payments');
-const Cart = require('../model/Carts');
+const User = require('../model/Users');
 
-const modempay = new ModemPay(process.env.MODEM_PAY_SECRET_KEY);
+const modempay = process.env.MODEM_PAY_SECRET_KEY
+    ? new ModemPay(process.env.MODEM_PAY_SECRET_KEY)
+    : null;
 
-const checkout = async (req, res) => {
+const deposit = async (req, res) => {
     try {
-        const { userId, paymentMethod } = req.body;
+        const userId = req.user._id;
+        const { amount } = req.body;
 
-        const cart = await Cart.findOne({ userId });
-        if (!cart || cart.items.length === 0) {
-            return res.status(400).json({ message: "Cart is empty" });
+        if (!amount || amount <= 0) {
+            return res.status(400).json({ message: "Invalid amount" });
         }
 
-        const orderId = new mongoose.Types.ObjectId();
+        // Local/dev fallback when ModemPay isn't configured.
+        if (!modempay) {
+            const user = await User.findById(userId);
+            if (!user) return res.status(404).json({ message: "User not found" });
 
-        if (paymentMethod === 'Online') {
-            const intent = await modempay.paymentIntents.create({
-                amount: cart.totalAmount,
-                currency: "GMD",
-                return_url: "http://localhost:3000/payment-success",
-                cancel_url: "http://localhost:3000/payment-failed",
-                metadata: {
-                    userId: userId.toString(),
-                    orderId: orderId.toString()
-                }
-            });
+            user.balance = (user.balance || 0) + Number(amount);
+            await user.save();
 
             await Payment.create({
                 userId,
-                orderId,
-                amount: cart.totalAmount,
-                paymentMethod: 'Online',
-                paymentStatus: 'Pending',
-                transactionId: intent.data.id 
+                amount,
+                paymentMethod: 'Wallet',
+                paymentStatus: 'Completed',
+                notes: 'Wallet Deposit (dev)'
             });
 
             return res.status(200).json({
-                message: "Payment initiated",
-                paymentUrl: intent.data.payment_link 
+                message: "Deposit completed (dev)",
+                balance: user.balance
             });
-
-        } else {
-            await Payment.create({
-                userId,
-                orderId,
-                amount: cart.totalAmount,
-                paymentMethod: 'Cash',
-                paymentStatus: 'Pending'
-            });
-
-            return res.status(200).json({ message: "Order placed successfully" });
         }
 
+        const intent = await modempay.paymentIntents.create({
+            amount: amount,
+            currency: "GMD",
+            return_url: `http://localhost:3000/payment/verify-deposit?userId=${userId}&amount=${amount}`,
+            cancel_url: "http://localhost:3000/payment-failed",
+            metadata: {
+                userId: userId.toString(),
+                type: 'DEPOSIT'
+            }
+        });
+
+        await Payment.create({
+            userId,
+            amount,
+            paymentMethod: 'Online',
+            paymentStatus: 'Pending',
+            transactionId: intent.data.id,
+            notes: 'Wallet Deposit'
+        });
+
+        return res.status(200).json({
+            message: "Deposit initiated",
+            paymentUrl: intent.data.payment_link
+        });
+
     } catch (error) {
-        console.error("Checkout Error:", error);
-        res.status(500).json({ message: "Error processing checkout" });
+        console.error("Deposit Error:", error);
+        res.status(500).json({ message: "Error processing deposit" });
     }
 };
 
-module.exports = { checkout };
+const verifyDeposit = async (req, res) => {
+    try {
+        const { userId, amount } = req.query;
+        
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        user.balance = (user.balance || 0) + Number(amount);
+        await user.save();
+
+        res.send("<h1>Deposit Successful! Your balance has been updated.</h1><script>setTimeout(() => window.close(), 3000)</script>");
+    } catch (error) {
+        console.error("Verify Deposit Error:", error);
+        res.status(500).send("Error verifying deposit");
+    }
+};
+
+module.exports = { deposit, verifyDeposit };

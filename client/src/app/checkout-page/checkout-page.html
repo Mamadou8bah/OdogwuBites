@@ -23,7 +23,7 @@
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div class="space-y-2">
               <label class="text-sm font-medium text-gray-400">Full Name</label>
-              <input type="text" [(ngModel)]="customerInfo.name" class="w-full bg-neutral-950 border border-neutral-800 rounded-2xl px-5 py-4 focus:outline-none focus:border-orange-500/50 transition-colors">
+              <input type="text" [(ngModel)]="customerInfo.name" placeholder="e.g. Fatoumatta Bah" class="w-full bg-neutral-950 border border-neutral-800 rounded-2xl px-5 py-4 focus:outline-none focus:border-orange-500/50 transition-colors">
             </div>
             <div class="space-y-2">
               <label class="text-sm font-medium text-gray-400">Phone Number</label>
@@ -31,15 +31,15 @@
             </div>
             <div class="md:col-span-2 space-y-2">
               <label class="text-sm font-medium text-gray-400">Delivery Address</label>
-              <input type="text" [(ngModel)]="customerInfo.address" placeholder="Street name, Building No..." class="w-full bg-neutral-950 border border-neutral-800 rounded-2xl px-5 py-4 focus:outline-none focus:border-orange-500/50 transition-colors">
+              <input type="text" [(ngModel)]="customerInfo.address" placeholder="e.g. Brusubi Phase 1, House No 12" class="w-full bg-neutral-950 border border-neutral-800 rounded-2xl px-5 py-4 focus:outline-none focus:border-orange-500/50 transition-colors">
             </div>
             <div class="space-y-2">
               <label class="text-sm font-medium text-gray-400">City</label>
-              <input type="text" [(ngModel)]="customerInfo.city" class="w-full bg-neutral-950 border border-neutral-800 rounded-2xl px-5 py-4 focus:outline-none focus:border-orange-500/50 transition-colors">
+              <input type="text" [(ngModel)]="customerInfo.city" placeholder="e.g. Serrekunda" class="w-full bg-neutral-950 border border-neutral-800 rounded-2xl px-5 py-4 focus:outline-none focus:border-orange-500/50 transition-colors">
             </div>
             <div class="space-y-2">
               <label class="text-sm font-medium text-gray-400">Postal Code</label>
-              <input type="text" [(ngModel)]="customerInfo.postalCode" class="w-full bg-neutral-950 border border-neutral-800 rounded-2xl px-5 py-4 focus:outline-none focus:border-orange-500/50 transition-colors">
+              <input type="text" [(ngModel)]="customerInfo.postalCode" placeholder="00000" class="w-full bg-neutral-950 border border-neutral-800 rounded-2xl px-5 py-4 focus:outline-none focus:border-orange-500/50 transition-colors">
             </div>
           </div>
         </div>
@@ -48,34 +48,23 @@
         <div class="bg-neutral-900/50 rounded-3xl p-8 border border-neutral-800">
           <h2 class="text-xl font-bold mb-8 flex items-center gap-3">
             <span class="w-8 h-8 rounded-full bg-orange-500/10 text-orange-500 flex items-center justify-center text-sm font-bold">2</span>
-            Payment Method
+            Wallet Payment
           </h2>
 
           <div class="space-y-4">
-            <label class="flex items-center gap-5 p-6 rounded-2xl border cursor-pointer transition-all bg-neutral-950"
-                   [ngClass]="selectedPaymentMethod === 'Online' ? 'border-orange-500/50 bg-orange-500/5' : 'border-neutral-800 hover:border-neutral-700'">
-              <input type="radio" name="payment" [(ngModel)]="selectedPaymentMethod" value="Online" class="w-5 h-5 accent-orange-500">
+            <div class="flex items-center gap-5 p-6 rounded-2xl border border-orange-500/50 bg-orange-500/5">
               <div class="flex-grow">
-                <p class="font-bold">Online Payment</p>
-                <p class="text-sm text-gray-400">Pay securely via ModemPay (Card, Mobile Money)</p>
+                <p class="font-bold text-lg">Wallet Balance</p>
+                <div class="flex items-center gap-4 mt-2">
+                  <p class="text-xl text-gray-100 font-bold">D{{userBalance}}</p>
+                  <button (click)="depositFunds()" class="bg-orange-500 text-white px-4 py-1.5 rounded-xl text-sm font-bold hover:bg-orange-600 transition-colors">Deposit Funds</button>
+                </div>
+                <p class="text-xs text-gray-400 mt-2">All orders are processed exclusively using your wallet balance. Please ensure you have sufficient funds before confirming.</p>
               </div>
-              <div class="flex items-center gap-2">
-                <div class="w-10 h-6 bg-white/10 rounded flex items-center justify-center text-[8px] font-bold text-gray-400">VISA</div>
-                <div class="w-10 h-6 bg-white/10 rounded flex items-center justify-center text-[8px] font-bold text-gray-400">MC</div>
-              </div>
-            </label>
-
-            <label class="flex items-center gap-5 p-6 rounded-2xl border cursor-pointer transition-all bg-neutral-950"
-                   [ngClass]="selectedPaymentMethod === 'Cash' ? 'border-orange-500/50 bg-orange-500/5' : 'border-neutral-800 hover:border-neutral-700'">
-              <input type="radio" name="payment" [(ngModel)]="selectedPaymentMethod" value="Cash" class="w-5 h-5 accent-orange-500">
-              <div class="flex-grow">
-                <p class="font-bold">Cash on Delivery</p>
-                <p class="text-sm text-gray-400">Pay when your food arrives at your doorstep</p>
-              </div>
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-orange-500/50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
               </svg>
-            </label>
+            </div>
           </div>
         </div>
       </div>

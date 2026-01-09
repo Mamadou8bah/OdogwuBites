@@ -11,6 +11,14 @@
         "button-name": "off"
       }
     ],
-    "axe/text-alternatives": "off"
+    "axe/text-alternatives": "off",
+    "compat-api/css": [
+      "default",
+      {
+        "ignore": [
+          "-webkit-mask"
+        ]
+      }
+    ]
   }
 }

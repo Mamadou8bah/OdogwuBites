@@ -12,14 +12,16 @@ const paymentSchema = new mongoose.Schema({
     amount: Number,
     paymentMethod: {
         type: String,
-        enum: ['Cash', 'Online'],
+        enum: ['Wallet', 'Online', 'Cash'],
+        default: 'Wallet'
     },
     paymentStatus: {
         type: String,
-        enum: ['Pending', 'Paid', 'Failed'],
+        enum: ['Pending', 'Paid', 'Failed', 'Completed'],
         default: 'Pending'
     },
     transactionId: String,
+    notes: String,
     createdAt: {
         type: Date,
         default: Date.now

@@ -1,4 +1,4 @@
-const {getAllCategories,getCategoryById,createCategory,deleteCategory}=require('../service/categoryService');
+const {getAllCategories,getCategoryById,createCategory,deleteCategory}=require('../controller/category');
 const express=require('express');
 const router=express.Router();
 const {isLoggedIn,isAdmin}=require('../middleware/authMiddleware');

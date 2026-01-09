@@ -1,5 +1,5 @@
 const {createMenuItem,deleteMenuItem,getAllMenuItems,getMenuItemById,getMenuItemByCategory,updateMenuItem,searchMenuItems}=require('../controller/menuItems')
-const {isLoggedIn,isAdmin}=require('../middleware/authenticationMiddleware')
+const {isLoggedIn,isAdmin}=require('../middleware/authMiddleware')
 const express=require('express')
 const multer=require('multer')
 const router=express.Router();

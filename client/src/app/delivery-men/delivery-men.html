@@ -1,5 +1,5 @@
 <section class="space-y-4">
-	<div class="rounded-2xl border border-neutral-800 bg-neutral-900">
+	<div class="rounded-2xl border border-white/10 bg-[#222]">
 		<div class="flex flex-wrap items-center justify-between gap-3 p-4">
 			<div class="flex flex-1 flex-wrap items-center gap-3">
 				<div class="relative w-full max-w-sm">
@@ -29,14 +29,14 @@
 						placeholder="Search"
 						[(ngModel)]="searchTerm"
 						(ngModelChange)="onSearchTermChange()"
-						class="w-full rounded-xl border border-neutral-800 bg-neutral-950 py-2.5 pl-10 pr-3 text-sm text-gray-100 placeholder:text-gray-500 outline-none focus-visible:ring-2 focus-visible:ring-orange-500"
+						class="w-full rounded-xl border border-white/10 bg-[#292927] py-2.5 pl-10 pr-3 text-sm text-gray-100 placeholder:text-gray-500 outline-none focus-visible:ring-2 focus-visible:ring-orange-500"
 					/>
 				</div>
 
 				<button
 					type="button"
 					(click)="exportVisibleToCsv()"
-					class="inline-flex items-center gap-2 rounded-xl border border-neutral-800 bg-neutral-950 px-4 py-2.5 text-sm text-gray-200 transition-colors hover:bg-neutral-900 focus-visible:ring-2 focus-visible:ring-orange-500 outline-none"
+					class="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-[#292927] px-4 py-2.5 text-sm text-gray-200 transition-colors hover:bg-[#222] focus-visible:ring-2 focus-visible:ring-orange-500 outline-none"
 				>
 					<span>Export</span>
 					<svg
@@ -65,7 +65,7 @@
 						[(ngModel)]="sortOrder"
 						(ngModelChange)="onSortOrderChange()"
 						aria-label="Sort delivery men"
-						class="rounded-xl border border-neutral-800 bg-neutral-950 px-3 py-2 text-sm text-gray-200 outline-none focus-visible:ring-2 focus-visible:ring-orange-500"
+						class="rounded-xl border border-white/10 bg-[#292927] px-3 py-2 text-sm text-gray-200 outline-none focus-visible:ring-2 focus-visible:ring-orange-500"
 					>
 						<option value="newest">newest</option>
 						<option value="oldest">oldest</option>
@@ -127,12 +127,12 @@
 			<table class="min-w-full border-separate border-spacing-0 text-left text-sm">
 				<thead>
 					<tr class="text-xs text-gray-400">
-						<th class="sticky left-0 z-10 bg-neutral-900 px-4 py-3">
+						<th class="sticky left-0 z-10 bg-[#222] px-4 py-3">
 							<input
 								type="checkbox"
 								[checked]="isAllVisibleSelected()"
 								(change)="toggleAllVisible($any($event.target).checked)"
-								class="h-4 w-4 rounded border-neutral-700 bg-neutral-950"
+								class="h-4 w-4 rounded border-white/20 bg-[#292927]"
 							/>
 						</th>
 						<th class="px-4 py-3">Id</th>
@@ -149,15 +149,15 @@
 					<tr
 						*ngFor="let d of visibleDeliveryMen; trackBy: trackById"
 						[routerLink]="[d.id]"
-						class="border-t border-neutral-800 text-gray-100 cursor-pointer"
+						class="border-t border-white/10 text-gray-100 cursor-pointer"
 					>
-						<td class="sticky left-0 z-10 bg-neutral-900 px-4 py-3">
+						<td class="sticky left-0 z-10 bg-[#222] px-4 py-3">
 							<input
 								type="checkbox"
 								[checked]="isSelected(d.id)"
 								(change)="toggleSelected(d.id, $any($event.target).checked)"
 								(click)="$event.stopPropagation()"
-								class="h-4 w-4 rounded border-neutral-700 bg-neutral-950"
+								class="h-4 w-4 rounded border-white/20 bg-[#292927]"
 							/>
 						</td>
                          
@@ -205,7 +205,7 @@
 			</table>
 		</div>
 
-		<div class="flex items-center justify-between gap-3 border-t border-neutral-800 p-4">
+		<div class="flex items-center justify-between gap-3 border-t border-white/10 p-4">
 			<div class="text-sm text-gray-500">Page {{ currentPage }} of {{ totalPages }}</div>
 
 			<div class="flex items-center gap-2">
@@ -213,7 +213,7 @@
 					type="button"
 					(click)="goPrev()"
 					[disabled]="currentPage === 1"
-					class="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-neutral-800 bg-neutral-950 text-gray-300 disabled:opacity-40"
+					class="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-white/10 bg-[#292927] text-gray-300 disabled:opacity-40"
 					aria-label="Previous page"
 				>
 					&lt;
@@ -224,11 +224,11 @@
 						*ngIf="p !== '…'; else dots"
 						type="button"
 						(click)="goToPage($any(p))"
-						class="inline-flex h-9 min-w-9 items-center justify-center rounded-xl border border-neutral-800 px-3 text-sm"
+						class="inline-flex h-9 min-w-9 items-center justify-center rounded-xl border border-white/10 px-3 text-sm"
 						[ngClass]="
 							currentPage === $any(p)
 								? 'bg-orange-500/20 text-orange-300'
-								: 'bg-neutral-950 text-gray-300'
+								: 'bg-[#292927] text-gray-300'
 						"
 					>
 						{{ p }}
@@ -242,7 +242,7 @@
 					type="button"
 					(click)="goNext()"
 					[disabled]="currentPage === totalPages"
-					class="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-neutral-800 bg-neutral-950 text-gray-300 disabled:opacity-40"
+					class="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-white/10 bg-[#292927] text-gray-300 disabled:opacity-40"
 					aria-label="Next page"
 				>
 					&gt;
@@ -254,7 +254,7 @@
 
 <!-- Add Delivery Man Modal -->
 <div *ngIf="isAddModalOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-	<div class="bg-neutral-900 border border-neutral-800 w-full max-w-lg rounded-3xl overflow-hidden shadow-2xl overflow-y-auto max-h-[95vh]">
+	<div class="bg-[#222] border border-white/10 w-full max-w-lg rounded-3xl overflow-hidden shadow-2xl overflow-y-auto max-h-[95vh]">
 		<div class="p-6">
 			<!-- Logo and Title -->
 			<div class="flex flex-col items-center gap-2 mb-8 text-center text-nowrap">
@@ -265,12 +265,12 @@
 			</div>
 
 			<form (ngSubmit)="saveDeliveryMan()" #deliveryForm="ngForm" class="space-y-4">
-				<!-- Full Name -->
+				<!-- Full Name (Read only suggestion if user exists) -->
 				<div>
-					<label class="block text-sm font-medium text-gray-400 mb-1">Full Name</label>
-					<input type="text" name="name" [(ngModel)]="newDeliveryMan.name" required
-						placeholder="e.g. John Doe"
-						class="w-full rounded-xl border border-neutral-800 bg-neutral-950 py-2.5 px-4 text-sm text-gray-100 outline-none focus:border-orange-500">
+					<label class="block text-sm font-medium text-gray-400 mb-1">Full Name (Optional for existing users)</label>
+					<input type="text" name="name" [(ngModel)]="newDeliveryMan.name"
+						placeholder="e.g. Lamin Sanneh"
+						class="w-full rounded-xl border border-white/10 bg-[#292927] py-2.5 px-4 text-sm text-gray-100 outline-none focus:border-orange-500">
 				</div>
 
 				<div class="grid grid-cols-2 gap-4">
@@ -278,15 +278,15 @@
 					<div>
 						<label class="block text-sm font-medium text-gray-400 mb-1">Email</label>
 						<input type="email" name="email" [(ngModel)]="newDeliveryMan.email" required
-							placeholder="john@example.com"
-							class="w-full rounded-xl border border-neutral-800 bg-neutral-950 py-2.5 px-4 text-sm text-gray-100 outline-none focus:border-orange-500">
+							placeholder="lamin@example.gm"
+							class="w-full rounded-xl border border-white/10 bg-[#292927] py-2.5 px-4 text-sm text-gray-100 outline-none focus:border-orange-500">
 					</div>
 					<!-- Phone -->
 					<div>
 						<label class="block text-sm font-medium text-gray-400 mb-1">Phone</label>
 						<input type="tel" name="phone" [(ngModel)]="newDeliveryMan.phone"
-							placeholder="+1 234..."
-							class="w-full rounded-xl border border-neutral-800 bg-neutral-950 py-2.5 px-4 text-sm text-gray-100 outline-none focus:border-orange-500">
+							placeholder="+220 ..."
+							class="w-full rounded-xl border border-white/10 bg-[#292927] py-2.5 px-4 text-sm text-gray-100 outline-none focus:border-orange-500">
 					</div>
 				</div>
 
@@ -295,7 +295,7 @@
 					<div>
 						<label class="block text-sm font-medium text-gray-400 mb-1">Employment</label>
 						<select name="employmentType" [(ngModel)]="newDeliveryMan.employmentType"
-							class="w-full rounded-xl border border-neutral-800 bg-neutral-950 py-2.5 px-4 text-sm text-gray-100 outline-none focus:border-orange-500">
+							class="w-full rounded-xl border border-white/10 bg-[#292927] py-2.5 px-4 text-sm text-gray-100 outline-none focus:border-orange-500">
 							<option value="full_time">Full Time</option>
 							<option value="part_time">Part Time</option>
 							<option value="contractor">Contractor</option>
@@ -305,7 +305,7 @@
 					<div>
 						<label class="block text-sm font-medium text-gray-400 mb-1">Vehicle</label>
 						<select name="vehicleType" [(ngModel)]="newDeliveryMan.vehicle.type"
-							class="w-full rounded-xl border border-neutral-800 bg-neutral-950 py-2.5 px-4 text-sm text-gray-100 outline-none focus:border-orange-500">
+							class="w-full rounded-xl border border-white/10 bg-[#292927] py-2.5 px-4 text-sm text-gray-100 outline-none focus:border-orange-500">
 							<option value="motorcycle">Motorcycle</option>
 							<option value="bicycle">Bicycle</option>
 							<option value="car">Car</option>
@@ -318,22 +318,22 @@
 				<div>
 					<label class="block text-sm font-medium text-gray-400 mb-1">License Plate</label>
 					<input type="text" name="licensePlate" [(ngModel)]="newDeliveryMan.vehicle.licensePlate"
-						placeholder="e.g. ABC-123"
-						class="w-full rounded-xl border border-neutral-800 bg-neutral-950 py-2.5 px-4 text-sm text-gray-100 outline-none focus:border-orange-500">
+						placeholder="e.g. BJL 1234 A"
+						class="w-full rounded-xl border border-white/10 bg-[#292927] py-2.5 px-4 text-sm text-gray-100 outline-none focus:border-orange-500">
 				</div>
 
 				<!-- Address (Compact) -->
 				<div>
 					<label class="block text-sm font-medium text-gray-400 mb-1">Street Address</label>
 					<input type="text" name="street" [(ngModel)]="newDeliveryMan.address.street"
-						placeholder="123 Delivery Lane"
-						class="w-full rounded-xl border border-neutral-800 bg-neutral-950 py-2.5 px-4 text-sm text-gray-100 outline-none focus:border-orange-500">
+						placeholder="Kairaba Avenue, Serrekunda"
+						class="w-full rounded-xl border border-white/10 bg-[#292927] py-2.5 px-4 text-sm text-gray-100 outline-none focus:border-orange-500">
 				</div>
 
 				<!-- Footer Buttons -->
 				<div class="flex gap-3 pt-4">
 					<button type="button" (click)="closeAddModal()"
-						class="flex-1 px-6 py-3 border border-neutral-800 text-gray-400 font-bold rounded-2xl hover:bg-neutral-800 hover:text-white transition-all duration-300">
+						class="flex-1 px-6 py-3 border border-white/10 text-gray-400 font-bold rounded-2xl hover:bg-white/5 hover:text-white transition-all duration-300">
 						Cancel
 					</button>
 					<button type="submit" [disabled]="!deliveryForm.form.valid"

@@ -5,15 +5,17 @@
     <div class="description w-full">
         <p class="mx-auto font-light text-center text-base  sm:text-2xl md:text-2xl text-gray-400 mt-4 w-11/12 sm:w-8/12 md:w-6/12">
           Browse our menu, choose your favorites, and enjoy restaurant-quality dishes from the comfort of your home.
-        </p>
+        </p> 
     </div>
     <a routerLink="/menu" class="p-3 pl-7 pr-7 m-6 bg-orange-400 rounded-2xl ">Order Now</a>
     <div class="flex w-full flex-row items-center justify-center gap-7 mb-10 mt-20 flex-wrap">
+        <div *ngIf="isLoading" class="loader2"></div>
     <div 
         class="w-[280px] mb-[5rem] p-4 bg-black/10 rounded-xl flex flex-col items-center relative hover:scale-105 transition-all duration-300 ease-in-out"
         *ngFor="let menuItem of firstMenuItems"
         (click)="toggleMenuDetails(menuItem)"
     >
+    
         <div class="w-[130px] h-[130px] rounded-full overflow-hidden absolute top-[-50px] mb-5 z-10">
             <img 
                 [src]="menuItem.imageUrl" 
@@ -97,6 +99,9 @@
         <div class="menu-list">
          <div class="flex flex-wrap justify-center gap-8 p-10 ">
 
+            <div class="loader-3">
+
+            </div>
         <div 
             *ngFor="let item of favoriteItems; let i = index"
             class="relative flex w-[260px] h-[380px] bg-[#222] rounded-[130px] items-center justify-center p-4 text-white shadow-lg transition-transform hover:scale-105"
@@ -154,6 +159,7 @@
         </div>
 
         <div class="selected-menus flex flex-row flex-wrap py-5 items-center justify-center gap-5 min-h-[50vh]">
+            <div class="loader3"></div>
             <div *ngFor="let item of selectedMenuItems" class="w-[22rem] md:w-[25rem]  p-12 bg-[#222] flex flex-col justify-center items-center gap-5 rounded-2xl" (click)="toggleMenuDetails(item)">
                 <div class="h-[9rem] w-[9rem] bg-[#222]">
                     <img class="w-full h-full rounded-full object-cover" src={{item.imageUrl}} alt="">
@@ -279,7 +285,7 @@
                     
                     <input 
                         type="email" 
-                        placeholder="Enter Your Email" 
+                        placeholder="e.g. fatou@example.gm" 
                         autocomplete="email"
                         class="w-full py-3.5 bg-transparent text-white placeholder:text-gray-500 focus:outline-0"
                         aria-label="Email address"

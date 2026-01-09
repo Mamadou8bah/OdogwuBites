@@ -1,19 +1,20 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-
-import { menuItems } from '../data/menu-items';
+import { MenuPageService } from '../service/menu-page-service';
 
 @Component({
   selector: 'app-products',
+  standalone: true,
   imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './products.html',
   styleUrl: './products.css',
 })
-export class Products {
+export class Products implements OnInit { 
   searchTerm: string = '';
-  searchedProducts = menuItems;
+  searchedProducts: any[] = [];
+  allProducts: any[] = [];
 
   selectedCategory: string = 'all';
 
@@ -23,24 +24,40 @@ export class Products {
   showAddModal: boolean = false;
   selectedFileName: string = '';
   isEditing: boolean = false;
-  editingProductIndex: number = -1;
+  editingProduct: any = null;
+  selectedFile: File | null = null;
 
   newProduct: any = {
     title: '',
     description: '',
     price: 0,
     categoryName: '',
-    imageUrl: '',
     isAvailable: true
   };
 
+  constructor(private menuService: MenuPageService) {}
+
+  ngOnInit(): void {
+    this.fetchProducts();
+  }
+
+  fetchProducts(): void {
+    this.menuService.getMenuItems().subscribe({
+      next: (data) => {
+        this.allProducts = data;
+        this.applyFilters();
+      },
+      error: (err) => console.error(err)
+    });
+  }
+
   get categories(): string[] {
     const unique = new Set<string>();
-    for (const item of menuItems) {
-      const name = (item as any)?.categoryName;
-      if (typeof name === 'string' && name.trim()) unique.add(name.trim());
+    for (const item of this.allProducts) {
+      const name = item.categoryName;
+      if (name) unique.add(name);
     }
-    return Array.from(unique).sort((a, b) => a.localeCompare(b));
+    return Array.from(unique);
   }
 
   onSearchTermChange(): void {
@@ -53,22 +70,20 @@ export class Products {
     this.applyFilters();
   }
 
-  applyFilters():void{
-    const query = this.searchTerm.trim().toLowerCase();
-    const selected = (this.selectedCategory ?? 'all').trim();
-
-    this.searchedProducts = menuItems.filter((item: any) => {
-      const titleText = (item?.title ?? '').toString().toLowerCase();
-      const categoryText = (item?.categoryName ?? '').toString().toLowerCase();
-
-      const matchesSearch = !query || titleText.includes(query) || categoryText.includes(query);
-      const matchesCategory = selected === 'all' || (item?.categoryName ?? '') === selected;
+  applyFilters(): void {
+    const query = this.searchTerm.toLowerCase();
+    this.searchedProducts = this.allProducts.filter(item => {
+      const matchesSearch = item.title.toLowerCase().includes(query) || 
+                          item.categoryName.toLowerCase().includes(query);
+      const matchesCategory = this.selectedCategory === 'all' || 
+                            item.categoryName === this.selectedCategory;
       return matchesSearch && matchesCategory;
     });
   }
+
   exportVisibleToCsv(): void {
     const rows = this.getVisibleProducts();
-    const headers=["Image","Name","Price","Category","Status"];
+    const headers = ["Image", "Name", "Price", "Category", "Status"];
     const csvContent = [
       headers.join(','),
       ...rows.map(item => [
@@ -90,32 +105,32 @@ export class Products {
 
   addMenuItem(): void {
     this.isEditing = false;
+    this.resetForm();
     this.showAddModal = true;
   }
 
   editProduct(product: any): void {
     this.isEditing = true;
-    this.editingProductIndex = menuItems.indexOf(product);
+    this.editingProduct = product;
     this.newProduct = { ...product };
-    this.selectedFileName = ''; // Or handling if we want to show existing name
     this.showAddModal = true;
   }
 
   deleteProduct(product: any): void {
     if (confirm(`Are you sure you want to delete "${product.title}"?`)) {
-      const index = menuItems.indexOf(product);
-      if (index > -1) {
-        menuItems.splice(index, 1);
-        this.applyFilters();
-      }
+      this.menuService.deleteMenuItem(product._id).subscribe({
+        next: () => this.fetchProducts(),
+        error: (err) => alert(err.error?.message || 'Delete failed')
+      });
     }
   }
 
   closeModal(): void {
     this.showAddModal = false;
     this.selectedFileName = '';
+    this.selectedFile = null;
     this.isEditing = false;
-    this.editingProductIndex = -1;
+    this.editingProduct = null;
     this.resetForm();
   }
 
@@ -123,7 +138,7 @@ export class Products {
     const file = event.target.files[0];
     if (file) {
       this.selectedFileName = file.name;
-      this.newProduct.imageUrl = URL.createObjectURL(file);
+      this.selectedFile = file;
     }
   }
 
@@ -133,83 +148,60 @@ export class Products {
       description: '',
       price: 0,
       categoryName: '',
-      imageUrl: '',
       isAvailable: true
     };
   }
 
   saveProduct(): void {
-    if (this.newProduct.title && this.newProduct.price) {
-      if (this.isEditing && this.editingProductIndex > -1) {
-        menuItems[this.editingProductIndex] = {
-          ...this.newProduct,
-          updatedAt: new Date().toISOString()
-        };
-        console.log('Product updated:', this.newProduct);
-      } else {
-        const productToSave = {
-          ...this.newProduct,
-          createdAt: new Date().toISOString(),
-          rating: 0
-        };
-        menuItems.unshift(productToSave);
-        console.log('New product added:', productToSave);
-      }
-      
-      this.applyFilters();
-      this.closeModal();
+    const formData = new FormData();
+    formData.append('title', this.newProduct.title);
+    formData.append('description', this.newProduct.description);
+    formData.append('price', this.newProduct.price.toString());
+    formData.append('categoryName', this.newProduct.categoryName);
+    formData.append('isAvailable', this.newProduct.isAvailable.toString());
+    if (this.selectedFile) {
+      formData.append('image', this.selectedFile);
     }
+
+    const request = this.isEditing 
+      ? this.menuService.updateMenuItem(this.editingProduct._id, formData)
+      : this.menuService.createMenuItem(formData);
+
+    request.subscribe({
+      next: () => {
+        this.fetchProducts();
+        this.closeModal();
+      },
+      error: (err) => alert(err.error?.message || 'Save failed')
+    });
   }
 
   getTotalPages(): number {
     return Math.max(1, Math.ceil(this.searchedProducts.length / this.pageSize));
   }
 
-  getVisibleProducts():any[]{
-    const safePage = Math.min(Math.max(1, this.currentPage), this.getTotalPages() as number);
+  getVisibleProducts(): any[] {
+    const safePage = Math.min(Math.max(1, this.currentPage), this.getTotalPages());
     const start = (safePage - 1) * this.pageSize;
     return this.searchedProducts.slice(start, start + this.pageSize);
   }
 
   getPageButtons(): Array<number | '…'> {
-    const totalPages = this.getTotalPages() as number;
-
-    if (totalPages <= 6) {
-      return Array.from({ length: totalPages }, (_, i) => i + 1);
-    }
-    return [1, 2, 3,4, '…', totalPages];
-  }
-  onSortOrderChange(): void {
-    this.currentPage = 1;
+    const total = this.getTotalPages();
+    if (total <= 6) return Array.from({ length: total }, (_, i) => i + 1);
+    return [1, 2, 3, 4, '…', total];
   }
 
-  goNext():void{
-    if(this.currentPage < (this.getTotalPages() as number)){
-      this.currentPage +=1;
-    }
-  }
-  goPrev():void{
-    if(this.currentPage >1){
-      this.currentPage -=1;
-    }
+  goPrev(): void {
+    this.goToPage(this.currentPage - 1);
   }
 
-  goToPage(page:any):void{
-    if (typeof page !== 'number') return;
-    this.currentPage = Math.min(Math.max(1, page), this.getTotalPages() as number);
+  goNext(): void {
+    this.goToPage(this.currentPage + 1);
   }
 
-  productSlug(product: any): string {
-    return this.toSlug(product?.title ?? '');
-  }
-
-  private toSlug(value: string): string {
-    return (value ?? '')
-      .trim()
-      .toLowerCase()
-      .replace(/['’]/g, '')
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/-+/g, '-')
-      .replace(/^-|-$/g, '');
+  goToPage(page: number | '…'): void {
+    if (page === '…') return;
+    this.currentPage = Math.min(Math.max(1, page), this.getTotalPages());
   }
 }

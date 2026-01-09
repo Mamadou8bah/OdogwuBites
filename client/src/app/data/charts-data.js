@@ -1,4 +1,3 @@
-// Most popular menu items
 export const popularMenuItems = [
   { name: 'Jollof Rice', orders: 120 },
   { name: 'Fried Chicken', orders: 95 },
@@ -7,25 +6,20 @@ export const popularMenuItems = [
   { name: 'Pounded Yam', orders: 60 },
 ];
 
-// Delivery performance (on-time vs late)
 export const deliveryPerformance = [
   { status: 'On Time', count: 70 },
   { status: 'Late', count: 8 },
 ];
 
-// Customer retention (new vs returning)
 export const customerRetention = [
   { type: 'New', count: 30 },
   { type: 'Returning', count: 55 },
 ];
 
-// Payment method distribution
 export const paymentMethods = [
-  { method: 'Card', count: 60 },
-  { method: 'Cash', count: 20 },
-  { method: 'Transfer', count: 5 },
+  { method: 'Wallet', count: 85 }
 ];
-// Average order value by day
+
 export const avgOrderValueByDay = [
   { day: '2026-01-01', avgValue: 100 },
   { day: '2026-01-02', avgValue: 120 },
@@ -36,7 +30,6 @@ export const avgOrderValueByDay = [
   { day: '2026-01-07', avgValue: 150 },
 ];
 
-// Peak order hours (number of orders per hour)
 export const ordersByHour = [
   { hour: '08:00', count: 2 },
   { hour: '09:00', count: 4 },
@@ -54,7 +47,7 @@ export const ordersByHour = [
   { hour: '21:00', count: 7 },
   { hour: '22:00', count: 3 },
 ];
-// Top customers by total spent
+
 export const topCustomers = [
   { name: 'Jane Doe', totalSpent: 5200, orders: 18 },
   { name: 'John Smith', totalSpent: 4300, orders: 15 },
@@ -62,10 +55,7 @@ export const topCustomers = [
   { name: 'Chris Lee', totalSpent: 3500, orders: 12 },
   { name: 'Patricia Brown', totalSpent: 3200, orders: 10 },
 ];
-// charts-data.js
-// Mock data for dashboard charts
 
-// Total revenue against days (last 7 days)
 export const revenueByDay = [
   { day: '2026-01-01', revenue: 1200 },
   { day: '2026-01-02', revenue: 1500 },
@@ -76,7 +66,6 @@ export const revenueByDay = [
   { day: '2026-01-07', revenue: 2200 },
 ];
 
-// Mini-card sparklines (last 7 days)
 export const todayRevenueTrend = [
   { hour: '08:00', value: 180 },
   { hour: '10:00', value: 260 },
@@ -117,7 +106,6 @@ export const todayVisitorsTrend = [
   { hour: '20:00', value: 185 },
 ];
 
-// Revenue chart (this year vs last year)
 export const revenueThisYearByMonth = [
   { month: 'Jan', value: 120000 },
   { month: 'Feb', value: 98000 },
@@ -138,23 +126,18 @@ export const revenueLastYearByMonth = [
   { month: 'Jul', value: 255000 },
 ];
 
-// More chart data will be added below...
-
-// Order status distribution
 export const orderStatusData = [
   { status: 'Pending', count: 12 },
   { status: 'Delivered', count: 45 },
   { status: 'Canceled', count: 5 },
 ];
 
-// Product status breakdown (donut)
 export const productStatusData = [
   { status: 'Delivered', count: 62 },
   { status: 'Pending', count: 21 },
   { status: 'Canceled', count: 7 },
 ];
 
-// Best restaurants (bar)
 export const bestRestaurants = [
   { name: 'Heart Break', value: 18000 },
   { name: 'KFC', value: 26000 },

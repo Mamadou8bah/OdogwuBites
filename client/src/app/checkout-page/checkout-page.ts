@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { CartService } from '../service/cart.service';
 import { PaymentService } from '../service/payment.service';
 import { AuthService } from '../service/auth.service';
+import { OrderService } from '../service/order.service';
 
 @Component({
   selector: 'app-checkout-page',
@@ -23,20 +24,46 @@ export class CheckoutPage {
     postalCode: ''
   };
 
-  selectedPaymentMethod: 'Online' | 'Cash' = 'Online';
   isProcessing: boolean = false;
+  userBalance: number = 0;
 
   constructor(
     public cartService: CartService,
     private paymentService: PaymentService,
     private authService: AuthService,
+    private orderService: OrderService,
     private router: Router
   ) {
-    // Pre-fill with auth user data if available
     const user = this.authService.currentUser;
     if (user) {
       this.customerInfo.name = user.name;
       this.customerInfo.email = user.email;
+    }
+    this.cartService.refreshFromServer();
+    this.fetchBalance();
+  }
+
+  fetchBalance() {
+    this.paymentService.getBalance().subscribe({
+      next: (data: any) => {
+        this.userBalance = data.balance || 0;
+      },
+      error: (err) => console.error(err)
+    });
+  }
+
+  depositFunds() {
+    const amount = prompt('Enter amount to deposit (GMD):');
+    if (amount && !isNaN(Number(amount))) {
+      this.paymentService.deposit(Number(amount)).subscribe({
+        next: (response) => {
+          if (response.paymentUrl) {
+            window.open(response.paymentUrl, '_blank');
+            alert('Please complete the payment in the new tab and then refresh this page to see your updated balance.');
+          }
+        },
+        error: (err) => alert('Deposit failed: ' + (err.error?.message || 'Unknown error'))
+      });
     }
   }
 
@@ -59,28 +86,36 @@ export class CheckoutPage {
   placeOrder() {
     if (this.cartService.items.length === 0) return;
     
-    // Simple validation
     if (!this.customerInfo.address || !this.customerInfo.phone) {
       alert('Please fill in your delivery address and phone number.');
       return;
     }
 
     this.isProcessing = true;
-    const userId = this.authService.currentUser.id;
+    
+    if (this.userBalance < this.total) {
+      alert('Insufficient wallet balance. Please deposit more funds.');
+      this.isProcessing = false;
+      return;
+    }
 
-    this.paymentService.checkout(userId, this.selectedPaymentMethod).subscribe({
+    const orderData = {
+      address: this.customerInfo.address,
+      phone: this.customerInfo.phone,
+      paymentMethod: 'Wallet',
+      deliveryType: 'Delivery',
+      deliveryFee: this.deliveryFee,
+      notes: ''
+    };
+
+    this.orderService.createOrder(orderData).subscribe({
       next: (response) => {
-        if (response.paymentUrl) {
-          window.location.href = response.paymentUrl;
-        } else {
-          this.cartService.clear();
-          this.router.navigate(['/dashboard/orders']); // Or a success page
-        }
+        this.cartService.clear();
+        this.router.navigate(['/dashboard/orders']); 
         this.isProcessing = false;
       },
       error: (error) => {
-        console.error('Checkout failed', error);
-        alert('Something went wrong. Please try again.');
+        alert(error.error?.message || 'Something went wrong. Please try again.');
         this.isProcessing = false;
       }
     });

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router'; 
-import { deliveryPersonnel } from '../data/delivery';
+import { DeliveryService } from '../service/delivery.service';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 @Component({
@@ -17,15 +17,37 @@ export class DeliveryDetails implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private deliveryService: DeliveryService
   ) {}
 
   ngOnInit(): void {
     this.route.paramMap.subscribe((params) => {
       this.id = params.get('id');
-      this.delivery = this.id
-        ? deliveryPersonnel.find((person: any) => (person?.id ?? '').toString() === this.id)
-        : undefined;
+      if (this.id) {
+        this.fetchDeliveryDetails(this.id);
+      }
+    });
+  }
+
+  fetchDeliveryDetails(id: string): void {
+    this.deliveryService.getDeliveryStaffById(id).subscribe({
+      next: (staff: any) => {
+        this.delivery = {
+          id: staff._id,
+          employeeId: staff.employeeId,
+          name: staff.userId?.name,
+          email: staff.userId?.email,
+          phone: staff.userId?.phone,
+          status: staff.status,
+          hireDate: staff.hireDate,
+          employmentType: staff.employmentType,
+          vehicle: staff.vehicle,
+          address: staff.userId?.address ? { street: staff.userId.address } : undefined,
+          avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${staff.userId?.name || 'Driver'}`
+        };
+      },
+      error: (err) => console.error('Error fetching delivery staff details:', err)
     });
   }
 

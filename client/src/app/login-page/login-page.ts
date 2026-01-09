@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { AuthService } from '../service/auth.service';
 
 @Component({
   selector: 'app-login-page',
@@ -16,22 +17,54 @@ export class LoginPage {
   form: FormGroup;
 
   errorMessage: string = '';
+  successMessage: string = '';
+  verificationLink: string = '';
   loading: boolean = false;
+ 
   constructor(
     private fb: FormBuilder,
-   
+    private authService: AuthService,
     private router: Router
   ) {
     this.form = this.fb.group({
       username: [''],
       password: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
+      address: [''],
+      phone: ['']
     });
+
+    this.updateModeValidators();
   }
 
   toggleMode() {
     this.isLoginMode = !this.isLoginMode;
     this.form.reset();
+    this.errorMessage = '';
+    this.successMessage = '';
+    this.verificationLink = '';
+    this.profileImage = null;
+    this.updateModeValidators();
+  }
+
+  private updateModeValidators() {
+    const username = this.form.get('username');
+    const address = this.form.get('address');
+    const phone = this.form.get('phone');
+
+    if (this.isLoginMode) {
+      username?.setValidators([]);
+      address?.setValidators([]);
+      phone?.setValidators([]);
+    } else {
+      username?.setValidators([Validators.required]);
+      address?.setValidators([Validators.required]);
+      phone?.setValidators([Validators.required]);
+    }
+
+    username?.updateValueAndValidity({ emitEvent: false });
+    address?.updateValueAndValidity({ emitEvent: false });
+    phone?.updateValueAndValidity({ emitEvent: false });
   }
 
   onFileSelected(event: any) {
@@ -50,22 +83,52 @@ export class LoginPage {
 
   login() {
     this.loading = true;
-   
+    this.errorMessage = '';
+    this.successMessage = '';
+    this.verificationLink = '';
+    
+    this.authService.login({
+      email: this.form.value.email,
+      password: this.form.value.password
+    }).subscribe({
+      next: (res) => {
+        this.authService.setUser(res.user);
+        this.router.navigate(['/']);
+        this.loading = false;
+      },
+      error: (err) => {
+        this.errorMessage = err.error || 'Login failed';
+        this.loading = false;
+      }
+    });
   }
 
   register() {
     this.loading = true;
-    const formData = new FormData();
-    formData.append('fullname', this.form.value.username);
-    formData.append('password', this.form.value.password);
-    formData.append('email', this.form.value.email);
+    this.errorMessage = '';
+    this.successMessage = '';
+    this.verificationLink = '';
 
-    if (this.profileImage && typeof this.profileImage === 'string') {
-      const blob = this.dataURLtoBlob(this.profileImage);
-      formData.append('avatar', blob, 'profile.png'); 
-    }
+    const userData = {
+      name: this.form.value.username,
+      email: this.form.value.email,
+      password: this.form.value.password,
+      address: this.form.value.address,
+      phone: this.form.value.phone
+    };
 
-  
+    this.authService.register(userData).subscribe({
+      next: (res: any) => {
+        this.successMessage = 'Registration successful! Please check your email to verify your account.';
+        this.isLoginMode = true;
+        this.updateModeValidators();
+        this.loading = false;
+      },
+      error: (err) => {
+        this.errorMessage = err.error.message || 'Registration failed';
+        this.loading = false;
+      }
+    });
   }
 
   private dataURLtoBlob(dataURL: string): Blob {

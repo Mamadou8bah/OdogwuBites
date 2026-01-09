@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
-import { orders } from '../data/order';
 import { ActivatedRoute } from '@angular/router';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { OrderService } from '../service/order.service';
 
 @Component({
   selector: 'app-order-details',
@@ -18,29 +18,30 @@ export class OrderDetails implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private sanitizer: DomSanitizer,
-    private location: Location
+    private location: Location,
+    private orderService: OrderService
   ) {}
 
   ngOnInit() {
-    const id = this.route.snapshot.paramMap.get('id');
-    const orderList = orders as any[];
-    this.order = orderList.find(o => o.orderId == Number(id));
-
-    console.log(this.order)
-    if (this.order) {
-      this.generateMapUrl();
-    }
+    const id = this.route.snapshot.paramMap.get('id') || '';
+    this.orderService.getAllOrders().subscribe({
+      next: (orders) => {
+        this.order = orders.find((o: any) => o._id === id);
+        if (this.order) {
+          this.generateMapUrl();
+        }
+      },
+      error: (err) => console.error(err)
+    });
   }
 
   updateStatus(newStatus: string) {
     if (this.order) {
-      this.order.status = newStatus;
-      // Also update status of items if they show it
-      if (this.order.items) {
-        this.order.items.forEach((item: any) => item.status = newStatus);
+      if (newStatus === 'Delivered') {
+        this.orderService.deliverOrder(this.order._id).subscribe(() => this.order.status = 'Delivered');
+      } else if (newStatus === 'Cancelled') {
+        this.orderService.cancelOrder(this.order._id).subscribe(() => this.order.status = 'Cancelled');
       }
-      // In a real app, you would call a service to update the backend
-      console.log(`Order ${this.order.orderId} status updated to ${newStatus}`);
     }
   }
 
@@ -53,7 +54,7 @@ export class OrderDetails implements OnInit {
   }
 
   generateMapUrl() {
-    const location = this.order.delivery.address || 'Banjul';
+    const location = this.order.address || 'Banjul';
     const url = `https://maps.google.com/maps?q=${encodeURIComponent(location)}&output=embed`;
     this.safeMapUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
   }

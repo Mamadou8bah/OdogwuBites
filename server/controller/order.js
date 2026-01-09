@@ -1,14 +1,31 @@
 const Order=require('../model/Orders');
 const Payment = require('../model/Payments');
 const DeliveryStaff = require('../model/DeliveryStaffs');
-const ModemPay = require('modem-pay');
-
-const modempay = new ModemPay(process.env.MODEM_PAY_SECRET_KEY);
+const User = require('../model/Users');
 
 const createOrder=async(req,res)=>{
     try{
         const userId=req.user._id;
         const {deliveryFee,paymentMethod,deliveryType,notes}=req.body;
+        
+        const user = await User.findById(userId);
+        const Cart = require('../model/Carts');
+        const cart = await Cart.findOne({ userId });
+        
+        if (!cart || cart.items.length === 0) {
+            return res.status(400).json({ message: "Cart is empty" });
+        }
+
+        const totalOrderAmount = (cart.totalAmount || 0) + (deliveryFee || 0);
+
+        if (paymentMethod === 'Wallet') {
+            if (user.balance < totalOrderAmount) {
+                return res.status(400).json({ message: 'Insufficient amount in wallet' });
+            }
+            user.balance -= totalOrderAmount;
+            await user.save();
+        }
+
         const order=new Order({
             userId:userId,
             deliveryFee:deliveryFee,
@@ -31,42 +48,16 @@ const createOrder=async(req,res)=>{
 
         await order.save()
 
-        if (paymentMethod === 'Online') {
-            const intent = await modempay.paymentIntents.create({
-                amount: order.total,
-                currency: "GMD",
-                return_url: "http://localhost:3000/payment-success",
-                cancel_url: "http://localhost:3000/payment-failed",
-                metadata: {
-                    userId: userId.toString(),
-                    orderId: order._id.toString()
-                }
-            });
+        await Payment.create({
+            userId,
+            orderId: order._id,
+            amount: order.total,
+            paymentMethod: 'Wallet',
+            paymentStatus: 'Completed',
+            notes: 'Paid via Wallet'
+        });
 
-            await Payment.create({
-                userId,
-                orderId: order._id,
-                amount: order.total,
-                paymentMethod: 'Online',
-                paymentStatus: 'Pending',
-                transactionId: intent.data.id 
-            });
-
-            return res.status(200).json({
-                message: "Order created, proceed to payment",
-                order: order,
-                paymentUrl: intent.data.payment_link
-            });
-        } else {
-            await Payment.create({
-                userId,
-                orderId: order._id,
-                amount: order.total,
-                paymentMethod: 'Cash',
-                paymentStatus: 'Pending'
-            });
-            res.status(200).json(order)
-        }
+        res.status(200).json({ message: "Order placed successfully using wallet balance", order });
     }catch(error){
         console.error(error);
         res.status(400).json('Order Failed')
@@ -135,7 +126,7 @@ const getAllOrders=async(req,res)=>{
     }
 }
 
-const getOrderByid=async(req,res)=>{
+const getOrderById=async(req,res)=>{
     try{
         const orderId=req.params.id;
         const order=await Order.findById(orderId).populate('menuItems');
@@ -147,4 +138,4 @@ const getOrderByid=async(req,res)=>{
         res.status(400).json(error)
     }
 }
-module.exports={createOrder,getOrdersByUserId,cancelOrder,acceptOrder,deliverOrder,getAllOrders,getOrderByid}
+module.exports={createOrder,getOrdersByUserId,cancelOrder,acceptOrder,deliverOrder,getAllOrders,getOrderById}

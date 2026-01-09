@@ -39,6 +39,10 @@ const userSchema=new mongoose.Schema(
         verified:{
             type:Boolean,
             default:false
+        },
+        balance:{
+            type:Number,
+            default:0
         }
     }
 )

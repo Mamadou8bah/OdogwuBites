@@ -1,6 +1,6 @@
 <section>
-    <div class=" border-neutral-800 bg-neutral-900 p-4 rounded-3xl flex flex-row gap-10 flex-wrap justify-center">
-        <div class=" flex flex-col items-center gap-4 bg-black/20 p-6 rounded-2xl w-[32rem] ">
+    <div class="border border-white/10 bg-[#222] p-4 rounded-3xl flex flex-row gap-6 md:gap-10 flex-wrap justify-center">
+        <div class=" flex flex-col items-center gap-4 bg-black/20 p-6 rounded-2xl w-full max-w-[32rem] ">
              <div class="logo flex flex-col items-center gap-3 mb-10 px-2">
                 <h1 class="logo-text font-bold text-4xl font-lobster text-orange-400">
                     OdogwuBites
@@ -11,42 +11,42 @@
                 </button>
             </div>
         </div>
-        <div class="grid grid-cols-2 w-[38rem] gap-6 bg-black/20 p-6 rounded-2xl text-center items-center"> 
-            <div class="bg-neutral-900  rounded-2xl p-5 flex flex-col gap-2">
+        <div class="grid grid-cols-1 sm:grid-cols-2 w-full max-w-[38rem] gap-6 bg-black/20 p-6 rounded-2xl text-center items-center"> 
+            <div class="bg-[#222] rounded-2xl p-5 flex flex-col gap-2">
                 <p class="text-orange-400">Client</p>
                 <p>{{order?.clientName}}</p>
             </div>
 
-            <div class="bg-neutral-900  rounded-2xl p-5 flex flex-col gap-2">
+            <div class="bg-[#222] rounded-2xl p-5 flex flex-col gap-2">
                 <p class="text-orange-400">Email</p>
                 <p>{{order?.clientEmail}}</p>
             </div>
 
-            <div class="bg-neutral-900  rounded-2xl p-5 flex flex-col gap-2">
+            <div class="bg-[#222] rounded-2xl p-5 flex flex-col gap-2">
                 <p class="text-orange-400">Status</p>
                 <p>{{order?.status.toUpperCase()}}</p>
             </div>
 
-            <div class="bg-neutral-900  rounded-2xl p-5 flex flex-col gap-2">
+            <div class="bg-[#222] rounded-2xl p-5 flex flex-col gap-2">
                 <p class="text-orange-400">Address</p>
                 <p>{{order?.delivery?.address}}</p>
             </div>
 
-            <div class="bg-neutral-900  rounded-2xl p-5 flex flex-col gap-2">
+            <div class="bg-[#222] rounded-2xl p-5 flex flex-col gap-2">
                 <p class="text-orange-400">Total Payments</p>
                 <p>{{order?.payment.amountPaid}}</p>
             </div>
 
-            <div class="bg-neutral-900  rounded-2xl p-5 flex flex-col gap-2">
+            <div class="bg-[#222] rounded-2xl p-5 flex flex-col gap-2">
                 <p class="text-orange-400">Total Items</p>
                 <p>{{order?.items.length}}</p>
             </div>
         </div>
 
-        <div class="flex flex-col items-center gap-4 bg-black/20 p-6 rounded-2xl w-[32rem]">
+        <div class="flex flex-col items-center gap-4 bg-black/20 p-6 rounded-2xl w-full max-w-[32rem]">
             <p class="text-[2.2rem] text-orange-400">Items</p>
             <div class="w-[100%] flex flex-col gap-3">
-                <div *ngFor="let o of order?.items" class="w-[100%] rounded-2xl bg-neutral-900 px-3 py-2 flex flex-col gap-1" >
+                <div *ngFor="let o of order?.items" class="w-[100%] rounded-2xl bg-[#222] px-3 py-2 flex flex-col gap-1" >
                     <p class="font-bold text-[0.9rem]">{{o.item}}</p>
                     <div class="flex flex-row justify-between items-center w-[100%]">
                         <div class="text-gray-400 text-[0.7rem]">
@@ -66,7 +66,7 @@
         </div>
         <div>
            
-            <div *ngIf="order" class="w-[38rem] mt-4 bg-black/20 p-4 rounded-2xl text-center">
+            <div *ngIf="order" class="w-full max-w-[38rem] mt-4 bg-black/20 p-4 rounded-2xl text-center">
                 <p class="text-orange-400 text-[2.2rem]">Map</p>
                 <div class="h-[23rem] rounded-xl overflow-hidden border border-white/10">
                     <iframe
@@ -93,7 +93,7 @@
                 Mark as Completed
             </button>
             <button *ngIf="order?.status !== 'delivered' && order?.status !== 'cancelled'" (click)="updateStatus('cancelled')" 
-                class="px-8 py-3 border border-neutral-800 text-gray-400 rounded-2xl hover:bg-neutral-800 hover:text-red-500 transition-all duration-300">
+                class="px-8 py-3 border border-white/10 text-gray-400 rounded-2xl hover:bg-white/5 hover:text-red-500 transition-all duration-300">
                 Cancel Order
             </button>
         </div>

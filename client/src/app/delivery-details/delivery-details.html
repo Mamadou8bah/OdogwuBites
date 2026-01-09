@@ -2,19 +2,19 @@
     <div class="flex items-center justify-between">
         <a
             routerLink="/dashboard/delivery-men"
-            class="inline-flex items-center gap-2 rounded-xl border border-neutral-800 bg-neutral-950 px-4 py-2.5 text-sm text-gray-200 transition-colors hover:bg-neutral-900 focus-visible:ring-2 focus-visible:ring-orange-500 outline-none"
+            class="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-[#292927] px-4 py-2.5 text-sm text-gray-200 transition-colors hover:bg-[#222] focus-visible:ring-2 focus-visible:ring-orange-500 outline-none"
         >
             <span>&lt; Back</span>
         </a>
     </div>
 
-    <div *ngIf="!delivery" class="rounded-2xl border border-neutral-800 bg-neutral-900 p-6 text-gray-200">
+    <div *ngIf="!delivery" class="rounded-2xl border border-white/10 bg-[#222] p-6 text-gray-200">
         <p class="text-lg font-medium">Delivery person not found.</p>
         <p class="mt-1 text-sm text-gray-400">Check the URL id and try again.</p>
     </div>
 
-    <div *ngIf="delivery" class="border-neutral-800 bg-neutral-900 p-4 rounded-3xl flex flex-row gap-10 flex-wrap justify-center">
-        <div class="flex flex-col items-center gap-4 bg-black/20 p-6 rounded-2xl w-[32rem]">
+    <div *ngIf="delivery" class="border border-white/10 bg-[#222] p-4 rounded-3xl flex flex-row gap-6 md:gap-10 flex-wrap justify-center">
+        <div class="flex flex-col items-center gap-4 bg-black/20 p-6 rounded-2xl w-full max-w-[32rem]">
             <div class="w-[12rem] h-[12rem]">
                 <img [src]="delivery?.avatar" [alt]="delivery?.name || 'Delivery person'" class="w-full h-full object-cover rounded-full" />
             </div>
@@ -22,39 +22,39 @@
             <p class="text-sm text-gray-400">{{ statusLabel() }}</p>
         </div>
 
-        <div class="grid grid-cols-2 w-[38rem] gap-6 bg-black/20 p-6 rounded-2xl text-center items-center">
-            <div class="bg-neutral-900 rounded-2xl p-5 flex flex-col gap-2">
+        <div class="grid grid-cols-1 sm:grid-cols-2 w-full max-w-[38rem] gap-6 bg-black/20 p-6 rounded-2xl text-center items-center">
+            <div class="bg-[#222] rounded-2xl p-5 flex flex-col gap-2">
                 <p class="text-orange-400">Driver ID</p>
                 <p>{{ delivery?.id || '—' }}</p>
             </div>
-            <div class="bg-neutral-900 rounded-2xl p-5 flex flex-col gap-2">
+            <div class="bg-[#222] rounded-2xl p-5 flex flex-col gap-2">
                 <p class="text-orange-400">Employee ID</p>
                 <p>{{ delivery?.employeeId || '—' }}</p>
             </div>
 
-            <div class="bg-neutral-900 rounded-2xl p-5 flex flex-col gap-2">
+            <div class="bg-[#222] rounded-2xl p-5 flex flex-col gap-2">
                 <p class="text-orange-400">Email</p>
                 <p>{{ delivery?.email || '—' }}</p>
             </div>
-            <div class="bg-neutral-900 rounded-2xl p-5 flex flex-col gap-2">
+            <div class="bg-[#222] rounded-2xl p-5 flex flex-col gap-2">
                 <p class="text-orange-400">Phone</p>
                 <p>{{ delivery?.phone || '—' }}</p>
             </div>
 
-            <div class="bg-neutral-900 rounded-2xl p-5 flex flex-col gap-2">
+            <div class="bg-[#222] rounded-2xl p-5 flex flex-col gap-2">
                 <p class="text-orange-400">Status</p>
                 <p>{{ statusLabel() }}</p>
             </div>
-            <div class="bg-neutral-900 rounded-2xl p-5 flex flex-col gap-2">
+            <div class="bg-[#222] rounded-2xl p-5 flex flex-col gap-2">
                 <p class="text-orange-400">Employment</p>
                 <p>{{ (delivery?.employmentType || '—').toString().replace('_',' ') }}</p>
             </div>
 
-            <div class="bg-neutral-900 rounded-2xl p-5 flex flex-col gap-2">
+            <div class="bg-[#222] rounded-2xl p-5 flex flex-col gap-2">
                 <p class="text-orange-400">Hire Date</p>
                 <p>{{ delivery?.hireDate ? (delivery?.hireDate | date) : '—' }}</p>
             </div>
-            <div class="bg-neutral-900 rounded-2xl p-5 flex flex-col gap-2">
+            <div class="bg-[#222] rounded-2xl p-5 flex flex-col gap-2">
                 <p class="text-orange-400">Address</p>
                 <p>
                     {{ delivery?.address?.street || '—' }}
@@ -65,11 +65,11 @@
             </div>
         </div>
 
-        <div class="flex flex-col items-center gap-4 bg-black/20 p-6 rounded-2xl w-[32rem]">
+        <div class="flex flex-col items-center gap-4 bg-black/20 p-6 rounded-2xl w-full max-w-[32rem]">
             <p class="text-[2.2rem] text-orange-400">Vehicle & Performance</p>
 
             <div class="w-[100%] flex flex-col gap-3">
-                <div class="w-[100%] rounded-2xl bg-neutral-900 px-4 py-3">
+                <div class="w-[100%] rounded-2xl bg-[#222] px-4 py-3">
                     <p class="font-bold text-[0.95rem]">Vehicle</p>
                     <p class="text-gray-400 text-[0.85rem]">
                         {{ delivery?.vehicle?.year || '' }} {{ delivery?.vehicle?.make || '' }} {{ delivery?.vehicle?.model || '' }}
@@ -78,7 +78,7 @@
                     <p class="text-gray-400 text-[0.85rem]">Plate: {{ delivery?.vehicle?.licensePlate || '—' }}</p>
                 </div>
 
-                <div class="w-[100%] rounded-2xl bg-neutral-900 px-4 py-3">
+                <div class="w-[100%] rounded-2xl bg-[#222] px-4 py-3">
                     <p class="font-bold text-[0.95rem]">Performance</p>
                     <div class="grid grid-cols-2 gap-3 text-[0.85rem] text-gray-400">
                         <p>Total: {{ delivery?.performance?.totalDeliveries ?? '—' }}</p>
@@ -88,7 +88,7 @@
                     </div>
                 </div>
 
-                <div class="w-[100%] rounded-2xl bg-neutral-900 px-4 py-3">
+                <div class="w-[100%] rounded-2xl bg-[#222] px-4 py-3">
                     <p class="font-bold text-[0.95rem]">Earnings</p>
                     <div class="grid grid-cols-2 gap-3 text-[0.85rem] text-gray-400">
                         <p>Base/hr: {{ delivery?.earnings?.baseRate ?? '—' }}</p>
@@ -98,7 +98,7 @@
                     </div>
                 </div>
 
-                <div class="w-[100%] rounded-2xl bg-neutral-900 px-4 py-3">
+                <div class="w-[100%] rounded-2xl bg-[#222] px-4 py-3">
                     <p class="font-bold text-[0.95rem]">Coverage</p>
                     <p class="text-gray-400 text-[0.85rem]">Zones: {{ (delivery?.zones || []).join(', ') || '—' }}</p>
                     <p class="text-gray-400 text-[0.85rem]">Specializations: {{ (delivery?.specializations || []).join(', ') || '—' }}</p>
@@ -107,7 +107,7 @@
         </div>
 
         <div>
-            <div class="w-[38rem] mt-4 bg-black/20 p-4 rounded-2xl text-center">
+            <div class="w-full max-w-[38rem] mt-4 bg-black/20 p-4 rounded-2xl text-center">
                 <p class="text-orange-400 text-[2.2rem]">Map</p>
                 <div class="h-[23rem] rounded-xl overflow-hidden border border-white/10">
                     <iframe
@@ -127,7 +127,7 @@
             <div class="mt-4 flex flex-wrap items-center justify-end gap-3">
                 <a
                     routerLink="/dashboard/delivery-men"
-                    class="inline-flex items-center gap-2 rounded-xl border border-neutral-800 bg-neutral-950 px-4 py-2.5 text-sm text-gray-200 transition-colors hover:bg-neutral-900 focus-visible:ring-2 focus-visible:ring-orange-500 outline-none"
+                    class="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-[#292927] px-4 py-2.5 text-sm text-gray-200 transition-colors hover:bg-[#222] focus-visible:ring-2 focus-visible:ring-orange-500 outline-none"
                 >
                     Back to Delivery Men
                 </a>

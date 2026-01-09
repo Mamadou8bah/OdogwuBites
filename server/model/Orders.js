@@ -16,7 +16,8 @@ const orderSchema = new mongoose.Schema(
     total: Number,
     paymentMethod: {
       type: String,
-      enum: ['Cash', 'Online']
+      enum: ['Wallet', 'Online', 'Cash'],
+      default: 'Wallet'
     },
     deliveryType: {
       type: String,

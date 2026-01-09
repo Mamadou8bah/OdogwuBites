@@ -1,5 +1,5 @@
 <section class="space-y-4">
-    <div class="rounded-2xl border border-neutral-800 bg-neutral-900">
+    <div class="rounded-2xl border border-white/10 bg-[#222]">
         <div class="flex flex-wrap items-center justify-between gap-3 p-4">
             <div class="flex flex-1 flex-wrap items-center gap-3">
                 <div class=" relative w-full max-w-sm">
@@ -25,14 +25,14 @@
 						</svg>
                     </span>
                     <input [(ngModel)]="searchTerm" type="text"
-                    placeholder="Search for menu items.."
-                    class="placeholder:text-[14px] w-full rounded-xl border border-neutral-800 bg-neutral-950 py-2.5 pl-10 pr-3 text-sm text-gray-100 placeholder:text-gray-500 outline-none"
+                    placeholder="Search for Benechin, Domoda, Afra..."
+                    class="placeholder:text-[14px] w-full rounded-xl border border-white/10 bg-[#292927] py-2.5 pl-10 pr-3 text-sm text-gray-100 placeholder:text-gray-500 outline-none"
                     (input)="onSearchTermChange()">
                 </div>
                 <button
 					type="button"
 					(click)="exportVisibleToCsv()"
-					class="inline-flex items-center gap-2 rounded-xl border border-neutral-800 bg-neutral-950 px-4 py-2.5 text-sm text-gray-200 transition-colors hover:bg-neutral-900 focus-visible:ring-2 focus-visible:ring-orange-500 outline-none"
+					class="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-[#292927] px-4 py-2.5 text-sm text-gray-200 transition-colors hover:bg-[#222] focus-visible:ring-2 focus-visible:ring-orange-500 outline-none"
 				>
 					<span>Export</span>
 					<svg
@@ -57,7 +57,7 @@
             <div class="flex gap-2 justify-center items-center">
                 <select
 					name="category"
-					class="rounded-xl border border-neutral-800 bg-neutral-950 px-3 py-2 text-sm text-gray-200 outline-none focus-visible:ring-2 focus-visible:ring-orange-500"
+                    class="rounded-xl border border-white/10 bg-[#292927] px-3 py-2 text-sm text-gray-200 outline-none focus-visible:ring-2 focus-visible:ring-orange-500"
 					[(ngModel)]="selectedCategory"
 					(ngModelChange)="onFilterByCategory()"
 				>
@@ -79,7 +79,7 @@
 
     <div class="overflow-x-auto">
         <table class="w-full table-auto border-collapse">
-            <thead class="bg-neutral-800">
+            <thead class="bg-[#222]">
                 <tr>
                     <th class="whitespace-nowrap px-6 py-3 text-left text-sm font-medium text-gray-400">Image</th>
                     <th class="whitespace-nowrap px-6 py-3 text-left text-sm font-medium text-gray-400">Name</th>
@@ -92,9 +92,9 @@
             <tbody>
                 <!-- Example row -->
                 <tr
-                    class="border-t border-neutral-800 hover:bg-neutral-800 cursor-pointer"
+                    class="border-t border-white/10 hover:bg-white/5 cursor-pointer"
                     *ngFor="let product of getVisibleProducts()"
-                    [routerLink]="['/dashboard/products', productSlug(product)]"
+                    [routerLink]="['/dashboard/products', product._id || product.id]"
                 >
                     <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-200">
                         <img src="{{product.imageUrl}}" alt="Product Image" class="h-[4rem] w-[4rem] rounded-full object-cover">
@@ -106,7 +106,7 @@
                         <p *ngIf="product.isAvailable">Available</p>
                         <p *ngIf="!product.isAvailable">Unavailable</p>
                     </td>
-                    <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-200">
+                    <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-200"> 
                         <div class="flex items-center gap-3">
                             <button
                                 type="button"
@@ -132,7 +132,7 @@
     </div>
 
     <div>
-        <div class="flex items-center justify-between gap-3 border-t border-neutral-800 p-4">
+        <div class="flex items-center justify-between gap-3 border-t border-white/10 p-4">
             <div class="text-sm text-gray-500">
                 Page {{ currentPage }} of {{ getTotalPages() }}
             </div>
@@ -142,7 +142,7 @@
                     type="button"
                     (click)="goPrev()"
                     [disabled]="currentPage === 1"
-                    class="inline-flex items-center gap-2 rounded-xl border border-neutral-800 bg-neutral-950 px-4 py-2.5 text-sm text-gray-200 transition-colors hover:bg-neutral-900 focus-visible:ring-2 focus-visible:ring-orange-500 outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                    class="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-[#292927] px-4 py-2.5 text-sm text-gray-200 transition-colors hover:bg-[#222] focus-visible:ring-2 focus-visible:ring-orange-500 outline-none disabled:cursor-not-allowed disabled:opacity-50"
                 >
                     &lt;
                 </button>
@@ -152,7 +152,7 @@
                         type="button"
                         (click)="goToPage(button)"
                         [disabled]="button === currentPage"
-                        class="inline-flex items-center gap-2 rounded-xl border border-neutral-800 bg-orange-400 px-4 py-2.5 text-sm text-gray-200 transition-colors hover:bg-neutral-900 focus-visible:ring-2 focus-visible:ring-orange-500 outline-none disabled:cursor-not-allowed disabled:opacity-20"
+                        class="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-orange-400 px-4 py-2.5 text-sm text-gray-200 transition-colors hover:bg-[#222] focus-visible:ring-2 focus-visible:ring-orange-500 outline-none disabled:cursor-not-allowed disabled:opacity-20"
                     >
                         {{ button }}
                     </button>
@@ -161,7 +161,7 @@
                     type="button"
                     (click)="goNext()"
                     [disabled]="currentPage === getTotalPages()"
-                    class="inline-flex items-center gap-2 rounded-xl border border-neutral-800 bg-neutral-950 px-4 py-2.5 text-sm text-gray-200 transition-colors hover:bg-neutral-900 focus-visible:ring-2 focus-visible:ring-orange-500 outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                    class="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-[#292927] px-4 py-2.5 text-sm text-gray-200 transition-colors hover:bg-[#222] focus-visible:ring-2 focus-visible:ring-orange-500 outline-none disabled:cursor-not-allowed disabled:opacity-50"
                 >
                     &gt;
                 </button>
@@ -172,7 +172,7 @@
 
     <!-- Add Product Modal -->
     <div *ngIf="showAddModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-        <div class="bg-neutral-900 border border-neutral-800 w-full max-w-lg rounded-3xl overflow-hidden shadow-2xl">
+        <div class="bg-[#222] border border-white/10 w-full max-w-lg rounded-3xl overflow-hidden shadow-2xl">
             <div class="p-6">
                 <!-- Logo and Title -->
                 <div class="flex flex-col items-center gap-2 mb-8 text-center text-nowrap">
@@ -187,8 +187,8 @@
                     <div>
                         <label class="block text-sm font-medium text-gray-400 mb-1">Product Title</label>
                         <input type="text" name="title" [(ngModel)]="newProduct.title" required
-                            placeholder="e.g. Special Jollof Rice"
-                            class="w-full rounded-xl border border-neutral-800 bg-neutral-950 py-2.5 px-4 text-sm text-gray-100 outline-none focus:border-orange-500">
+                            placeholder="e.g. Special Chicken Benechin"
+                            class="w-full rounded-xl border border-white/10 bg-[#292927] py-2.5 px-4 text-sm text-gray-100 outline-none focus:border-orange-500">
                     </div>
 
                     <div class="grid grid-cols-2 gap-4">
@@ -196,15 +196,17 @@
                         <div>
                             <label class="block text-sm font-medium text-gray-400 mb-1">Price (D)</label>
                             <input type="number" name="price" [(ngModel)]="newProduct.price" required
-                                class="w-full rounded-xl border border-neutral-800 bg-neutral-950 py-2.5 px-4 text-sm text-gray-100 outline-none focus:border-orange-500">
+                                class="w-full rounded-xl border border-white/10 bg-[#292927] py-2.5 px-4 text-sm text-gray-100 outline-none focus:border-orange-500">
                         </div>
                         <!-- Category -->
                         <div>
                             <label class="block text-sm font-medium text-gray-400 mb-1">Category</label>
                             <select name="categoryName" [(ngModel)]="newProduct.categoryName" required
-                                class="w-full rounded-xl border border-neutral-800 bg-neutral-950 py-2.5 px-4 text-sm text-gray-100 outline-none focus:border-orange-500">
+                                class="w-full rounded-xl border border-white/10 bg-[#292927] py-2.5 px-4 text-sm text-gray-100 outline-none focus:border-orange-500">
                                 <option value="" disabled>Select Category</option>
-                                <option *ngFor="let c of categories" [value]="c">{{c}}</option>
+                                <option value="all">All Categories</option>
+                                <option value="rice-meals">Rice Meals</option>
+                                <option value="sides">Sides</option>
                             </select>
                         </div>
                     </div>
@@ -213,8 +215,8 @@
                     <div>
                         <label class="block text-sm font-medium text-gray-400 mb-1">Description</label>
                         <textarea name="description" [(ngModel)]="newProduct.description" rows="3"
-                            placeholder="Brief description of the dish..."
-                            class="w-full rounded-xl border border-neutral-800 bg-neutral-950 py-2.5 px-4 text-sm text-gray-100 outline-none focus:border-orange-500 resize-none"></textarea>
+                            placeholder="e.g. Traditional Gambian Jollof Rice served with seasoned chicken and vegetables..."
+                            class="w-full rounded-xl border border-white/10 bg-[#292927] py-2.5 px-4 text-sm text-gray-100 outline-none focus:border-orange-500 resize-none"></textarea>
                     </div>
 
                     <!-- Image Upload -->
@@ -223,7 +225,7 @@
                         <div class="relative">
                             <input type="file" (change)="onFileSelected($event)" accept="image/*" class="hidden" #fileInput>
                             <button type="button" (click)="fileInput.click()" 
-                                class="w-full flex items-center justify-between gap-3 rounded-xl border border-neutral-800 bg-neutral-950 py-2.5 px-4 text-sm text-gray-400 outline-none hover:border-orange-500 transition-all duration-300">
+                                class="w-full flex items-center justify-between gap-3 rounded-xl border border-white/10 bg-[#292927] py-2.5 px-4 text-sm text-gray-400 outline-none hover:border-orange-500 transition-all duration-300">
                                 <span class="truncate">{{ selectedFileName || 'Choose an image file...' }}</span>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0 text-orange-500"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
                             </button>
@@ -233,14 +235,14 @@
                     <!-- Availability -->
                     <div class="flex items-center gap-3 py-2">
                         <input type="checkbox" name="isAvailable" [(ngModel)]="newProduct.isAvailable" id="isAvailable"
-                            class="w-5 h-5 rounded border-neutral-800 bg-neutral-950 text-orange-500 focus:ring-orange-500">
+                            class="w-5 h-5 rounded border-white/20 bg-[#292927] text-orange-500 focus:ring-orange-500">
                         <label for="isAvailable" class="text-sm text-gray-300 cursor-pointer">Available for order</label>
                     </div>
 
                     <!-- Footer Buttons -->
                     <div class="flex gap-3 pt-4">
                         <button type="button" (click)="closeModal()"
-                            class="flex-1 px-6 py-3 border border-neutral-800 text-gray-400 font-bold rounded-2xl hover:bg-neutral-800 hover:text-white transition-all duration-300">
+                            class="flex-1 px-6 py-3 border border-white/10 text-gray-400 font-bold rounded-2xl hover:bg-white/5 hover:text-white transition-all duration-300">
                             Cancel
                         </button>
                         <button type="submit" [disabled]="!productForm.form.valid"

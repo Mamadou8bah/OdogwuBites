@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { AuthService } from '../service/auth.service';
 
 @Component({
   selector: 'app-settings-page',
@@ -9,21 +10,19 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './settings-page.html',
   styleUrl: './settings-page.css'
 })
-export class SettingsPage {
-  user = {
-    name: 'Admin',
-    email: 'Admin@gmail.com',
-    username: 'adminadmin',
-    password: 'password123',
-    phone: '012345678910',
-    address: 'Maadi, Egypt',
-    birthDate: '1997-09-09',
-    postalCode: '31111',
-    profileImage: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
-  };
-
+export class SettingsPage implements OnInit {
+  user: any = {};
   activeTab: string = 'edit-profile';
   editableFields: { [key: string]: boolean } = {};
+
+  constructor(private authService: AuthService) {}
+
+  ngOnInit(): void {
+    const currentUser = this.authService.currentUser;
+    if (currentUser) {
+      this.user = { ...currentUser };
+    }
+  }
 
   setActiveTab(tab: string) {
     this.activeTab = tab;
@@ -45,8 +44,14 @@ export class SettingsPage {
   }
 
   saveSettings() {
-    console.log('Settings saved:', this.user);
-    // Reset all fields to read-only after saving
-    this.editableFields = {};
+    this.authService.updateProfile(this.user).subscribe({
+      next: (res) => {
+        alert('Settings saved successfully!');
+        this.editableFields = {};
+      },
+      error: (err) => {
+        alert('Failed to save settings: ' + (err.error?.message || 'Unknown error'));
+      }
+    });
   }
 }

@@ -3,20 +3,26 @@ const User = require('../model/Users');
 
 const createDeliveryStaff = async (req, res) => {
     try {
-        const { userId } = req.body;
+        const { email } = req.body;
         
-        const user = await User.findById(userId);
+        const user = await User.findOne({ email });
         if (!user) {
-            return res.status(404).json({ message: 'User not found' });
+            return res.status(404).json({ message: 'User with this email not found' });
         }
 
-        const existingStaff = await DeliveryStaff.findOne({ userId });
+        const existingStaff = await DeliveryStaff.findOne({ userId: user._id });
         if (existingStaff) {
             return res.status(400).json({ message: 'User is already a delivery staff' });
         }
 
-        const newStaff = new DeliveryStaff({ userId });
+        const newStaff = new DeliveryStaff({ 
+            userId: user._id,
+            employeeId: `EMP${Date.now()}`
+        });
         await newStaff.save();
+
+        user.role = 'staff';
+        await user.save();
 
         res.status(201).json(newStaff);
     } catch (error) {
@@ -57,9 +63,32 @@ const deleteDeliveryStaff = async (req, res) => {
     }
 };
 
+const updateDeliveryStaff = async (req, res) => {
+    try {
+        const { status, vehicleType, vehicleMake, vehicleModel, vehicleLicensePlate } = req.body;
+        const staff = await DeliveryStaff.findById(req.params.id);
+        
+        if (!staff) {
+            return res.status(404).json({ message: 'Delivery Staff not found' });
+        }
+
+        if (status) staff.status = status;
+        if (vehicleType) staff.vehicleType = vehicleType;
+        if (vehicleMake) staff.vehicleMake = vehicleMake;
+        if (vehicleModel) staff.vehicleModel = vehicleModel;
+        if (vehicleLicensePlate) staff.vehicleLicensePlate = vehicleLicensePlate;
+
+        await staff.save();
+        res.status(200).json(staff);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 module.exports = {
     createDeliveryStaff,
     getAllDeliveryStaff,
     getDeliveryStaffById,
-    deleteDeliveryStaff
+    deleteDeliveryStaff,
+    updateDeliveryStaff
 };

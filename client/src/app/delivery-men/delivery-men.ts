@@ -1,9 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-
-import { deliveryPersonnel } from '../data/delivery';
+import { DeliveryService } from '../service/delivery.service';
 
 @Component({
   selector: 'app-delivery-men',
@@ -12,8 +11,33 @@ import { deliveryPersonnel } from '../data/delivery';
   templateUrl: './delivery-men.html',
   styleUrl: './delivery-men.css',
 })
-export class DeliveryMen {
-  protected readonly deliveryMen = deliveryPersonnel as unknown as DeliveryPerson[];
+export class DeliveryMen implements OnInit {
+  protected deliveryMen: DeliveryPerson[] = [];
+
+  constructor(private deliveryService: DeliveryService) {}
+
+  ngOnInit(): void {
+    this.refreshDeliveryMen();
+  }
+
+  refreshDeliveryMen(): void {
+    this.deliveryService.getAllDeliveryStaff().subscribe({
+      next: (staff: any[]) => {
+        this.deliveryMen = staff.map(s => ({
+          id: s._id,
+          employeeId: s.employeeId,
+          name: s.userId?.name,
+          email: s.userId?.email,
+          phone: s.userId?.phone,
+          status: s.status || 'active',
+          hireDate: s.hireDate,
+          address: s.userId?.address ? { street: s.userId.address } : undefined,
+          avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${s.userId?.name || 'Driver'}`
+        }));
+      },
+      error: (err) => console.error('Error fetching delivery staff:', err)
+    });
+  }
 
   searchTerm = '';
   sortOrder: SortOrder = 'newest';
@@ -208,10 +232,13 @@ export class DeliveryMen {
 
   deleteDeliveryMan(driver: any): void {
     if (confirm(`Are you sure you want to remove ${driver.name}?`)) {
-      const index = deliveryPersonnel.findIndex(p => p.id === driver.id);
-      if (index !== -1) {
-        deliveryPersonnel.splice(index, 1);
-      }
+      this.deliveryService.deleteDeliveryStaff(driver.id).subscribe({
+        next: () => {
+          this.refreshDeliveryMen();
+          this.selectedIds.delete(driver.id);
+        },
+        error: (err) => console.error('Error deleting delivery staff:', err)
+      });
     }
   }
 
@@ -242,45 +269,34 @@ export class DeliveryMen {
   }
 
   saveDeliveryMan(): void {
-    if (this.newDeliveryMan.name && this.newDeliveryMan.email) {
+    if (this.newDeliveryMan.email) {
       if (this.isEditing && this.selectedDriverId) {
-        const index = deliveryPersonnel.findIndex(p => p.id === this.selectedDriverId);
-        if (index !== -1) {
-          deliveryPersonnel[index] = { ...deliveryPersonnel[index], ...this.newDeliveryMan };
-        }
-      } else {
-        // Find the highest ID number
-        const maxId = this.deliveryMen.reduce((max, p) => {
-          const num = parseInt(p.id.replace('DRV', ''));
-          return num > max ? num : max;
-        }, 0);
-        
-        const id = `DRV${(maxId + 1).toString().padStart(3, '0')}`;
-        const employeeId = `EMP2024${(maxId + 1).toString().padStart(3, '0')}`;
-        
-        const newEntry: any = {
-          ...this.newDeliveryMan,
-          id,
-          employeeId,
-          hireDate: new Date().toISOString().split('T')[0],
-          avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${this.newDeliveryMan.name}`,
-          performance: {
-            rating: 0,
-            totalDeliveries: 0,
-            onTimeRate: 0,
-            acceptanceRate: 0
-          },
-          earnings: {
-            total: 0,
-            lastMonth: 0,
-            thisMonth: 0,
-            pending: 0
-          }
+        const updateData = {
+          status: this.newDeliveryMan.status,
+          vehicleType: this.newDeliveryMan.vehicle?.type,
+          vehicleMake: this.newDeliveryMan.vehicle?.make,
+          vehicleModel: this.newDeliveryMan.vehicle?.model,
+          vehicleLicensePlate: this.newDeliveryMan.vehicle?.licensePlate
         };
-
-        deliveryPersonnel.unshift(newEntry);
+        this.deliveryService.updateDeliveryStaff(this.selectedDriverId, updateData).subscribe({
+          next: () => {
+            this.refreshDeliveryMen();
+            this.closeAddModal();
+          },
+          error: (err) => console.error('Error updating delivery staff:', err)
+        });
+      } else {
+        this.deliveryService.createDeliveryStaff(this.newDeliveryMan.email).subscribe({
+          next: () => {
+            this.refreshDeliveryMen();
+            this.closeAddModal();
+          },
+          error: (err) => {
+            console.error('Error adding delivery staff:', err);
+            alert(err.error?.message || 'Error adding delivery staff. Make sure the user exists.');
+          }
+        });
       }
-      this.closeAddModal();
     }
   }
 
@@ -321,6 +337,7 @@ type DeliveryAddress = {
 
 type DeliveryPerson = {
   id: string;
+  employeeId?: string;
   name?: string;
   email?: string;
   phone?: string;

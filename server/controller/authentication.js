@@ -1,5 +1,5 @@
 const User = require('../model/Users')
-const bcrypt = require('bcrypt')
+const bcrypt = require('bcryptjs')
 const dotenv = require('dotenv')
 const jwt = require('jsonwebtoken')
 const {createToken,findTokenByToken}=require('../controller/verificationToken')
@@ -10,7 +10,7 @@ dotenv.config()
 const {sendEmailVerificationEmail,sendPasswordResetEmail}=require('../utils/emailSender')
 
 
-const signingKey = process.env.JWT_SECRET
+const signingKey = process.env.JWT_SECRET || 'dev_jwt_secret_change_me'
 
 const register = async (req, res) => {
   try {
@@ -22,22 +22,28 @@ const register = async (req, res) => {
     }
 
     const userPassword = req.body.password;
-    const saltNumber = parseInt(process.env.SALT_ROUNDS);
+    const saltNumber = Number.parseInt(process.env.SALT_ROUNDS || '10', 10);
     const hashedPassword = await bcrypt.hash(userPassword, saltNumber);
 
     const newUser = new User(req.body);
     newUser.password = hashedPassword;
     newUser.role = 'customer';
 
-    const verificationCode = createToken(newUser._id);
+    const verificationCode = await createToken(newUser._id);
     await newUser.save();
     const link = `http://localhost:3000/auth/verify-email?code=${verificationCode}&email=${newUser.email}`;
     await sendEmailVerificationEmail(newUser.email,newUser.name,link)
 
-    res.status(201).json({
+    const payload = {
       message: "User Registered Successfully, please verify your email",
       User: newUser
-    });
+    };
+
+    if (process.env.NODE_ENV !== 'production') {
+      payload.verificationLink = link;
+    }
+
+    res.status(201).json(payload);
 
   } catch (error) {
     res.status(400).json(error);
@@ -48,9 +54,11 @@ const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
+    console.log(req.body)
     const user = await User.findOne({ email });
+    console.log(user);
 
-    if (!user) {
+    if (user==null) {
       return res.status(400).json('Invalid Credentials');
     }
 
@@ -72,11 +80,18 @@ const login = async (req, res) => {
 
     res.status(200).json({
       message: "Login Successful",
-      token
+      token,
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        balance: user.balance
+      }
     });
 
   } catch (error) {
-    res.status(400).json(error);
+    res.status(400).json(error.message);
   }
 }
 
@@ -184,23 +199,59 @@ const becomeStaff=async(req,res)=>{
 
 }
 
-const fireStaff=async(req,res)=>{
-  try{
-    const email=req.body.email;
-    const user=await User.findOne({
-      email:email
-    })
-    if(!user){
-      return res.status(400).json('No user with such email')
+const fireStaff = async (req, res) => {
+  try {
+    const email = req.body.email;
+    const user = await User.findOne({ email: email });
+    if (!user) {
+      return res.status(400).json('No user with such email');
     }
-    user.role='customer'
-    await user.save()
-    res.status(200).json(`${user.name} is no longer a staff`)
-  }catch(error){
-    res.status(400).json(error)
+    user.role = 'customer';
+    await user.save();
+    res.status(200).json(`${user.name} is no longer a staff`);
+  } catch (error) {
+    res.status(400).json(error);
   }
-
 }
 
+const getProfile = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select('-password');
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(400).json(error);
+  }
+}
 
-module.exports={register,login,verify,requestPasswordReset,resetPassword,becomeAdmin,becomeStaff,fireStaff};
+const updateProfile = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { name, email, phone, address } = req.body;
+    
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (name) user.name = name;
+    if (email) user.email = email;
+    if (phone) user.phone = phone;
+    if (address) user.address = address;
+
+    await user.save();
+    res.status(200).json({ message: "Profile updated successfully", user: {
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      balance: user.balance
+    }});
+  } catch (error) {
+    res.status(400).json(error);
+  }
+}
+
+module.exports={register,login,verify,requestPasswordReset,resetPassword,becomeAdmin,becomeStaff,fireStaff,getProfile,updateProfile};

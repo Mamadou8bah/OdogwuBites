@@ -4,19 +4,26 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
+    "dev": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
     "cloudinary": "^1.41.3",
     "dotenv": "^17.2.3",
+    "express": "^4.19.2",
     "handlebars": "^4.7.8",
     "jsonwebtoken": "^9.0.2",
     "modem-pay": "^1.1.1",
+    "mongoose": "^8.9.5",
     "multer": "^2.0.2",
     "multer-storage-cloudinary": "^4.0.0",
     "nodemailer": "^7.0.11",
-    "nodemailer-express-handlebars": "^7.0.0"
+    "nodemailer-express-handlebars": "^7.0.0",
+    "streamifier": "^0.1.1"
   }
 }

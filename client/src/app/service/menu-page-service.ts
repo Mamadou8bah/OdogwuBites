@@ -1,32 +1,45 @@
 import { Injectable } from '@angular/core';
-import { Homepage as HomepageService } from '../service/homepage';
-
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class MenuPageService {
+  private apiUrl = 'http://localhost:3000/menu';
 
-  private menuItems: any[] = [];
+  constructor(private http: HttpClient) {}
 
-  constructor(private homepageService: HomepageService) { 
-    this.menuItems = homepageService.getMenuItems();
-  }
-  getMenuItems(): any[] {
-    return this.menuItems;
+  getMenuItems(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/all`);
   }
 
-  addToCart(menuItemId:String):void{
-    //To Be Implemented
+  getMenuItemById(id: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/${id}`);
   }
-  removeFromCart(menuItemId:String):void{
-    //To Be Implemented
+
+  searchMenuItems(query: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/search?q=${encodeURIComponent(query)}`);
   }
-  checkOut():void{
-    //To Be Implemented
+
+  createMenuItem(formData: FormData): Observable<any> {
+    const token = localStorage.getItem('token');
+    return this.http.post(`${this.apiUrl}/create`, formData, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
   }
-  clearCart():void{
-    //To Be Implemented
+
+  updateMenuItem(id: string, formData: FormData): Observable<any> {
+    const token = localStorage.getItem('token');
+    return this.http.put(`${this.apiUrl}/update/${id}`, formData, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
   }
-  
+
+  deleteMenuItem(id: string): Observable<any> {
+    const token = localStorage.getItem('token');
+    return this.http.delete(`${this.apiUrl}/delete/${id}`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+  }
 }

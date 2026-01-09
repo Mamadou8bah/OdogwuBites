@@ -3,6 +3,7 @@ import { Component, EventEmitter, HostListener, Input, Output } from '@angular/c
 import { CartService } from '../service/cart.service';
 
 type MenuItem = {
+  _id?: string;
   title: string;
   description?: string;
   price: number;

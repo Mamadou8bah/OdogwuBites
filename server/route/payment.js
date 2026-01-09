@@ -1,8 +1,10 @@
 const express = require('express');
-const { checkout } = require('../controller/payment');
+const { deposit, verifyDeposit } = require('../controller/payment');
+const { isLoggedIn } = require('../middleware/authMiddleware');
 
 const router = express.Router();
 
-router.post('/checkout', checkout);
+router.post('/deposit', isLoggedIn, deposit);
+router.get('/verify-deposit', verifyDeposit);
 
 module.exports = router;

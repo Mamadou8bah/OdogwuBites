@@ -1,0 +1,118 @@
+<section class="bg-[#222] border border-white/10 rounded-3xl text-gray-100 p-4 sm:p-8 min-h-[70dvh] flex flex-row gap-6 sm:gap-8 items-center justify-center flex-wrap">
+    
+    <!-- Display Mode -->
+    <ng-container *ngIf="!isEditing">
+        <div class="w-full max-w-[29rem] h-auto sm:h-[29rem] gap-6 bg-black/20 p-4 sm:p-6 rounded-2xl flex justify-center items-center">
+            <div class="w-full max-w-[25rem] h-auto sm:h-[25rem] rounded-2xl">
+                <img class="w-full h-auto sm:h-full rounded-3xl object-cover" src="{{menuItem?.imageUrl}}" alt="{{menuItem?.title}}">
+            </div>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 w-full max-w-[38rem] gap-6 bg-black/20 p-6 rounded-2xl text-center items-center"> 
+            <div class="bg-[#222] rounded-2xl p-5 flex flex-col gap-2">
+                <p class="text-orange-400">Title</p>
+                <p>{{menuItem?.title}}</p>
+            </div>
+
+            <div class="bg-[#222] rounded-2xl p-5 flex flex-col gap-2">
+                <p class="text-orange-400">Price</p>
+                <p>D{{getDiscountedPrice(menuItem)}}</p>
+            </div>
+
+            <div class="bg-[#222] rounded-2xl p-5 flex flex-col gap-2">
+                <p class="text-orange-400">Category</p>
+                <p>{{menuItem?.categoryName}}</p>
+            </div>
+
+            <div class="bg-[#222] rounded-2xl p-5 flex flex-col gap-2">
+                <p class="text-orange-400">Discount</p>
+                <p>{{menuItem?.discount ? menuItem?.discount + '%' : 'No discount'}}</p>
+            </div>
+
+            <div class="col-span-2 bg-[#222] rounded-2xl p-5 flex flex-col gap-2 text-center">
+                <p class="text-orange-400">Description</p>
+                <p class="leading-relaxed">{{menuItem?.description}}</p>
+            </div>
+
+            <div class="col-span-2 flex flex-col sm:flex-row gap-4 mt-2">
+                <button (click)="editMenuItem()" class="flex-1 flex items-center justify-center gap-2 bg-orange-400 text-neutral-950 font-bold py-3 px-6 rounded-xl hover:bg-orange-600 transition-all cursor-pointer border-none outline-none">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                    </svg>
+                    Edit
+                </button>
+                <button (click)="deleteMenuItem()" class="flex-1 flex items-center justify-center gap-2 bg-red-500/10 text-red-500 border border-red-500/20 py-3 px-6 rounded-xl hover:bg-red-500/20 transition-all cursor-pointer outline-none">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                    Delete
+                </button>
+                <button (click)="close()" class="flex-1 flex items-center justify-center gap-2 bg-[#292927] text-gray-300 border border-white/10 py-3 px-6 rounded-xl hover:bg-[#222] transition-all cursor-pointer outline-none">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </ng-container>
+
+    <!-- Edit Mode -->
+    <ng-container *ngIf="isEditing">
+        <div class="w-full max-w-4xl bg-black/20 p-8 rounded-3xl border border-white/10">
+            <h2 class="text-2xl font-bold text-orange-400 mb-6 flex items-center gap-3">
+                <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                </svg>
+                Edit Product Details
+            </h2>
+            
+            <form (ngSubmit)="saveChanges()" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="flex flex-col gap-2">
+                    <label class="text-sm font-medium text-gray-400">Product Title</label>
+                    <input type="text" [(ngModel)]="editForm.title" name="title" class="bg-[#292927] border border-white/10 p-3 rounded-xl outline-none focus:border-orange-500 transition-all">
+                </div>
+
+                <div class="flex flex-col gap-2">
+                    <label class="text-sm font-medium text-gray-400">Price (D)</label>
+                    <input type="number" [(ngModel)]="editForm.price" name="price" class="bg-[#292927] border border-white/10 p-3 rounded-xl outline-none focus:border-orange-500 transition-all">
+                </div>
+
+                <div class="flex flex-col gap-2">
+                    <label class="text-sm font-medium text-gray-400">Category</label>
+                    <input type="text" [(ngModel)]="editForm.categoryName" name="category" class="bg-[#292927] border border-white/10 p-3 rounded-xl outline-none focus:border-orange-500 transition-all">
+                </div>
+
+                <div class="flex flex-col gap-2">
+                    <label class="text-sm font-medium text-gray-400">Discount (%)</label>
+                    <input type="number" [(ngModel)]="editForm.discount" name="discount" class="bg-[#292927] border border-white/10 p-3 rounded-xl outline-none focus:border-orange-500 transition-all">
+                </div>
+
+                <div class="col-span-2 flex flex-col gap-2">
+                    <label class="text-sm font-medium text-gray-400">Update Product Image</label>
+                    <div class="relative">
+                        <input type="file" (change)="onFileSelected($event)" accept="image/*" class="hidden" #fileInput>
+                        <button type="button" (click)="fileInput.click()" 
+                            class="w-full flex items-center justify-between gap-3 rounded-xl border border-white/10 bg-[#292927] py-3 px-4 text-sm text-gray-400 outline-none hover:border-orange-500 transition-all duration-300">
+                            <span class="truncate">{{ selectedFileName || 'Choose a new photo...' }}</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0 text-orange-500">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="col-span-2 flex flex-col gap-2">
+                    <label class="text-sm font-medium text-gray-400">Description</label>
+                    <textarea rows="4" [(ngModel)]="editForm.description" name="description" class="bg-[#292927] border border-white/10 p-3 rounded-xl outline-none focus:border-orange-500 transition-all resize-none"></textarea>
+                </div>
+
+                <div class="col-span-2 flex flex-col sm:flex-row gap-4 mt-4">
+                    <button type="submit" class="flex-1 bg-orange-500 text-neutral-950 font-bold py-4 rounded-xl hover:bg-orange-600 transition-all cursor-pointer border-none outline-none shadow-lg">
+                        Update Product
+                    </button>
+                    <button type="button" (click)="isEditing = false" class="flex-1 bg-[#292927] text-gray-300 font-bold py-4 rounded-xl hover:bg-[#222] transition-all cursor-pointer border-none outline-none border border-white/10">
+                        Discard Changes
+                    </button>
+                </div>
+            </form>
+        </div>
+    </ng-container>
+
+</section>
