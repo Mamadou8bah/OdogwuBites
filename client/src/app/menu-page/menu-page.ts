@@ -14,10 +14,17 @@ import { MenuDetails } from '../menu-details/menu-details';
 export class MenuPage implements OnInit {
   menuItems: any[] = [];
   filteredMenuItems: any[] = [];
+  paginatedMenuItems: any[] = [];
   selectedCategory: string = 'All';
   searchInput: string = '';
   clickedMenuItem: any = null;
   isLoading: boolean = false;
+  loadError: string | null = null;
+
+  // Pagination
+  currentPage: number = 1;
+  itemsPerPage: number = 6;
+  totalPages: number = 1;
 
   constructor(private menuPageService: MenuPageService) {}
 
@@ -27,13 +34,18 @@ export class MenuPage implements OnInit {
 
   loadMenuItems(): void {
     this.isLoading = true;
+    this.loadError = null;
     this.menuPageService.getMenuItems().subscribe({
       next: (items) => {
         this.menuItems = items;
         this.filterMenu();
-        this.isLoading=true;
+        this.isLoading = false;
       },
-      error: (err) => console.error('Failed to load menu items', err)
+      error: (err) => {
+        console.error('Failed to load menu items', err);
+        this.loadError = 'Failed to load menu items. Please try again.';
+        this.isLoading = false;
+      }
     });
   }
 
@@ -43,10 +55,12 @@ export class MenuPage implements OnInit {
 
   toggleCategory(category: string): void {
     this.selectedCategory = category;
+    this.currentPage = 1;
     this.filterMenu();
   }
 
   onSearchChange(): void {
+    this.currentPage = 1;
     this.filterMenu();
   }
 
@@ -64,5 +78,40 @@ export class MenuPage implements OnInit {
       item.title.toLowerCase().includes(search) ||
       (item.description && item.description.toLowerCase().includes(search))
     );
+
+    this.updatePagination();
+  }
+
+  private updatePagination(): void {
+    this.totalPages = Math.ceil(this.filteredMenuItems.length / this.itemsPerPage);
+    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    const endIndex = startIndex + this.itemsPerPage;
+    this.paginatedMenuItems = this.filteredMenuItems.slice(startIndex, endIndex);
+  }
+
+  nextPage(): void {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+      this.updatePagination();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }
+
+  prevPage(): void {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+      this.updatePagination();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }
+
+  goToPage(page: number): void {
+    this.currentPage = page;
+    this.updatePagination();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  get pagesArray(): number[] {
+    return Array.from({ length: this.totalPages }, (_, i) => i + 1);
   }
 }

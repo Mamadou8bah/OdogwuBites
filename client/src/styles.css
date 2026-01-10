@@ -1,5 +1,5 @@
-@import "tailwindcss";
 @import url('https://fonts.googleapis.com/css2?family=Lobster&display=swap');
+@import "tailwindcss";
 @theme {
   /* Add your custom theme configuration here */
   /* --font-display: "Satoshi", "sans-serif"; */

@@ -1,15 +1,12 @@
 const mongoose = require('mongoose');
-function connectToDatabase() {
-    mongoose.connect('mongodb://localhost:27017/odogwuBites')
-    .then(
-        ()=>{
-            console.log('Succesfully connected to a database')
-        }
-    )
-    .catch(
-        (Error)=>{
-            console.error('Error connecting to DB',Error)
-        }
-    )
+
+async function connectToDatabase() {
+    try {
+        await mongoose.connect('mongodb://localhost:27017/odogwuBites');
+        console.log('Succesfully connected to a database');
+    } catch (error) {
+        console.error('Error connecting to DB', error);
+        throw error;
+    }
 }
 module.exports={connectToDatabase}

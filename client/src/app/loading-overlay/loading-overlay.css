@@ -1,0 +1,7 @@
+:host {
+  pointer-events: none;
+}
+
+:host > div {
+  pointer-events: all;
+}

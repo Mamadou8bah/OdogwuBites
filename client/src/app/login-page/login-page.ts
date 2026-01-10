@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../service/auth.service';
+import { NavigationHistoryService } from '../service/navigation-history.service';
 
 @Component({
   selector: 'app-login-page',
@@ -24,7 +25,9 @@ export class LoginPage {
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute,
+    private navigationHistory: NavigationHistoryService,
   ) {
     this.form = this.fb.group({
       username: [''],
@@ -93,7 +96,8 @@ export class LoginPage {
     }).subscribe({
       next: (res) => {
         this.authService.setUser(res.user);
-        this.router.navigate(['/']);
+        const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
+        this.router.navigateByUrl(returnUrl || this.navigationHistory.consumeReturnUrl('/'));
         this.loading = false;
       },
       error: (err) => {

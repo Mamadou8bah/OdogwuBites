@@ -1,99 +1,113 @@
-<section>
-    <div class="border border-white/10 bg-[#222] p-4 rounded-3xl flex flex-row gap-6 md:gap-10 flex-wrap justify-center">
-        <div class=" flex flex-col items-center gap-4 bg-black/20 p-6 rounded-2xl w-full max-w-[32rem] ">
-             <div class="logo flex flex-col items-center gap-3 mb-10 px-2">
-                <h1 class="logo-text font-bold text-4xl font-lobster text-orange-400">
-                    OdogwuBites
-                </h1>
+<section class="px-3 sm:px-0">
+    <div class="border border-white/10 bg-[#222] p-4 sm:p-6 rounded-3xl grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10">
+        <div class="flex flex-col items-center gap-4 bg-black/20 p-4 sm:p-6 rounded-2xl w-full justify-between">
+             <div class="logo flex flex-col items-center gap-3 mb-2 px-2">
                 <button (click)="goBack()" class="text-gray-400 hover:text-white transition flex items-center gap-2 mt-4 print:hidden">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
                     Back to Orders
-                </button>
+                </button>                
+               <div *ngIf="order?.items && order?.items[0]" class="w-full flex justify-center">
+                <div class="w-full max-w-64 sm:max-w-100 aspect-square">
+                    <img [src]="order.items[0].menuItemId?.imageUrl || 'assets/Gemini_Generated_Image_sq13l6sq13l6sq13.png'" 
+                         class="w-full h-full object-cover rounded-full border-4 border-orange-500/20" 
+                         (error)="$any($event).target.src = 'assets/Gemini_Generated_Image_sq13l6sq13l6sq13.png'"
+                         alt="Order Item Image">
+                </div>
+               </div>
             </div>
         </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 w-full max-w-[38rem] gap-6 bg-black/20 p-6 rounded-2xl text-center items-center"> 
+        <div class="grid grid-cols-1 sm:grid-cols-2 w-full max-w-152 gap-4 sm:gap-6 bg-black/20 p-4 sm:p-6 rounded-2xl text-center items-center"> 
             <div class="bg-[#222] rounded-2xl p-5 flex flex-col gap-2">
                 <p class="text-orange-400">Client</p>
-                <p>{{order?.clientName}}</p>
+                <p class="wrap-break-word">{{order?.user?.name}}</p>
             </div>
 
             <div class="bg-[#222] rounded-2xl p-5 flex flex-col gap-2">
                 <p class="text-orange-400">Email</p>
-                <p>{{order?.clientEmail}}</p>
+                <p class="wrap-break-word">{{order?.user?.email}}</p>
             </div>
 
             <div class="bg-[#222] rounded-2xl p-5 flex flex-col gap-2">
-                <p class="text-orange-400">Status</p>
-                <p>{{order?.status.toUpperCase()}}</p>
+                <p class="text-orange-400 uppercase text-xs tracking-widest">Status</p>
+                <p class="font-bold" [ngClass]="{
+                    'text-yellow-500': order?.status === 'Pending',
+                    'text-blue-500': order?.status === 'Accepted',
+                    'text-green-500': order?.status === 'Delivered',
+                    'text-red-500': order?.status === 'Cancelled'
+                }">{{order?.status}}</p>
             </div>
 
             <div class="bg-[#222] rounded-2xl p-5 flex flex-col gap-2">
                 <p class="text-orange-400">Address</p>
-                <p>{{order?.delivery?.address}}</p>
+                <p class="wrap-break-word">{{order?.address || order?.user?.address}}</p>
             </div>
 
             <div class="bg-[#222] rounded-2xl p-5 flex flex-col gap-2">
                 <p class="text-orange-400">Total Payments</p>
-                <p>{{order?.payment.amountPaid}}</p>
+                <p class="text-xl font-bold">D{{order?.total}}</p>
             </div>
 
             <div class="bg-[#222] rounded-2xl p-5 flex flex-col gap-2">
                 <p class="text-orange-400">Total Items</p>
-                <p>{{order?.items.length}}</p>
+                <p>{{order?.items?.length}}</p>
+            </div>
+
+            <div *ngIf="order?.deliveryStaff" class="bg-[#222] rounded-2xl p-5 flex flex-col gap-2 sm:col-span-2">
+                <p class="text-orange-400">Delivery Personnel</p>
+                <p class="font-bold">{{order.deliveryStaff.fullname || order.deliveryStaff.userId?.name}}</p>
+                <p class="text-xs text-gray-400">{{order.deliveryStaff.userId?.email}}</p>
             </div>
         </div>
 
-        <div class="flex flex-col items-center gap-4 bg-black/20 p-6 rounded-2xl w-full max-w-[32rem]">
-            <p class="text-[2.2rem] text-orange-400">Items</p>
-            <div class="w-[100%] flex flex-col gap-3">
-                <div *ngFor="let o of order?.items" class="w-[100%] rounded-2xl bg-[#222] px-3 py-2 flex flex-col gap-1" >
-                    <p class="font-bold text-[0.9rem]">{{o.item}}</p>
-                    <div class="flex flex-row justify-between items-center w-[100%]">
-                        <div class="text-gray-400 text-[0.7rem]">
-                            <p>{{o.name}}</p>
-                            <p>D{{o.totalPrice}}</p>
-                            <p>{{o.quantity}}</p>
+        <div class="flex flex-col items-center gap-4 bg-black/20 p-4 sm:p-6 rounded-2xl w-full">
+            <p class="text-[1.8rem] sm:text-[2.2rem] text-orange-400">Items</p>
+            <div class="w-full flex flex-col gap-3">
+                <div *ngFor="let o of order?.items" class="w-full rounded-2xl bg-[#222] px-3 py-2 flex flex-col gap-1" >
+                    <div class="flex flex-row justify-between items-start w-full">
+                        <div>
+                            <p class="font-bold text-[0.9rem] wrap-break-word">{{o.title}}</p>
+                            <div class="text-gray-400 text-[0.7rem] flex gap-2">
+                                <p>Price: D{{o.unitPrice}}</p>
+                                <p>Qty: {{o.quantity}}</p>
+                            </div>
                         </div>
-                        <div class="flex flex-col text-[0.7rem] justify-between h-full">
-                            <p>{{o.orderDate | date}}</p>
-                            <p [ngClass]="{'text-green-500': o.status === 'delivered', 'text-red-500': o.status !== 'delivered'}">
-                            {{o.status?.toUpperCase()}}
-                            </p>
-                        </div>
+                        <p class="font-bold text-orange-400">D{{o.subTotal}}</p>
                     </div>
                 </div>
             </div>
+            <div *ngIf="order?.deliveryFee" class="w-full mt-4 pt-4 border-t border-white/10 flex justify-between items-center px-3">
+                <p class="text-gray-400">Delivery Fee</p>
+                <p class="font-bold">D{{order.deliveryFee}}</p>
+            </div>
         </div>
-        <div>
-           
-            <div *ngIf="order" class="w-full max-w-[38rem] mt-4 bg-black/20 p-4 rounded-2xl text-center">
-                <p class="text-orange-400 text-[2.2rem]">Map</p>
-                <div class="h-[23rem] rounded-xl overflow-hidden border border-white/10">
+        <div class="w-full">
+            <div *ngIf="order" class="w-full bg-black/20 p-4 rounded-2xl text-center">
+                <p class="text-orange-400 text-[1.8rem] sm:text-[2.2rem]">Map</p>
+                <div class="h-64 sm:h-92 rounded-xl overflow-hidden border border-white/10">
                     <iframe
                         *ngIf="safeMapUrl"
                         width="100%"
                         height="100%"
-                        style="border:0"
+                        class="border-0"
                         loading="lazy"
                         [src]="safeMapUrl">
                     </iframe>
                 </div>
             </div>
-
         </div>
 
         <!-- Action Buttons -->
-        <div class="w-full flex flex-wrap justify-center gap-4 mt-10 print:hidden">
-            <button *ngIf="order?.status === 'pending'" (click)="updateStatus('confirmed')" 
-                class="px-8 py-3 bg-orange-500 text-white font-bold rounded-2xl hover:bg-orange-600 transition-all duration-300">
+        <div class="w-full md:col-span-2 flex flex-wrap justify-center gap-4 mt-4 print:hidden">
+            <button *ngIf="order?.status === 'Pending'" (click)="updateStatus('Accepted')" 
+                class="w-full sm:w-auto px-8 py-3 bg-orange-500 text-white font-bold rounded-2xl hover:bg-orange-600 transition-all duration-300">
                 Confirm Order
             </button>
-            <button *ngIf="order?.status !== 'delivered' && order?.status !== 'cancelled'" (click)="updateStatus('delivered')" 
-                class="px-8 py-3 bg-orange-500 text-white font-bold rounded-2xl hover:bg-orange-600 transition-all duration-300">
+            <button *ngIf="order?.status === 'Accepted'" (click)="updateStatus('Delivered')" 
+                class="w-full sm:w-auto px-8 py-3 bg-orange-500 text-white font-bold rounded-2xl hover:bg-orange-600 transition-all duration-300">
                 Mark as Completed
             </button>
-            <button *ngIf="order?.status !== 'delivered' && order?.status !== 'cancelled'" (click)="updateStatus('cancelled')" 
-                class="px-8 py-3 border border-white/10 text-gray-400 rounded-2xl hover:bg-white/5 hover:text-red-500 transition-all duration-300">
+            <button *ngIf="order?.status === 'Pending' || order?.status === 'Accepted'" (click)="updateStatus('Cancelled')" 
+                class="w-full sm:w-auto px-8 py-3 border border-white/10 text-gray-400 rounded-2xl hover:bg-white/5 hover:text-red-500 transition-all duration-300">
                 Cancel Order
             </button>
         </div>

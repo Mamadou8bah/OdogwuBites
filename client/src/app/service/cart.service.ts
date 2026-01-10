@@ -20,6 +20,8 @@ export class CartService {
   public isCartOpen: boolean = false;
   private apiUrl = 'http://localhost:3000/cart';
 
+  private didAttemptLocalToServerSync = false;
+
   constructor(private http: HttpClient, private authService: AuthService) {
     if (localStorage.getItem('token')) {
       this.refreshFromServer();
@@ -58,13 +60,65 @@ export class CartService {
     });
   }
 
+  private toQuantityMap(items: CartItem[]): Map<string, number> {
+    const m = new Map<string, number>();
+    for (const it of items) {
+      if (!it.menuItemId) continue;
+      m.set(String(it.menuItemId), (m.get(String(it.menuItemId)) || 0) + Math.max(1, Number(it.quantity || 1)));
+    }
+    return m;
+  }
+
   refreshFromServer(): void {
-    if (!this.authService.isLoggedIn || !localStorage.getItem('token')) return;
+    if (!localStorage.getItem('token')) return;
+
+    // If the user just logged in and has a local cart, try to sync it once.
+    const shouldSyncLocal = this.authService.isLoggedIn && !this.didAttemptLocalToServerSync;
+    const localSnapshot = [...this._items];
 
     this.http.get<any>(`${this.apiUrl}/me`, { headers: this.getHeaders() })
       .pipe(catchError(() => of(null)))
       .subscribe((cart) => {
-        if (cart) this.setFromApiCart(cart);
+        if (!cart) return;
+
+        // Attempt a one-time merge of local cart into server cart.
+        if (shouldSyncLocal && localSnapshot.length > 0) {
+          this.didAttemptLocalToServerSync = true;
+
+          const serverItems = Array.isArray(cart?.items) ? cart.items : [];
+          const serverMap = new Map<string, number>();
+          for (const it of serverItems) {
+            const id = String(it?.menuItem?._id ?? it?.menuItem ?? '');
+            if (!id) continue;
+            serverMap.set(id, (serverMap.get(id) || 0) + Math.max(1, Number(it?.quantity ?? 1)));
+          }
+
+          const localMap = this.toQuantityMap(localSnapshot);
+          const adds: Array<{ id: string; qty: number }> = [];
+          for (const [id, localQty] of localMap.entries()) {
+            const serverQty = serverMap.get(id) || 0;
+            const diff = localQty - serverQty;
+            if (diff > 0) adds.push({ id, qty: diff });
+          }
+
+          if (adds.length > 0) {
+            // Fire-and-forget sync; then refresh again to get canonical server cart.
+            for (const a of adds) {
+              this.http.post<any>(`${this.apiUrl}/add/${a.id}`, { quantity: a.qty }, { headers: this.getHeaders() })
+                .pipe(catchError(() => of(null)))
+                .subscribe();
+            }
+
+            this.http.get<any>(`${this.apiUrl}/me`, { headers: this.getHeaders() })
+              .pipe(catchError(() => of(null)))
+              .subscribe((fresh) => {
+                if (fresh) this.setFromApiCart(fresh);
+              });
+            return;
+          }
+        }
+
+        this.setFromApiCart(cart);
       });
   }
 
@@ -94,7 +148,7 @@ export class CartService {
       return;
     }
 
-    const existing = this._items.find(i => i.name === menuItem.title);
+    const existing = this._items.find(i => (menuItem._id ? i.menuItemId === menuItem._id : i.name === menuItem.title));
     if (existing) {
       existing.quantity += normalizedQuantity;
       this.openCart();
@@ -107,6 +161,7 @@ export class CartService {
       ...this._items,
       {
         id: nextId,
+        menuItemId: menuItem._id,
         name: menuItem.title,
         price: menuItem.price,
         quantity: normalizedQuantity,

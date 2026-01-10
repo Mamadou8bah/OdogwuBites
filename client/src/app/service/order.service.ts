@@ -29,6 +29,14 @@ export class OrderService {
     return this.http.get<any[]>(this.apiUrl, { headers: this.getHeaders() });
   }
 
+  getMyAssignedOrders(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/assigned/me`, { headers: this.getHeaders() });
+  }
+
+  getOrderById(orderId: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/${orderId}`, { headers: this.getHeaders() });
+  }
+
   cancelOrder(orderId: string): Observable<any> {
     return this.http.post(`${this.apiUrl}/cancel/${orderId}`, {}, { headers: this.getHeaders() });
   }

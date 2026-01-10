@@ -24,6 +24,18 @@ export class AuthService {
     return !!this._user;
   }
 
+  /**
+   * Full user details as currently stored (may be partial right after login).
+   * Prefer calling getProfile() to refresh from the server.
+   */
+  get currentUserDetails() {
+    if (!this._user) return null;
+    return {
+      ...this._user,
+      _id: this._user._id || this._user.id,
+    };
+  }
+
   get currentUser() {
     if (!this._user) return null;
     return {
@@ -31,7 +43,9 @@ export class AuthService {
         name: this._user.name,
         email: this._user.email,
         role: this._user.role,
-        balance: this._user.balance
+        balance: this._user.balance,
+        phone: this._user.phone,
+        address: this._user.address
     };
   }
 
@@ -44,6 +58,10 @@ export class AuthService {
       tap((res: any) => {
         if (res.token) {
           localStorage.setItem('token', res.token);
+        
+        }
+        if (res.user) {
+          this.setUser(res.user);
         }
       })
     );
@@ -69,5 +87,19 @@ export class AuthService {
         if (res.user) this.setUser(res.user);
       })
     );
+  }
+
+  getProfile(): Observable<any> {
+    const token = localStorage.getItem('token');
+    return this.http.get(`${this.apiUrl}/profile`, {
+      headers: { Authorization: `Bearer ${token}` },
+    }).pipe(
+      tap((user: any) => {
+        if (user) this.setUser(user);
+      })
+    );
+  }
+  isAuthenticated(): boolean {
+    return localStorage.getItem('token') !== null;
   }
 }

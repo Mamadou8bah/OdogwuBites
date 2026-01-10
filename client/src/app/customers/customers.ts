@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { clients } from '../data/clients';
+import { UsersService } from '../service/users.service';
 
 @Component({
   selector: 'app-customers',
@@ -11,8 +11,11 @@ import { clients } from '../data/clients';
   templateUrl: './customers.html',
   styleUrl: './customers.css',
 })
-export class Customers {
-  protected readonly customers = clients as unknown as Customer[];
+export class Customers implements OnInit {
+  protected customers: Customer[] = [];
+
+  isLoading = false;
+  loadError: string | null = null;
 
   searchTerm = '';
   sortOrder: SortOrder = 'newest';
@@ -20,9 +23,43 @@ export class Customers {
   pageSize = 10;
   currentPage = 1;
 
-  openActionsForCustomerId: number | null = null;
+  openActionsForCustomerId: string | null = null;
 
-  private readonly selectedIds = new Set<number>();
+  private readonly selectedIds = new Set<string>();
+
+  constructor(private usersService: UsersService) {}
+
+  ngOnInit(): void {
+    this.loadUsers();
+  }
+
+  private loadUsers(): void {
+    this.isLoading = true;
+    this.loadError = null;
+
+    this.usersService.getUsers().subscribe({
+      next: (res) => {
+        const users = Array.isArray(res?.users) ? res.users : [];
+        this.customers = users.map((u) => ({
+          id: String(u._id),
+          name: u.name,
+          email: u.email,
+          phone: u.phone != null ? String(u.phone) : undefined,
+          address: u.address ? { street: u.address } : undefined,
+          totalPayments: u.totalPayments ?? 0,
+          registrationDate: u.createdAt
+        }));
+        this.currentPage = 1;
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error('Failed to load users', err);
+        this.loadError = err?.error?.message || 'Failed to load users';
+        this.customers = [];
+        this.isLoading = false;
+      }
+    });
+  }
 
   get filteredCustomers(): Customer[] {
     const query = this.searchTerm.trim().toLowerCase();
@@ -87,11 +124,11 @@ export class Customers {
     this.goToPage(this.currentPage + 1);
   }
 
-  isSelected(customerId: number): boolean {
+  isSelected(customerId: string): boolean {
     return this.selectedIds.has(customerId);
   }
 
-  toggleSelected(customerId: number, checked: boolean): void {
+  toggleSelected(customerId: string, checked: boolean): void {
     if (checked) this.selectedIds.add(customerId);
     else this.selectedIds.delete(customerId);
   }
@@ -127,36 +164,11 @@ export class Customers {
     return a.city || a.street || '—';
   }
 
-  exportVisibleToCsv(): void {
-    const rows = this.visibleCustomers;
-    const headers = ['Name', 'Phone', 'Email', 'Address', 'TotalPayments'];
-    const lines = [
-      headers.join(','),
-      ...rows.map((c) =>
-        [
-          this.csvCell(c.name ?? ''),
-          this.csvCell(c.phone ?? ''),
-          this.csvCell(c.email ?? ''),
-          this.csvCell(this.addressLabel(c)),
-          this.csvCell(String(c.totalPayments ?? 0)),
-        ].join(','),
-      ),
-    ].join('\n');
-
-    const blob = new Blob([lines], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'customers.csv';
-    a.click();
-    URL.revokeObjectURL(url);
-  }
-
-  trackById(_: number, item: Customer): number {
+  trackById(_: number, item: Customer): string {
     return item.id;
   }
 
-  toggleActions(customerId: number): void {
+  toggleActions(customerId: string): void {
     this.openActionsForCustomerId = this.openActionsForCustomerId === customerId ? null : customerId;
   }
 
@@ -181,11 +193,6 @@ export class Customers {
     const t = new Date(raw).getTime();
     return Number.isFinite(t) ? t : 0;
   }
-
-  private csvCell(value: string): string {
-    const escaped = value.replace(/"/g, '""');
-    return `"${escaped}"`;
-  }
 }
 
 type SortOrder = 'newest' | 'oldest';
@@ -199,7 +206,7 @@ type CustomerAddress = {
 };
 
 type Customer = {
-  id: number;
+  id: string;
   name?: string;
   email?: string;
   phone?: string;

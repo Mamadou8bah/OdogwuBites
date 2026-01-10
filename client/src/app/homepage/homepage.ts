@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Homepage as HomepageService } from '../service/homepage';
 import { CartService } from '../service/cart.service';
 import { MenuDetails } from '../menu-details/menu-details';
+import { catchError, finalize, of } from 'rxjs';
 
 @Component({
   selector: 'app-homepage',
@@ -18,6 +19,7 @@ export class Homepage implements OnInit {
   selectedCategory: string = 'All';
   clickedMenuItem: any = null;
   isLoading: boolean = false;
+  loadError: string | null = null;
 
   constructor(
     private homepageService: HomepageService,
@@ -30,23 +32,28 @@ export class Homepage implements OnInit {
 
   loadData(): void {
     this.isLoading = true;
-    this.homepageService.getMenuItems().subscribe({
-      next: (items) => {
+    this.loadError = null;
+
+    this.homepageService
+      .getMenuItems()
+      .pipe(
+        catchError((err) => {
+          console.error(err);
+          this.loadError = 'Failed to load menu items. Please try again.';
+          return of([] as any[]);
+        }),
+        finalize(() => {
+          this.isLoading = false;
+        })
+      )
+      .subscribe((items) => {
         this.menuItems = items;
         this.firstMenuItems = items.slice(0, 4);
         this.selectedMenuItems = items.slice(0, 6);
-        this.isLoading = true;
-      },
-      error: (err) => {
-        console.error(err);
-        this.isLoading = false;
-      }
-    });
-
-    this.homepageService.getFavoriteItems().subscribe({
-      next: (items) => this.favoriteItems = items,
-      error: (err) => console.error(err)
-    });
+        this.favoriteItems = [...items]
+          .sort((a, b) => (b?.rating || 0) - (a?.rating || 0))
+          .slice(0, 4);
+      });
   }
 
   toggleCategory(category: string) {

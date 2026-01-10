@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { MenuPageService } from '../service/menu-page-service';
+import { finalize } from 'rxjs/operators';
 
 @Component({
   selector: 'app-products',
@@ -15,6 +16,10 @@ export class Products implements OnInit {
   searchTerm: string = '';
   searchedProducts: any[] = [];
   allProducts: any[] = [];
+
+  isLoading = false;
+  loadError: string | null = null;
+  isSaving = false;
 
   selectedCategory: string = 'all';
 
@@ -42,12 +47,27 @@ export class Products implements OnInit {
   }
 
   fetchProducts(): void {
-    this.menuService.getMenuItems().subscribe({
+    this.isLoading = true;
+    this.loadError = null;
+
+    this.menuService
+      .getMenuItems()
+      .pipe(finalize(() => (this.isLoading = false)))
+      .subscribe({
       next: (data) => {
-        this.allProducts = data;
+        // Server returns category as populated `categoryId`; keep a convenient `categoryName` for UI.
+        this.allProducts = (data || []).map((item: any) => ({
+          ...item,
+          categoryName: item?.categoryId?.name ?? item?.categoryName ?? '',
+        }));
         this.applyFilters();
       },
-      error: (err) => console.error(err)
+      error: (err) => {
+        console.error(err);
+        this.loadError = err?.error?.message || 'Failed to load products';
+        this.allProducts = [];
+        this.searchedProducts = [];
+      }
     });
   }
 
@@ -81,28 +101,6 @@ export class Products implements OnInit {
     });
   }
 
-  exportVisibleToCsv(): void {
-    const rows = this.getVisibleProducts();
-    const headers = ["Image", "Name", "Price", "Category", "Status"];
-    const csvContent = [
-      headers.join(','),
-      ...rows.map(item => [
-        `"${item.imageUrl}"`,
-        `"${item.title}"`,
-        `"${item.price}"`,
-        `"${item.categoryName}"`,
-        `"${item.isAvailable ? 'Available' : 'Unavailable'}"`
-      ].join(','))
-    ].join('\n');
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'products.csv';
-    a.click();
-    URL.revokeObjectURL(url);
-  }
-
   addMenuItem(): void {
     this.isEditing = false;
     this.resetForm();
@@ -118,10 +116,14 @@ export class Products implements OnInit {
 
   deleteProduct(product: any): void {
     if (confirm(`Are you sure you want to delete "${product.title}"?`)) {
-      this.menuService.deleteMenuItem(product._id).subscribe({
-        next: () => this.fetchProducts(),
-        error: (err) => alert(err.error?.message || 'Delete failed')
-      });
+      this.isSaving = true;
+      this.menuService
+        .deleteMenuItem(product._id)
+        .pipe(finalize(() => (this.isSaving = false)))
+        .subscribe({
+          next: () => this.fetchProducts(),
+          error: (err) => alert(err.error?.message || 'Delete failed')
+        });
     }
   }
 
@@ -153,6 +155,11 @@ export class Products implements OnInit {
   }
 
   saveProduct(): void {
+    if (!this.isEditing && !this.selectedFile) {
+      alert('Please select an image');
+      return;
+    }
+
     const formData = new FormData();
     formData.append('title', this.newProduct.title);
     formData.append('description', this.newProduct.description);
@@ -163,17 +170,21 @@ export class Products implements OnInit {
       formData.append('image', this.selectedFile);
     }
 
+    console.log('Submitting form data:', this.newProduct, this.selectedFile);
     const request = this.isEditing 
       ? this.menuService.updateMenuItem(this.editingProduct._id, formData)
       : this.menuService.createMenuItem(formData);
 
-    request.subscribe({
-      next: () => {
-        this.fetchProducts();
-        this.closeModal();
-      },
-      error: (err) => alert(err.error?.message || 'Save failed')
-    });
+    this.isSaving = true;
+    request
+      .pipe(finalize(() => (this.isSaving = false)))
+      .subscribe({
+        next: () => {
+          this.fetchProducts();
+          this.closeModal();
+        },
+        error: (err) => alert(typeof err.error === 'string' ? err.error : (err.error?.message || 'Save failed'))
+      });
   }
 
   getTotalPages(): number {

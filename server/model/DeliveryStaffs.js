@@ -31,13 +31,20 @@ const deliveryStaffSchema=new mongoose.Schema({
         type: Date,
         default: Date.now
     },
+    // Tracks how many assigned orders have already been credited to the staff user's wallet balance.
+    // Earnings rule: 50 * number of orders assigned.
+    paidOrdersCount: {
+        type: Number,
+        default: 0,
+        min: 0
+    },
     Orders:[
         {
             type:mongoose.Types.ObjectId,
             ref:'Order'
         }
     ]
-})
+}) 
 
 const DeliveryStaff=mongoose.model('DeliveryStaff',deliveryStaffSchema);
 

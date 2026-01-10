@@ -1,12 +1,22 @@
 const Cart = require('../model/Carts');
 const MenuItem = require('../model/MenuItems');
 
+async function loadPopulatedCartByUserId(userId) {
+    return Cart.findOne({ userId }).populate('items.menuItem');
+}
+
 const getCartByUserId = async (req, res) => {
     try {
-        const userId = (req.user && req.user._id) ? req.user._id : req.params.userId;
-        let cart = await Cart.findOne({ userId }).populate('items.menuItem');
+        const requestedUserId = req.params.userId ? String(req.params.userId) : String(req.user._id);
+
+        // Only admins can fetch carts that aren't theirs.
+        if (req.params.userId && String(req.user._id) !== requestedUserId && req.user.role !== 'admin') {
+            return res.status(403).json({ message: 'Forbidden' });
+        }
+
+        let cart = await loadPopulatedCartByUserId(requestedUserId);
         if (!cart) {
-            cart = await Cart.create({ userId, items: [], totalAmount: 0 });
+            cart = await Cart.create({ userId: requestedUserId, items: [], totalAmount: 0 });
             cart = await Cart.findById(cart._id).populate('items.menuItem');
         }
         res.status(200).json(cart);
@@ -52,7 +62,8 @@ const addToCart = async (req, res) => {
             });
         }
         await cart.save();
-        res.status(201).json(cart);
+        const populated = await Cart.findById(cart._id).populate('items.menuItem');
+        res.status(201).json(populated);
 
     } catch (error) {
         res.status(400).json('Could not add to cart');
@@ -75,7 +86,8 @@ const removeFromCart = async (req, res) => {
             cart.items = cart.items.filter(i => i.menuItem?.toString() !== menuItemId);
         }
         await cart.save();
-        res.status(200).json(cart);
+        const populated = await Cart.findById(cart._id).populate('items.menuItem');
+        res.status(200).json(populated);
     } catch (error) {
         res.status(400).json('Could not remove from cart');
     }
@@ -89,7 +101,8 @@ const clearCart = async (req, res) => {
 
         cart.items = [];
         await cart.save();
-        res.status(200).json(cart);
+        const populated = await Cart.findById(cart._id).populate('items.menuItem');
+        res.status(200).json(populated);
     } catch (error) {
         res.status(400).json('Could not clear cart');
     }

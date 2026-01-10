@@ -15,6 +15,8 @@ export class OrderDetails implements OnInit {
   order: any;
   safeMapUrl: SafeResourceUrl | null = null;
 
+
+
   constructor(
     private route: ActivatedRoute,
     private sanitizer: DomSanitizer,
@@ -24,12 +26,12 @@ export class OrderDetails implements OnInit {
 
   ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id') || '';
-    this.orderService.getAllOrders().subscribe({
-      next: (orders) => {
-        this.order = orders.find((o: any) => o._id === id);
-        if (this.order) {
-          this.generateMapUrl();
-        }
+    if (!id) return;
+
+    this.orderService.getOrderById(id).subscribe({
+      next: (order) => {
+        this.order = order;
+        if (this.order) this.generateMapUrl();
       },
       error: (err) => console.error(err)
     });
@@ -37,7 +39,9 @@ export class OrderDetails implements OnInit {
 
   updateStatus(newStatus: string) {
     if (this.order) {
-      if (newStatus === 'Delivered') {
+      if (newStatus === 'Accepted') {
+        this.orderService.acceptOrder(this.order._id).subscribe(() => this.order.status = 'Accepted');
+      } else if (newStatus === 'Delivered') {
         this.orderService.deliverOrder(this.order._id).subscribe(() => this.order.status = 'Delivered');
       } else if (newStatus === 'Cancelled') {
         this.orderService.cancelOrder(this.order._id).subscribe(() => this.order.status = 'Cancelled');
@@ -49,8 +53,9 @@ export class OrderDetails implements OnInit {
     this.location.back();
   }
 
-  printOrder() {
-    window.print();
+  get orderCost(): number {
+    if (!this.order || !Array.isArray(this.order.items)) return 0;
+    return this.order.items.reduce((total: number, item: any) => total + (item.unitPrice * item.quantity), 0);
   }
 
   generateMapUrl() {

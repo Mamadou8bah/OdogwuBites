@@ -17,6 +17,9 @@ import { DeliveryDetails } from './delivery-details/delivery-details';
 import { ProductDetails } from './product-details/product-details';
 import { SettingsPage } from './settings-page/settings-page';
 import { CheckoutPage } from './checkout-page/checkout-page';
+import { authChildGuard, authGuard } from './guards/auth.guard';
+import { adminGuard } from './guards/role.guard';
+import { guestGuard } from './guards/guest.guard';
 export const routes: Routes = [
     {
         path:'',
@@ -32,14 +35,13 @@ export const routes: Routes = [
     },
     {
         path:'login',
-        component:LoginPage
-    },{
-        path:'cart',
-        component:Cart
-
+        component:LoginPage,
+        canActivate: [guestGuard]
     },{
         path:'dashboard',
         component:Dashboard,
+        canActivate: [authGuard],
+        canActivateChild: [authChildGuard],
         children:[
             {
                 path:'',
@@ -47,7 +49,8 @@ export const routes: Routes = [
             },
             {
                 path:'users',
-                component:Users
+                component:Users,
+                canActivate: [adminGuard]
             },
             {
                 path:'orders',
@@ -55,27 +58,33 @@ export const routes: Routes = [
             },
             {
                 path:'products',
-                component:Products
+                component:Products,
+                canActivate: [adminGuard]
             },
             {
                 path:'products/:id',
-                component:ProductDetails
+                component:ProductDetails,
+                canActivate: [adminGuard]
             },
             {
                 path:'customers',
-                component:Customers
+                component:Customers,
+                canActivate: [adminGuard]
             },
             {
                 path:'customers/:id',
-                component:CustomerDetails
+                component:CustomerDetails,
+                canActivate: [adminGuard]
             },
             {
                 path:'delivery-men',
-                component:DeliveryMen
+                component:DeliveryMen,
+                canActivate: [adminGuard]
             },
             {
                 path:'delivery-men/:id',
-                component:DeliveryDetails
+                component:DeliveryDetails,
+                canActivate: [adminGuard]
             },
             {
                 path:'orders/:id',

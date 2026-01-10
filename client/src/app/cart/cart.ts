@@ -6,7 +6,7 @@ import { CartItem } from '../data/cartItems';
 import { CartService } from '../service/cart.service';
 import { PaymentService } from '../service/payment.service';
 import { AuthService } from '../service/auth.service';
-
+import { NavigationHistoryService } from '../service/navigation-history.service';
 @Component({
   selector: 'app-cart',
   imports: [CommonModule, FormsModule],
@@ -19,11 +19,14 @@ export class Cart {
   isProcessing: boolean = false;
   checkoutSuccess: boolean = false;
 
+  isLoggedIn: boolean = localStorage.getItem('token') || localStorage.getItem('user') ? true : false;
+
   constructor(
     private cartService: CartService,
     private paymentService: PaymentService,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private navigationHistory: NavigationHistoryService,
   ) {}
 
   get cartItems(): CartItem[] {
@@ -68,6 +71,12 @@ export class Cart {
 
   checkout(): void {
     if (this.cartItems.length === 0) return;
+    if(!this.isLoggedIn){
+      alert('Please log in to proceed to checkout.');
+      this.cartService.closeCart();
+      this.router.navigate(['/login']);
+      return;
+    }
     this.router.navigate(['/dashboard/checkout']);
   }
 }

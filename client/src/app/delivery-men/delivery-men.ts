@@ -30,9 +30,25 @@ export class DeliveryMen implements OnInit {
           email: s.userId?.email,
           phone: s.userId?.phone,
           status: s.status || 'active',
+          employmentType: s.employmentType || 'full_time',
           hireDate: s.hireDate,
+          assignedOrdersCount: Number(s.assignedOrdersCount ?? (Array.isArray(s.Orders) ? s.Orders.length : 0)) || 0,
+          totalEarnings: Number(s.totalEarnings) || 0,
           address: s.userId?.address ? { street: s.userId.address } : undefined,
-          avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${s.userId?.name || 'Driver'}`
+          avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${s.userId?.name || 'Driver'}`,
+          vehicle: s.vehicle ? {
+            type: s.vehicle.type,
+            make: s.vehicle.make,
+            model: s.vehicle.model,
+            year: s.vehicle.year,
+            licensePlate: s.vehicle.licensePlate
+          } : {
+            type: 'motorcycle',
+            make: '',
+            model: '',
+            year: undefined,
+            licensePlate: ''
+          }
         }));
       },
       error: (err) => console.error('Error fetching delivery staff:', err)
@@ -60,6 +76,7 @@ export class DeliveryMen implements OnInit {
       type: 'motorcycle',
       make: '',
       model: '',
+      year: undefined,
       licensePlate: ''
     },
     address: {
@@ -187,32 +204,6 @@ export class DeliveryMen implements OnInit {
     return 'text-gray-300';
   }
 
-  exportVisibleToCsv(): void {
-    const rows = this.visibleDeliveryMen;
-    const headers = ['Id', 'Name', 'Phone', 'Email', 'Address', 'Status'];
-    const lines = [
-      headers.join(','),
-      ...rows.map((d) =>
-        [
-          this.csvCell(d.id ?? ''),
-          this.csvCell(d.name ?? ''),
-          this.csvCell(d.phone ?? ''),
-          this.csvCell(d.email ?? ''),
-          this.csvCell(this.addressLabel(d)),
-          this.csvCell(this.statusLabel(d)),
-        ].join(','),
-      ),
-    ].join('\n');
-
-    const blob = new Blob([lines], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'delivery-men.csv';
-    a.click();
-    URL.revokeObjectURL(url);
-  }
-
   addDeliveryMan(): void {
     this.isEditing = false;
     this.selectedDriverId = null;
@@ -257,6 +248,7 @@ export class DeliveryMen implements OnInit {
         type: 'motorcycle',
         make: '',
         model: '',
+        year: undefined,
         licensePlate: ''
       },
       address: {
@@ -273,9 +265,11 @@ export class DeliveryMen implements OnInit {
       if (this.isEditing && this.selectedDriverId) {
         const updateData = {
           status: this.newDeliveryMan.status,
+          employmentType: this.newDeliveryMan.employmentType,
           vehicleType: this.newDeliveryMan.vehicle?.type,
           vehicleMake: this.newDeliveryMan.vehicle?.make,
           vehicleModel: this.newDeliveryMan.vehicle?.model,
+          vehicleYear: this.newDeliveryMan.vehicle?.year,
           vehicleLicensePlate: this.newDeliveryMan.vehicle?.licensePlate
         };
         this.deliveryService.updateDeliveryStaff(this.selectedDriverId, updateData).subscribe({
@@ -311,11 +305,6 @@ export class DeliveryMen implements OnInit {
     return Number.isFinite(t) ? t : 0;
   }
 
-  private csvCell(value: string): string {
-    const escaped = value.replace(/"/g, '""');
-    return `"${escaped}"`;
-  }
-
   private titleCase(value: string): string {
     const s = value.trim();
     if (!s) return s;
@@ -342,6 +331,15 @@ type DeliveryPerson = {
   email?: string;
   phone?: string;
   status?: string;
+  employmentType?: string;
   hireDate?: string;
+  assignedOrdersCount?: number;
+  totalEarnings?: number;
   address?: DeliveryAddress;
+  vehicle?: {
+    type?: string;
+    make?: string;
+    model?: string;
+    licensePlate?: string;
+  };
 };

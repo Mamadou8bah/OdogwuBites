@@ -14,6 +14,7 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 export class DeliveryDetails implements OnInit {
   id: string | null = null;
   delivery: any;
+  readonly perAssignedOrderEarning = 50;
 
   constructor(
     private route: ActivatedRoute,
@@ -33,22 +34,42 @@ export class DeliveryDetails implements OnInit {
   fetchDeliveryDetails(id: string): void {
     this.deliveryService.getDeliveryStaffById(id).subscribe({
       next: (staff: any) => {
+        const assignedOrdersCount =
+          Number(staff?.assignedOrdersCount ?? (Array.isArray(staff?.Orders) ? staff.Orders.length : 0)) || 0;
+        const totalEarnings =
+          Number(staff?.totalEarnings ?? assignedOrdersCount * this.perAssignedOrderEarning) || 0;
+
         this.delivery = {
           id: staff._id,
-          employeeId: staff.employeeId,
-          name: staff.userId?.name,
+          employeeId: staff.employeeId, 
+          name: staff.userId?.name, 
           email: staff.userId?.email,
           phone: staff.userId?.phone,
+          balance: staff.userId?.balance,
           status: staff.status,
           hireDate: staff.hireDate,
           employmentType: staff.employmentType,
           vehicle: staff.vehicle,
+          performance: {
+            assignedOrdersCount,
+            perAssignedOrderEarning: this.perAssignedOrderEarning,
+            totalEarnings,
+          },
           address: staff.userId?.address ? { street: staff.userId.address } : undefined,
           avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${staff.userId?.name || 'Driver'}`
         };
       },
       error: (err) => console.error('Error fetching delivery staff details:', err)
     });
+  }
+
+  vehicleSummary(): string {
+    const v = this.delivery?.vehicle;
+    if (!v) return '—';
+    const parts = [v.year, v.make, v.model]
+      .map((p: any) => (p == null ? '' : String(p).trim()))
+      .filter((p: string) => p);
+    return parts.join(' ') || '—';
   }
 
   

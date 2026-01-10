@@ -27,12 +27,14 @@ export class CheckoutPage {
   isProcessing: boolean = false;
   userBalance: number = 0;
 
+  errorMessage: string = '';
+
   constructor(
     public cartService: CartService,
     private paymentService: PaymentService,
     private authService: AuthService,
     private orderService: OrderService,
-    private router: Router
+    private router: Router 
   ) {
     const user = this.authService.currentUser;
     if (user) {
@@ -94,7 +96,7 @@ export class CheckoutPage {
     this.isProcessing = true;
     
     if (this.userBalance < this.total) {
-      alert('Insufficient wallet balance. Please deposit more funds.');
+      this.errorMessage = 'Insufficient wallet balance. Please deposit funds.';
       this.isProcessing = false;
       return;
     }
@@ -102,16 +104,23 @@ export class CheckoutPage {
     const orderData = {
       address: this.customerInfo.address,
       phone: this.customerInfo.phone,
+      city: this.customerInfo.city,
+      postalCode: this.customerInfo.postalCode,
       paymentMethod: 'Wallet',
       deliveryType: 'Delivery',
       deliveryFee: this.deliveryFee,
-      notes: ''
+      notes: '',
+      clientRequestId: (globalThis.crypto && 'randomUUID' in globalThis.crypto)
+        ? (globalThis.crypto as any).randomUUID()
+        : `${Date.now()}-${Math.random().toString(16).slice(2)}`
     };
 
     this.orderService.createOrder(orderData).subscribe({
       next: (response) => {
-        this.cartService.clear();
-        this.router.navigate(['/dashboard/orders']); 
+        // Server clears the cart; refresh local state + wallet balance.
+        this.cartService.refreshFromServer();
+        this.fetchBalance();
+        this.router.navigate(['/dashboard/orders']);
         this.isProcessing = false;
       },
       error: (error) => {

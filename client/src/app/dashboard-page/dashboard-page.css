@@ -1,0 +1,20 @@
+/* ngx-charts renders SVG text in dark colors by default; tune for our dark dashboard */
+:host ::ng-deep .ngx-charts text {
+	fill: rgba(226, 232, 240, 0.9); /* slate-200 */
+}
+
+:host ::ng-deep .ngx-charts .gridline-path {
+	stroke: rgba(255, 255, 255, 0.06);
+}
+
+:host ::ng-deep .ngx-charts .tick text {
+	fill: rgba(148, 163, 184, 0.95); /* slate-400 */
+}
+
+:host ::ng-deep .ngx-charts .legend-label-text {
+	color: rgba(226, 232, 240, 0.9);
+}
+
+:host ::ng-deep .ngx-charts-legend {
+	font-size: 12px;
+}

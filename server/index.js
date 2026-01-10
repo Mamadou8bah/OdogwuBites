@@ -2,6 +2,7 @@ const express=require('express')
 const cors = require('cors');
 const dotenv = require('dotenv');
 const {connectToDatabase}=require('./config/dbconfig')
+const { seedCategories } = require('./utils/seedCategories');
 
 const AuthRouter=require('./route/authentication')
 const MenuRouter=require('./route/menu')
@@ -11,11 +12,11 @@ const OrderRouter=require('./route/order')
 const PaymentRouter=require('./route/payment')
 const DeliveryStaffRouter=require('./route/deliveryStaff')
 const DashboardRouter=require('./route/dashboard')
+const UsersRouter=require('./route/users')
 const app=express()
 
 dotenv.config();
 
-connectToDatabase();
 app.use(cors({
     origin: process.env.CORS_ORIGIN || true,
 }));
@@ -28,11 +29,19 @@ app.use('/order', OrderRouter);
 app.use('/payment', PaymentRouter);
 app.use('/delivery-staff', DeliveryStaffRouter);
 app.use('/dashboard', DashboardRouter);
+app.use('/users', UsersRouter);
 
 const port = process.env.PORT || 3000;
 
-app.listen(port,
-    ()=>{
-        console.log(`listening at port ${port}`)
-    }
-)
+async function startServer() {
+    await connectToDatabase();
+    await seedCategories();
+    app.listen(port, () => {
+        console.log(`listening at port ${port}`);
+    });
+}
+
+startServer().catch((error) => {
+    console.error('Server startup failed', error);
+    process.exit(1);
+});

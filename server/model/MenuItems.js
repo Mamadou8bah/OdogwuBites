@@ -8,7 +8,7 @@ const menuItemSchema=new mongoose.Schema({
     description:{
         type:String
     },
-    price:{
+    price:{ 
         type:Number,
         required:true,
     },
@@ -22,10 +22,6 @@ const menuItemSchema=new mongoose.Schema({
     },
     isAvailable:Boolean,
     discount:Number,
-    imagePublicId:{
-        type:String,
-        required:true
-    },
     createdAt:{
         type:Date,
         default:Date.now

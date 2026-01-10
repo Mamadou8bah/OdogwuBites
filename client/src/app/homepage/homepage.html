@@ -9,12 +9,32 @@
     </div>
     <a routerLink="/menu" class="p-3 pl-7 pr-7 m-6 bg-orange-400 rounded-2xl ">Order Now</a>
     <div class="flex w-full flex-row items-center justify-center gap-7 mb-10 mt-20 flex-wrap">
-        <div *ngIf="isLoading" class="loader2"></div>
-    <div 
-        class="w-[280px] mb-[5rem] p-4 bg-black/10 rounded-xl flex flex-col items-center relative hover:scale-105 transition-all duration-300 ease-in-out"
-        *ngFor="let menuItem of firstMenuItems"
-        (click)="toggleMenuDetails(menuItem)"
-    >
+        <div *ngIf="loadError" class="w-full flex flex-col items-center gap-3 text-center">
+            <p class="text-red-300">{{ loadError }}</p>
+            <button type="button" class="px-6 py-2 bg-orange-400 rounded-2xl text-black" (click)="loadData()">Retry</button>
+        </div>
+
+        <ng-container *ngIf="isLoading; else homepageFeatured">
+            <div
+                *ngFor="let _ of [1,2,3,4]"
+                class="w-[280px] mb-[5rem] p-4 bg-black/10 rounded-xl flex flex-col items-center relative"
+            >
+                <div class="w-[130px] h-[130px] rounded-full overflow-hidden absolute top-[-50px] mb-5 z-10 bg-white/10 animate-pulse"></div>
+                <div class="mt-20 w-40 h-5 bg-white/10 rounded-md animate-pulse"></div>
+                <div class="w-full h-10 mt-3 bg-white/5 rounded-md animate-pulse"></div>
+                <div class="mt-4 flex flex-row w-full items-center justify-between px-6">
+                    <div class="w-16 h-6 bg-white/10 rounded-md animate-pulse"></div>
+                    <div class="w-9 h-9 bg-white/10 rounded-full animate-pulse"></div>
+                </div>
+            </div>
+        </ng-container>
+
+        <ng-template #homepageFeatured>
+        <div 
+            class="w-[280px] mb-[5rem] p-4 bg-black/10 rounded-xl flex flex-col items-center relative hover:scale-105 transition-all duration-300 ease-in-out"
+            *ngFor="let menuItem of firstMenuItems"
+            (click)="toggleMenuDetails(menuItem)"
+        >
     
         <div class="w-[130px] h-[130px] rounded-full overflow-hidden absolute top-[-50px] mb-5 z-10">
             <img 
@@ -31,7 +51,8 @@
             <p class="font-bold text-xl">D{{ menuItem.price }}</p>
             <button type="button" class="w-9 h-9" (click)="toggleMenuDetails(menuItem); $event.stopPropagation()"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M11 8C11 7.44772 11.4477 7 12 7C12.5523 7 13 7.44772 13 8V11H16C16.5523 11 17 11.4477 17 12C17 12.5523 16.5523 13 16 13H13V16C13 16.5523 12.5523 17 12 17C11.4477 17 11 16.5523 11 16V13H8C7.44771 13 7 12.5523 7 12C7 11.4477 7.44772 11 8 11H11V8Z" fill="#ffffff"></path> <path fill-rule="evenodd" clip-rule="evenodd" d="M23 12C23 18.0751 18.0751 23 12 23C5.92487 23 1 18.0751 1 12C1 5.92487 5.92487 1 12 1C18.0751 1 23 5.92487 23 12ZM3.00683 12C3.00683 16.9668 7.03321 20.9932 12 20.9932C16.9668 20.9932 20.9932 16.9668 20.9932 12C20.9932 7.03321 16.9668 3.00683 12 3.00683C7.03321 3.00683 3.00683 7.03321 3.00683 12Z" fill="#ffffff"></path> </g></svg></button>
         </div>
-    </div>
+        </div>
+        </ng-template>
     </div>
 
     <app-menu-details
@@ -99,11 +120,18 @@
         <div class="menu-list">
          <div class="flex flex-wrap justify-center gap-8 p-10 ">
 
-            <div class="loader-3">
+            <ng-container *ngIf="isLoading; else homepagePopular">
+                <div
+                    *ngFor="let _ of [1,2,3,4]"
+                    class="relative flex w-[260px] h-[380px] bg-[#222] rounded-[130px] items-center justify-center p-4"
+                >
+                    <div class="w-[220px] h-[220px] bg-white/10 rounded-full animate-pulse"></div>
+                </div>
+            </ng-container>
 
-            </div>
-        <div 
-            *ngFor="let item of favoriteItems; let i = index"
+            <ng-template #homepagePopular>
+            <div 
+                *ngFor="let item of favoriteItems; let i = index"
             class="relative flex w-[260px] h-[380px] bg-[#222] rounded-[130px] items-center justify-center p-4 text-white shadow-lg transition-transform hover:scale-105"
             [ngClass]="i % 2 !== 0 ? 'flex-col-reverse' : 'flex-col'"
             (click)="toggleMenuDetails(item)"
@@ -112,7 +140,7 @@
             <div class="relative w-full flex-1 flex items-center justify-center">
             <img 
                 [src]="item.imageUrl" 
-                class="w-full h-full object-cover rounded-full shadow-md z-10"
+                class="w-[220px] h-[220px] object-cover rounded-full shadow-md z-10"
                 alt="Food Image"
             >
             </div>
@@ -136,30 +164,45 @@
                 </svg>
             </button>
 
+            </div>
+            </ng-template>
         </div>
         </div>
         </div>
-            
-    </div>
 
     <div class="text-center w-full">
         <h1 class="text-5xl m-3">OUR DISHES</h1>
         <p class="text-gray-400 mb-0">Tried, tested, and adored — these star dishes of our menu are full of flavor, made fresh daily. </p>
         <div class="flex flex-nowrap md:flex-wrap overflow-x-auto md:overflow-visible gap-2 w-full py-3 mt-2 scrollbar-hide items-center justify-start md:justify-center">
-            <a class="inline-flex px-6 py-2 rounded-4xl border-2 border-amber-400 shrink-0 whitespace-nowrap" (click)="toggleCategory('All')">All</a>
-            <a class="inline-flex px-6 py-2 rounded-4xl border-2 border-amber-400 shrink-0 whitespace-nowrap" (click)="toggleCategory('Pizza')">Pizza</a>
-            <a class="inline-flex px-6 py-2 rounded-4xl border-2 border-amber-400 shrink-0 whitespace-nowrap" (click)="toggleCategory('Burgers')">Burgers</a>
-            <a class="inline-flex px-6 py-2 rounded-4xl border-2 border-amber-400 shrink-0 whitespace-nowrap" (click)="toggleCategory('Chicken')">Chicken</a>
-            <a class="inline-flex px-6 py-2 rounded-4xl border-2 border-amber-400 shrink-0 whitespace-nowrap" (click)="toggleCategory('Rice Meals')">Rice Meals</a>
-            <a class="inline-flex px-6 py-2 rounded-4xl border-2 border-amber-400 shrink-0 whitespace-nowrap" (click)="toggleCategory('Pasta')">Pasta</a>
-            <a class="inline-flex px-6 py-2 rounded-4xl border-2 border-amber-400 shrink-0 whitespace-nowrap" (click)="toggleCategory('Shawarma & Wraps')">Shawarma & Wraps</a>
-            <a class="inline-flex px-6 py-2 rounded-4xl border-2 border-amber-400 shrink-0 whitespace-nowrap" (click)="toggleCategory('Sides')">Sides</a>
-            <a class="inline-flex px-6 py-2 rounded-4xl border-2 border-amber-400 shrink-0 whitespace-nowrap" (click)="toggleCategory('Desserts')">Desserts</a>
-            <a class="inline-flex px-6 py-2 rounded-4xl border-2 border-amber-400 shrink-0 whitespace-nowrap" (click)="toggleCategory('Drinks')">Drinks</a>
+            <a class="inline-flex px-6 py-2 rounded-4xl border-2 border-amber-400 shrink-0 whitespace-nowrap cursor-pointer transition-colors" [ngClass]="selectedCategory === 'All' ? 'bg-amber-400 text-black' : 'text-amber-400 hover:bg-amber-400/10'" (click)="toggleCategory('All')">All</a>
+            <a class="inline-flex px-6 py-2 rounded-4xl border-2 border-amber-400 shrink-0 whitespace-nowrap cursor-pointer transition-colors" [ngClass]="selectedCategory === 'Pizza' ? 'bg-amber-400 text-black' : 'text-amber-400 hover:bg-amber-400/10'" (click)="toggleCategory('Pizza')">Pizza</a>
+            <a class="inline-flex px-6 py-2 rounded-4xl border-2 border-amber-400 shrink-0 whitespace-nowrap cursor-pointer transition-colors" [ngClass]="selectedCategory === 'Burgers' ? 'bg-amber-400 text-black' : 'text-amber-400 hover:bg-amber-400/10'" (click)="toggleCategory('Burgers')">Burgers</a>
+            <a class="inline-flex px-6 py-2 rounded-4xl border-2 border-amber-400 shrink-0 whitespace-nowrap cursor-pointer transition-colors" [ngClass]="selectedCategory === 'Chicken' ? 'bg-amber-400 text-black' : 'text-amber-400 hover:bg-amber-400/10'" (click)="toggleCategory('Chicken')">Chicken</a>
+            <a class="inline-flex px-6 py-2 rounded-4xl border-2 border-amber-400 shrink-0 whitespace-nowrap cursor-pointer transition-colors" [ngClass]="selectedCategory === 'Rice Meals' ? 'bg-amber-400 text-black' : 'text-amber-400 hover:bg-amber-400/10'" (click)="toggleCategory('Rice Meals')">Rice Meals</a>
+            <a class="inline-flex px-6 py-2 rounded-4xl border-2 border-amber-400 shrink-0 whitespace-nowrap cursor-pointer transition-colors" [ngClass]="selectedCategory === 'Pasta' ? 'bg-amber-400 text-black' : 'text-amber-400 hover:bg-amber-400/10'" (click)="toggleCategory('Pasta')">Pasta</a>
+            <a class="inline-flex px-6 py-2 rounded-4xl border-2 border-amber-400 shrink-0 whitespace-nowrap cursor-pointer transition-colors" [ngClass]="selectedCategory === 'Shawarma & Wraps' ? 'bg-amber-400 text-black' : 'text-amber-400 hover:bg-amber-400/10'" (click)="toggleCategory('Shawarma & Wraps')">Shawarma & Wraps</a>
+            <a class="inline-flex px-6 py-2 rounded-4xl border-2 border-amber-400 shrink-0 whitespace-nowrap cursor-pointer transition-colors" [ngClass]="selectedCategory === 'Sides' ? 'bg-amber-400 text-black' : 'text-amber-400 hover:bg-amber-400/10'" (click)="toggleCategory('Sides')">Sides</a>
+            <a class="inline-flex px-6 py-2 rounded-4xl border-2 border-amber-400 shrink-0 whitespace-nowrap cursor-pointer transition-colors" [ngClass]="selectedCategory === 'Desserts' ? 'bg-amber-400 text-black' : 'text-amber-400 hover:bg-amber-400/10'" (click)="toggleCategory('Desserts')">Desserts</a>
+            <a class="inline-flex px-6 py-2 rounded-4xl border-2 border-amber-400 shrink-0 whitespace-nowrap cursor-pointer transition-colors" [ngClass]="selectedCategory === 'Drinks' ? 'bg-amber-400 text-black' : 'text-amber-400 hover:bg-amber-400/10'" (click)="toggleCategory('Drinks')">Drinks</a>
         </div>
 
         <div class="selected-menus flex flex-row flex-wrap py-5 items-center justify-center gap-5 min-h-[50vh]">
-            <div class="loader3"></div>
+            <ng-container *ngIf="isLoading; else homepageDishes">
+                <div
+                    *ngFor="let _ of [1,2,3,4,5,6]"
+                    class="w-[22rem] md:w-[25rem] p-12 bg-[#222] flex flex-col justify-center items-center gap-5 rounded-2xl"
+                >
+                    <div class="h-[9rem] w-[9rem] bg-white/10 rounded-full animate-pulse"></div>
+                    <div class="w-48 h-5 bg-white/10 rounded-md animate-pulse"></div>
+                    <div class="w-full h-16 bg-white/5 rounded-md animate-pulse"></div>
+                    <div class="w-full flex flex-row justify-between">
+                        <div class="w-16 h-6 bg-white/10 rounded-md animate-pulse"></div>
+                        <div class="w-28 h-9 bg-white/10 rounded-full animate-pulse"></div>
+                    </div>
+                </div>
+            </ng-container>
+
+            <ng-template #homepageDishes>
             <div *ngFor="let item of selectedMenuItems" class="w-[22rem] md:w-[25rem]  p-12 bg-[#222] flex flex-col justify-center items-center gap-5 rounded-2xl" (click)="toggleMenuDetails(item)">
                 <div class="h-[9rem] w-[9rem] bg-[#222]">
                     <img class="w-full h-full rounded-full object-cover" src={{item.imageUrl}} alt="">
@@ -178,6 +221,7 @@
                     </button>
                 </div>
             </div>
+            </ng-template>
         </div>
     </div>
     <div class="mt-20 w-full text-center">

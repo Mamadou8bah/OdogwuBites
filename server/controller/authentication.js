@@ -242,13 +242,12 @@ const updateProfile = async (req, res) => {
     if (address) user.address = address;
 
     await user.save();
-    res.status(200).json({ message: "Profile updated successfully", user: {
-      _id: user._id,
-      name: user.name,
-      email: user.email,
-      role: user.role,
-      balance: user.balance
-    }});
+
+    const updatedUser = await User.findById(userId).select('-password');
+    res.status(200).json({
+      message: 'Profile updated successfully',
+      user: updatedUser,
+    });
   } catch (error) {
     res.status(400).json(error);
   }

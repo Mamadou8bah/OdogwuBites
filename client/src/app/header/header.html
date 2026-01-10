@@ -5,27 +5,67 @@
             OdogwuBites
         </h1>
     </div>
-    <div class="nav-links hidden md:flex flex gap-3 text-3xl">
-        <a routerLink="/" routerLinkActive="text-orange-400" [routerLinkActiveOptions]="{exact: true}">Home</a>
-        <a routerLink="/menu" routerLinkActive="text-orange-400">Menu</a>
-        <a routerLink="/about" routerLinkActive="text-orange-400">About</a>
+    <div class="nav-links hidden md:flex gap-3 text-3xl">
+        <a routerLink="/" routerLinkActive="text-orange-400" [routerLinkActiveOptions]="{exact: true}" class="inline-flex items-center gap-2">
+            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6">
+                <path d="M22 12.2039V13.725C22 17.6258 22 19.5763 20.8284 20.7881C19.6569 22 17.7712 22 14 22H10C6.22876 22 4.34315 22 3.17157 20.7881C2 19.5763 2 17.6258 2 13.725V12.2039C2 9.91549 2 8.77128 2.5192 7.82274C3.0384 6.87421 3.98695 6.28551 5.88403 5.10813L7.88403 3.86687C9.88939 2.62229 10.8921 2 12 2C13.1079 2 14.1106 2.62229 16.116 3.86687L18.116 5.10812C20.0131 6.28551 20.9616 6.87421 21.4808 7.82274" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                <path d="M15 18H9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+            </svg>
+            <span>Home</span>
+        </a>
+        <a routerLink="/menu" routerLinkActive="text-orange-400" class="inline-flex items-center gap-2">
+            <svg aria-hidden="true" fill="currentColor" viewBox="0 -3.84 122.88 122.88" version="1.1" xmlns="http://www.w3.org/2000/svg" xml:space="preserve" class="h-6 w-6">
+                <path d="M29.03,100.46l20.79-25.21l9.51,12.13L41,110.69C33.98,119.61,20.99,110.21,29.03,100.46L29.03,100.46z M53.31,43.05 c1.98-6.46,1.07-11.98-6.37-20.18L28.76,1c-2.58-3.03-8.66,1.42-6.12,5.09L37.18,24c2.75,3.34-2.36,7.76-5.2,4.32L16.94,9.8 c-2.8-3.21-8.59,1.03-5.66,4.7c4.24,5.1,10.8,13.43,15.04,18.53c2.94,2.99-1.53,7.42-4.43,3.69L6.96,18.32 c-2.19-2.38-5.77-0.9-6.72,1.88c-1.02,2.97,1.49,5.14,3.2,7.34L20.1,49.06c5.17,5.99,10.95,9.54,17.67,7.53 c1.03-0.31,2.29-0.94,3.64-1.77l44.76,57.78c2.41,3.11,7.06,3.44,10.08,0.93l0.69-0.57c3.4-2.83,3.95-8,1.04-11.34L50.58,47.16 C51.96,45.62,52.97,44.16,53.31,43.05L53.31,43.05z M65.98,55.65l7.37-8.94C63.87,23.21,99-8.11,116.03,6.29 C136.72,23.8,105.97,66,84.36,55.57l-8.73,11.09L65.98,55.65L65.98,55.65z" />
+            </svg>
+            <span>Menu</span>
+        </a>
+        <a routerLink="/about" routerLinkActive="text-orange-400" class="inline-flex items-center gap-2">
+            <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="h-6 w-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25h1.5v6h-1.5v-6z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 8.25h.008v.008H12V8.25z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 22.5c5.799 0 10.5-4.701 10.5-10.5S17.799 1.5 12 1.5 1.5 6.201 1.5 12 6.201 22.5 12 22.5z" />
+            </svg>
+            <span>About</span>
+        </a>
     </div>
-    <div class="buttons flex gap-5 hidden md:flex">
+    <div class="buttons hidden md:flex gap-5">
         <ng-container *ngIf="!authService.isLoggedIn">
-            <a routerLink="/login" class="pt-2 pl-3.5 pr-3.5 border-orange-400 border-2 rounded-xl">Login</a>
-            <a routerLink="/login" class="p-2.5 pl-3 pr-3 bg-orange-400 rounded-xl text-black font-bold">Sign Up</a>
+            <a routerLink="/login" class="inline-flex items-center gap-2 pt-2 pl-3.5 pr-3.5 border-orange-400 border-2 rounded-xl">
+                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="h-5 w-5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6A2.25 2.25 0 005.25 5.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M18 12H9m0 0l3-3m-3 3l3 3" />
+                </svg>
+                <span>Login</span>
+            </a>
+            <a routerLink="/login" class="inline-flex items-center gap-2 p-2.5 pl-3 pr-3 bg-orange-400 rounded-xl text-black font-bold">
+                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="h-5 w-5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M18 7.5V6A2.25 2.25 0 0015.75 3.75h-7.5A2.25 2.25 0 006 6v12a2.25 2.25 0 002.25 2.25h7.5A2.25 2.25 0 0018 18v-1.5" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 12h9m0 0l-3-3m3 3l-3 3" />
+                </svg>
+                <span>Sign Up</span>
+            </a>
         </ng-container>
 
         <ng-container *ngIf="authService.isLoggedIn">
             <button (click)="cartService.toggleCart()" class="relative p-2 text-white hover:text-orange-400 transition-colors" aria-label="Open cart">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-8 w-8">
+                    <path d="M2.08416 2.7512C2.22155 2.36044 2.6497 2.15503 3.04047 2.29242L3.34187 2.39838C3.95839 2.61511 4.48203 2.79919 4.89411 3.00139C5.33474 3.21759 5.71259 3.48393 5.99677 3.89979C6.27875 4.31243 6.39517 4.76515 6.4489 5.26153C6.47295 5.48373 6.48564 5.72967 6.49233 6H17.1305C18.8155 6 20.3323 6 20.7762 6.57708C21.2202 7.15417 21.0466 8.02369 20.6995 9.76275L20.1997 12.1875C19.8846 13.7164 19.727 14.4808 19.1753 14.9304C18.6236 15.38 17.8431 15.38 16.2821 15.38H10.9792C8.19028 15.38 6.79583 15.38 5.92943 14.4662C5.06302 13.5523 4.99979 12.5816 4.99979 9.64L4.99979 7.03832C4.99979 6.29837 4.99877 5.80316 4.95761 5.42295C4.91828 5.0596 4.84858 4.87818 4.75832 4.74609C4.67026 4.61723 4.53659 4.4968 4.23336 4.34802C3.91052 4.18961 3.47177 4.03406 2.80416 3.79934L2.54295 3.7075C2.15218 3.57012 1.94678 3.14197 2.08416 2.7512Z" fill="currentColor" />
+                    <path d="M7.5 18C8.32843 18 9 18.6716 9 19.5C9 20.3284 8.32843 21 7.5 21C6.67157 21 6 20.3284 6 19.5C6 18.6716 6.67157 18 7.5 18Z" fill="currentColor" />
+                    <path d="M16.5 18.0001C17.3284 18.0001 18 18.6716 18 19.5001C18 20.3285 17.3284 21.0001 16.5 21.0001C15.6716 21.0001 15 20.3285 15 19.5001C15 18.6716 15.6716 18.0001 16.5 18.0001Z" fill="currentColor" />
                 </svg>
                 <span *ngIf="cartService.items.length > 0" class="absolute -top-1 -right-1 bg-orange-400 text-black text-[10px] font-bold h-5 w-5 flex items-center justify-center rounded-full">
                     {{cartService.items.length}}
                 </span>
             </button>
-            <a routerLink="/dashboard/settings" class="pt-2 pl-3.5 pr-3.5 border-orange-400 border-2 rounded-xl">Profile</a>
+            <a
+                routerLink="/dashboard"
+                class="inline-flex items-center gap-2 px-4 py-2 bg-orange-400 text-black font-bold rounded-xl hover:bg-orange-500 transition-colors"
+            >
+                <svg aria-hidden="true" fill="currentColor" viewBox="0 0 1920 1920" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5">
+                    <path d="M833.935 1063.327c28.913 170.315 64.038 348.198 83.464 384.79 27.557 51.84 92.047 71.944 144 44.387 51.84-27.558 71.717-92.273 44.16-144.113-19.426-36.593-146.937-165.46-271.624-285.064Zm-43.821-196.405c61.553 56.923 370.899 344.81 415.285 428.612 56.696 106.842 15.811 239.887-91.144 296.697-32.64 17.28-67.765 25.411-102.325 25.411-78.72 0-154.955-42.353-194.371-116.555-44.386-83.802-109.102-501.346-121.638-584.245-3.501-23.717 8.245-47.21 29.365-58.277 21.346-11.294 47.096-8.02 64.828 8.357ZM960.045 281.99c529.355 0 960 430.757 960 960 0 77.139-8.922 153.148-26.654 225.882l-10.39 43.144h-524.386v-112.942h434.258c9.487-50.71 14.231-103.115 14.231-156.084 0-467.125-380.047-847.06-847.059-847.06-467.125 0-847.059 379.935-847.059 847.06 0 52.97 4.744 105.374 14.118 156.084h487.454v112.942H36.977l-10.39-43.144C8.966 1395.137.044 1319.128.044 1241.99c0-529.243 430.645-960 960-960Zm542.547 390.686 79.85 79.85-112.716 112.715-79.85-79.85 112.716-112.715Zm-1085.184 0L530.123 785.39l-79.85 79.85L337.56 752.524l79.849-79.85Zm599.063-201.363v159.473H903.529V471.312h112.942Z" fill-rule="evenodd" />
+                </svg>
+                <span>Dashboard</span>
+            </a>
         </ng-container>
     </div>
   
@@ -44,18 +84,60 @@
 
     <div class="mobile-menu flex flex-col w-dvw p-2 mt-3 rounded-b-2xl" *ngIf="isMenuOpen">
         <div class="nav-links flex flex-col align-middle justify-items-center mb-3 text-center">
-            <a (click)="toggleMenu()" routerLink="" routerLinkActive="text-orange-400" [routerLinkActiveOptions]="{exact: true}" class="w-80 h-10 text-3xl" >Home</a>
-            <a (click)="toggleMenu()" routerLink="/menu" routerLinkActive="text-orange-400" class="w-80 h-10 text-3xl">Menu</a>
-            <a (click)="toggleMenu()" routerLink="/about" routerLinkActive="text-orange-400" class="w-80 h-10 text-3xl">About</a>
+            <a (click)="toggleMenu()" routerLink="" routerLinkActive="text-orange-400" [routerLinkActiveOptions]="{exact: true}" class="w-80 h-10 text-3xl inline-flex items-center justify-center gap-2" >
+                <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6">
+                    <path d="M22 12.2039V13.725C22 17.6258 22 19.5763 20.8284 20.7881C19.6569 22 17.7712 22 14 22H10C6.22876 22 4.34315 22 3.17157 20.7881C2 19.5763 2 17.6258 2 13.725V12.2039C2 9.91549 2 8.77128 2.5192 7.82274C3.0384 6.87421 3.98695 6.28551 5.88403 5.10813L7.88403 3.86687C9.88939 2.62229 10.8921 2 12 2C13.1079 2 14.1106 2.62229 16.116 3.86687L18.116 5.10812C20.0131 6.28551 20.9616 6.87421 21.4808 7.82274" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                    <path d="M15 18H9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                </svg>
+                <span>Home</span>
+            </a>
+            <a (click)="toggleMenu()" routerLink="/menu" routerLinkActive="text-orange-400" class="w-80 h-10 text-3xl inline-flex items-center justify-center gap-2">
+                <svg aria-hidden="true" fill="currentColor" viewBox="0 -3.84 122.88 122.88" version="1.1" xmlns="http://www.w3.org/2000/svg" xml:space="preserve" class="h-6 w-6">
+                    <path d="M29.03,100.46l20.79-25.21l9.51,12.13L41,110.69C33.98,119.61,20.99,110.21,29.03,100.46L29.03,100.46z M53.31,43.05 c1.98-6.46,1.07-11.98-6.37-20.18L28.76,1c-2.58-3.03-8.66,1.42-6.12,5.09L37.18,24c2.75,3.34-2.36,7.76-5.2,4.32L16.94,9.8 c-2.8-3.21-8.59,1.03-5.66,4.7c4.24,5.1,10.8,13.43,15.04,18.53c2.94,2.99-1.53,7.42-4.43,3.69L6.96,18.32 c-2.19-2.38-5.77-0.9-6.72,1.88c-1.02,2.97,1.49,5.14,3.2,7.34L20.1,49.06c5.17,5.99,10.95,9.54,17.67,7.53 c1.03-0.31,2.29-0.94,3.64-1.77l44.76,57.78c2.41,3.11,7.06,3.44,10.08,0.93l0.69-0.57c3.4-2.83,3.95-8,1.04-11.34L50.58,47.16 C51.96,45.62,52.97,44.16,53.31,43.05L53.31,43.05z M65.98,55.65l7.37-8.94C63.87,23.21,99-8.11,116.03,6.29 C136.72,23.8,105.97,66,84.36,55.57l-8.73,11.09L65.98,55.65L65.98,55.65z" />
+                </svg>
+                <span>Menu</span>
+            </a>
+            <a (click)="toggleMenu()" routerLink="/about" routerLinkActive="text-orange-400" class="w-80 h-10 text-3xl inline-flex items-center justify-center gap-2">
+                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="h-6 w-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25h1.5v6h-1.5v-6z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 8.25h.008v.008H12V8.25z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 22.5c5.799 0 10.5-4.701 10.5-10.5S17.799 1.5 12 1.5 1.5 6.201 1.5 12 6.201 22.5 12 22.5z" />
+                </svg>
+                <span>About</span>
+            </a>
         </div>
 
         <div class="buttons flex gap-5 flex-col text-center" *ngIf="!authService.isLoggedIn">
-            <a (click)="toggleMenu()" routerLink="/login" class="p-3 border-orange-400 border-2 rounded-xl text-2xl">Login</a>
-            <a (click)="toggleMenu()" routerLink="/login" class="p-3 text-2xl bg-orange-400 rounded-xl">Sign Up</a>
+            <a (click)="toggleMenu()" routerLink="/login" class="p-3 border-orange-400 border-2 rounded-xl text-2xl inline-flex items-center justify-center gap-2">
+                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="h-6 w-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6A2.25 2.25 0 005.25 5.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M18 12H9m0 0l3-3m-3 3l3 3" />
+                </svg>
+                <span>Login</span>
+            </a>
+            <a (click)="toggleMenu()" routerLink="/login" class="p-3 text-2xl bg-orange-400 rounded-xl text-black font-bold inline-flex items-center justify-center gap-2">
+                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="h-6 w-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M18 7.5V6A2.25 2.25 0 0015.75 3.75h-7.5A2.25 2.25 0 006 6v12a2.25 2.25 0 002.25 2.25h7.5A2.25 2.25 0 0018 18v-1.5" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 12h9m0 0l-3-3m3 3l-3 3" />
+                </svg>
+                <span>Sign Up</span>
+            </a>
         </div>
         <div class="buttons flex gap-5 flex-col text-center" *ngIf="authService.isLoggedIn">
-            <button (click)="cartService.toggleCart(); toggleMenu()" class="relative p-3 border-white/10 border rounded-xl text-2xl">Cart</button>
-            <a (click)="toggleMenu()" routerLink="/dashboard/settings" class="p-3 border-orange-400 border-2 rounded-xl text-2xl">Profile</a>
+            <a (click)="toggleMenu()" routerLink="/dashboard" class="p-3 bg-orange-400 rounded-xl text-black font-bold text-2xl inline-flex items-center justify-center gap-2">
+                <svg aria-hidden="true" fill="currentColor" viewBox="0 0 1920 1920" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6">
+                    <path d="M833.935 1063.327c28.913 170.315 64.038 348.198 83.464 384.79 27.557 51.84 92.047 71.944 144 44.387 51.84-27.558 71.717-92.273 44.16-144.113-19.426-36.593-146.937-165.46-271.624-285.064Zm-43.821-196.405c61.553 56.923 370.899 344.81 415.285 428.612 56.696 106.842 15.811 239.887-91.144 296.697-32.64 17.28-67.765 25.411-102.325 25.411-78.72 0-154.955-42.353-194.371-116.555-44.386-83.802-109.102-501.346-121.638-584.245-3.501-23.717 8.245-47.21 29.365-58.277 21.346-11.294 47.096-8.02 64.828 8.357ZM960.045 281.99c529.355 0 960 430.757 960 960 0 77.139-8.922 153.148-26.654 225.882l-10.39 43.144h-524.386v-112.942h434.258c9.487-50.71 14.231-103.115 14.231-156.084 0-467.125-380.047-847.06-847.059-847.06-467.125 0-847.059 379.935-847.059 847.06 0 52.97 4.744 105.374 14.118 156.084h487.454v112.942H36.977l-10.39-43.144C8.966 1395.137.044 1319.128.044 1241.99c0-529.243 430.645-960 960-960Zm542.547 390.686 79.85 79.85-112.716 112.715-79.85-79.85 112.716-112.715Zm-1085.184 0L530.123 785.39l-79.85 79.85L337.56 752.524l79.849-79.85Zm599.063-201.363v159.473H903.529V471.312h112.942Z" fill-rule="evenodd" />
+                </svg>
+                <span>Dashboard</span>
+            </a>
+            <button (click)="cartService.toggleCart(); toggleMenu()" class="relative p-3 border-white/10 border rounded-xl text-2xl inline-flex items-center justify-center gap-2">
+                <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6">
+                    <path d="M2.08416 2.7512C2.22155 2.36044 2.6497 2.15503 3.04047 2.29242L3.34187 2.39838C3.95839 2.61511 4.48203 2.79919 4.89411 3.00139C5.33474 3.21759 5.71259 3.48393 5.99677 3.89979C6.27875 4.31243 6.39517 4.76515 6.4489 5.26153C6.47295 5.48373 6.48564 5.72967 6.49233 6H17.1305C18.8155 6 20.3323 6 20.7762 6.57708C21.2202 7.15417 21.0466 8.02369 20.6995 9.76275L20.1997 12.1875C19.8846 13.7164 19.727 14.4808 19.1753 14.9304C18.6236 15.38 17.8431 15.38 16.2821 15.38H10.9792C8.19028 15.38 6.79583 15.38 5.92943 14.4662C5.06302 13.5523 4.99979 12.5816 4.99979 9.64L4.99979 7.03832C4.99979 6.29837 4.99877 5.80316 4.95761 5.42295C4.91828 5.0596 4.84858 4.87818 4.75832 4.74609C4.67026 4.61723 4.53659 4.4968 4.23336 4.34802C3.91052 4.18961 3.47177 4.03406 2.80416 3.79934L2.54295 3.7075C2.15218 3.57012 1.94678 3.14197 2.08416 2.7512Z" fill="currentColor" />
+                    <path d="M7.5 18C8.32843 18 9 18.6716 9 19.5C9 20.3284 8.32843 21 7.5 21C6.67157 21 6 20.3284 6 19.5C6 18.6716 6.67157 18 7.5 18Z" fill="currentColor" />
+                    <path d="M16.5 18.0001C17.3284 18.0001 18 18.6716 18 19.5001C18 20.3285 17.3284 21.0001 16.5 21.0001C15.6716 21.0001 15 20.3285 15 19.5001C15 18.6716 15.6716 18.0001 16.5 18.0001Z" fill="currentColor" />
+                </svg>
+                <span>Cart</span>
+            </button>
         </div>
     </div>
 </nav>

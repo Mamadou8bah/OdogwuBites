@@ -34,11 +34,18 @@ export class Orders implements OnInit {
   fetchOrders(): void {
     this.loading = true;
     const user = this.authService.currentUser;
-    if (!user) return;
+    if (!user) {
+      this.loading = false;
+      return;
+    }
 
-    const request = user.role === 'admin' 
-      ? this.orderService.getAllOrders() 
-      : this.orderService.getOrdersByUserId(user._id);
+    const role = (user.role ?? '').toString().toLowerCase();
+
+    const request = role === 'admin'
+      ? this.orderService.getAllOrders()
+      : role === 'staff'
+        ? this.orderService.getMyAssignedOrders()
+        : this.orderService.getOrdersByUserId(user._id);
 
     request.subscribe({
       next: (data: any[]) => {
@@ -152,7 +159,8 @@ export class Orders implements OnInit {
   }
 
   restaurantLabel(order: Order): string {
-    const fromItem = order.items?.[0]?.category ?? order.items?.[0]?.name;
+    const first = order.items?.[0];
+    const fromItem = first?.category ?? first?.name ?? (first as any)?.title;
     if (typeof fromItem === 'string' && fromItem.trim()) return fromItem;
     if (order.orderSource) return this.titleCase(order.orderSource.replace(/_/g, ' '));
     return 'Odogwu Bites';
@@ -199,33 +207,6 @@ export class Orders implements OnInit {
     return 'border-white/10 bg-[#292927] text-gray-300';
   }
 
-  exportVisibleToCsv(): void {
-    const rows = this.visibleOrders;
-    const headers = ['OrderNo', 'Restaurant', 'DeliveryName', 'Date', 'Time', 'Location', 'Status'];
-    const lines = [
-      headers.join(','),
-      ...rows.map((o) =>
-        [
-          this.csvCell(String(o.orderId ?? '')),
-          this.csvCell(this.restaurantLabel(o)),
-          this.csvCell(this.deliveryName(o)),
-          this.csvCell(this.dateLabel(o)),
-          this.csvCell(this.timeLabel(o)),
-          this.csvCell(this.locationLabel(o)),
-          this.csvCell(this.statusLabel(o)),
-        ].join(','),
-      ),
-    ].join('\n');
-
-    const blob = new Blob([lines], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'orders.csv';
-    a.click();
-    URL.revokeObjectURL(url);
-  }
-
   trackByOrderId(_: number, item: Order): string {
     return item.orderId;
   }
@@ -252,7 +233,7 @@ export class Orders implements OnInit {
     if (!this.canMarkCompleted(order)) return;
     this.orderService.deliverOrder(String(order.orderId)).subscribe({
       next: () => {
-        order.status = 'delivered';
+        order.status = 'Delivered';
         this.closeActions();
       },
       error: (err) => console.error(err)
@@ -263,7 +244,7 @@ export class Orders implements OnInit {
     if (!this.canCancel(order)) return;
     this.orderService.cancelOrder(String(order.orderId)).subscribe({
       next: () => {
-        order.status = 'canceled';
+        order.status = 'Cancelled';
         this.closeActions();
       },
       error: (err) => console.error(err)
@@ -271,15 +252,10 @@ export class Orders implements OnInit {
   }
 
   private getOrderTime(order: Order): number {
-    const raw = order.orderDate ?? order.deliveryDate;
+    const raw = order.orderDate ?? order.deliveryDate ?? order.createdAt;
     if (!raw) return 0;
     const t = new Date(raw).getTime();
     return Number.isFinite(t) ? t : 0;
-  }
-
-  private csvCell(value: string): string {
-    const escaped = value.replace(/"/g, '""');
-    return `"${escaped}"`;
   }
 
   private titleCase(value: string): string {
@@ -299,6 +275,7 @@ type Order = {
   clientName?: string;
   orderDate?: string;
   deliveryDate?: string;
+  createdAt?: string;
   status?: string;
   orderSource?: string;
   items?: Array<{ name?: string; category?: string }>;

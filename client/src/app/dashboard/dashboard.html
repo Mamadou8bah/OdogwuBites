@@ -19,8 +19,8 @@
     </div>
 
     <nav class="flex-grow" aria-label="Main Navigation">
-      <ul class="space-y-2">
-        <li>
+      <ul class="space-y-2" >
+        <li *ngIf="user.role=='admin'">
            <a (click)="closeSidebar()" routerLink="/dashboard" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active-link bg-orange-500/10 text-orange-400" 
              class="flex items-center gap-3 p-3 text-gray-400 rounded-xl transition-all hover:bg-white/5 hover:text-orange-400 focus-visible:ring-2 focus-visible:ring-orange-500 outline-none group">
             <div class="w-8 h-8 flex-shrink-0">
@@ -47,7 +47,7 @@
           </a>
         </li>
 
-        <li>
+        <li *ngIf="user.role=='admin'">
            <a (click)="closeSidebar()" routerLink="products" routerLinkActive="active-link bg-orange-500/10 text-orange-400" 
              class="flex items-center gap-3 p-3 text-gray-400 rounded-xl transition-all hover:bg-white/5 hover:text-orange-400 focus-visible:ring-2 focus-visible:ring-orange-500 outline-none group">
             <div class="w-8 h-8 flex-shrink-0">
@@ -60,7 +60,7 @@
           </a>
         </li>
 
-        <li>
+        <li *ngIf="user.role=='admin'">
            <a (click)="closeSidebar()" routerLink="customers" routerLinkActive="active-link bg-orange-500/10 text-orange-400" 
              class="flex items-center gap-3 p-3 text-gray-400 rounded-xl transition-all hover:bg-white/5 hover:text-orange-400 focus-visible:ring-2 focus-visible:ring-orange-500 outline-none group">
             <div class="w-8 h-8 flex-shrink-0">
@@ -72,7 +72,7 @@
           </a>
         </li>
 
-        <li>
+        <li *ngIf="user.role=='admin'">
            <a (click)="closeSidebar()" routerLink="delivery-men" routerLinkActive="active-link bg-orange-500/10 text-orange-400" 
              class="flex items-center gap-3 p-3 text-gray-400 rounded-xl transition-all hover:bg-white/5 hover:text-orange-400 focus-visible:ring-2 focus-visible:ring-orange-500 outline-none group">
             <div class="w-8 h-8 flex-shrink-0">
@@ -145,10 +145,7 @@
       </div>
 
       <div class="flex w-full flex-wrap items-center justify-between gap-3 md:w-auto md:flex-nowrap md:justify-end md:gap-4">
-        <p class="text-base font-semibold text-gray-100 sm:text-lg">
-          Hello, <span class="text-orange-400">Admin</span>
-        </p>
-
+     
         <button
           (click)="cartService.toggleCart()"
           class="relative inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-orange-400 bg-orange-400 text-gray-300 transition-colors hover:text-orange-400 focus-visible:ring-2 focus-visible:ring-orange-500 outline-none"

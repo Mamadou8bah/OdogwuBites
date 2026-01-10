@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MenuPageService } from '../service/menu-page-service';
+import { finalize } from 'rxjs/operators';
 
 @Component({
   selector: 'app-product-details',
@@ -18,6 +19,10 @@ export class ProductDetails implements OnInit {
   selectedFileName: string = '';
   selectedFile: File | null = null;
 
+  isLoading = false;
+  loadError: string | null = null;
+  isSaving = false;
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -31,15 +36,30 @@ export class ProductDetails implements OnInit {
   }
 
   fetchMenuItem(id: string): void {
-    this.menuService.getMenuItemById(id).subscribe({
-      next: (data) => {
-        this.menuItem = data;
-        if (!this.menuItem) {
-          this.router.navigate(['/dashboard/products']);
-        }
-      },
-      error: () => this.router.navigate(['/dashboard/products'])
-    });
+    if (!id) {
+      this.menuItem = null;
+      this.loadError = 'Missing product id.';
+      return;
+    }
+
+    this.isLoading = true;
+    this.loadError = null;
+
+    this.menuService
+      .getMenuItemById(id)
+      .pipe(finalize(() => (this.isLoading = false)))
+      .subscribe({
+        next: (data) => {
+          this.menuItem = data;
+          if (!this.menuItem) {
+            this.loadError = 'Product not found.';
+          }
+        },
+        error: () => {
+          this.menuItem = null;
+          this.loadError = 'Failed to load product. Please try again.';
+        },
+      });
   }
 
   close(): void {
@@ -76,7 +96,11 @@ export class ProductDetails implements OnInit {
   }
 
   saveChanges(): void {
-    if (this.menuItem) {
+    if (!this.menuItem || this.isSaving) {
+      return;
+    }
+
+    this.isSaving = true;
       const formData = new FormData();
       formData.append('title', this.editForm.title);
       formData.append('description', this.editForm.description);
@@ -87,24 +111,35 @@ export class ProductDetails implements OnInit {
         formData.append('image', this.selectedFile);
       }
 
-      this.menuService.updateMenuItem(this.menuItem._id, formData).subscribe({
-        next: (data) => {
-          this.menuItem = data.menuItem || data;
-          this.isEditing = false;
-          this.selectedFileName = '';
-        },
-        error: (err) => alert(err.error?.message || 'Update failed')
-      });
-    }
+      this.menuService
+        .updateMenuItem(this.menuItem._id, formData)
+        .pipe(finalize(() => (this.isSaving = false)))
+        .subscribe({
+          next: (data) => {
+            this.menuItem = data.menuItem || data;
+            this.isEditing = false;
+            this.selectedFileName = '';
+          },
+          error: (err) => alert(err.error?.message || 'Update failed'),
+        });
   }
 
   deleteMenuItem(): void {
-    if (confirm('Are you sure you want to delete this menu item?')) {
-      this.menuService.deleteMenuItem(this.menuItem._id).subscribe({
-        next: () => this.router.navigate(['/dashboard/products']),
-        error: (err) => alert(err.error?.message || 'Delete failed')
-      });
+    if (!this.menuItem || this.isSaving) {
+      return;
     }
+    if (!confirm('Are you sure you want to delete this menu item?')) {
+      return;
+    }
+
+    this.isSaving = true;
+    this.menuService
+      .deleteMenuItem(this.menuItem._id)
+      .pipe(finalize(() => (this.isSaving = false)))
+      .subscribe({
+        next: () => this.router.navigate(['/dashboard/products']),
+        error: (err) => alert(err.error?.message || 'Delete failed'),
+      });
   }
 
   getDiscountedPrice(item: any): number {
