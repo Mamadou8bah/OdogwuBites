@@ -32,4 +32,8 @@ export class PaymentService {
   getUserPayments(userId: string): Observable<any> {
     return this.http.get(`${this.apiUrl}/user-payments/${userId}`, { headers: this.getHeaders() });
   }
+
+  confirmPayment(paymentId: string): Observable<any> {
+    return this.http.patch(`${this.apiUrl}/confirm/${paymentId}`, {}, { headers: this.getHeaders() });
+  }
 }

@@ -165,7 +165,7 @@ const verifyDeposit = async (req, res) => {
 
 const getAllPayments=async(req,res)=>{
     try{
-        const payments=await Payment.find();
+        const payments=await Payment.find().populate('userId', 'name email phone').sort({ createdAt: -1 });
         res.status(200).json(payments);
     }catch(error){
         res.status(400).json({message:error.message})
@@ -175,11 +175,46 @@ const getAllPayments=async(req,res)=>{
 const getUserPayments=async(req,res)=>{
     try{
         const userId=req.params.userId;
-        const payments=await Payment.find({userId});
+        const payments=await Payment.find({userId}).sort({ createdAt: -1 });
         res.status(200).json(payments);
     }catch(error){
         res.status(400).json({message:error.message})
     }
 }
 
-module.exports = { deposit, verifyDeposit, getAllPayments, getUserPayments };
+const confirmPayment = async (req, res) => {
+    try {
+        const { paymentId } = req.params;
+        const payment = await Payment.findById(paymentId);
+
+        if (!payment) {
+            return res.status(404).json({ message: "Payment not found" });
+        }
+
+        if (payment.paymentStatus === 'Completed' || payment.paymentStatus === 'Paid') {
+            return res.status(400).json({ message: "Payment already confirmed" });
+        }
+
+        const user = await User.findById(payment.userId);
+        if (!user) {
+            return res.status(404).json({ message: "User associated with payment not found" });
+        }
+
+        payment.paymentStatus = 'Completed';
+        await payment.save();
+
+        user.balance = (user.balance || 0) + payment.amount;
+        await user.save();
+
+        res.status(200).json({
+            message: "Payment confirmed and user balance updated",
+            balance: user.balance,
+            payment
+        });
+    } catch (error) {
+        console.error("Confirm Payment Error:", error);
+        res.status(500).json({ message: "Error confirming payment" });
+    }
+};
+
+module.exports = { deposit, verifyDeposit, getAllPayments, getUserPayments, confirmPayment };

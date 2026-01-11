@@ -56,6 +56,21 @@ export class Payments implements OnInit {
     }
   }
 
+  confirmPayment(paymentId: string): void {
+    if (confirm('Are you sure you want to confirm this payment? This will update the user\'s balance.')) {
+      this.paymentService.confirmPayment(paymentId).subscribe({
+        next: (res) => {
+          alert('Payment confirmed and user balance updated!');
+          this.loadPayments();
+        },
+        error: (err) => {
+          console.error('Error confirming payment:', err);
+          alert(err.error?.message || 'Error confirming payment');
+        }
+      });
+    }
+  }
+
   getStatusClass(status: string): string {
     switch (status.toLowerCase()) {
       case 'paid':
