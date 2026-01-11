@@ -1,0 +1,16 @@
+/* Mobile Safari needs -webkit-backdrop-filter for blur.
+	 Also: backdrop blur won't show on a fully transparent background,
+	 so we provide a translucent fill + a fallback for unsupported browsers. */
+
+.header-blur {
+	background-color: rgba(0, 0, 0, 0.25);
+	-webkit-backdrop-filter: blur(24px);
+	backdrop-filter: blur(24px);
+}
+
+@supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+	.header-blur {
+		background-color: rgba(0, 0, 0, 0.75);
+	}
+}
+

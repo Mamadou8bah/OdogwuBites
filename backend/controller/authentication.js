@@ -9,6 +9,16 @@ dotenv.config()
 
 const {sendEmailVerificationEmail,sendPasswordResetEmail}=require('../utils/emailSender')
 
+function getPublicBackendBaseUrl() {
+  // Render exposes the public URL via RENDER_EXTERNAL_URL.
+  const raw =
+    process.env.PUBLIC_BACKEND_URL ||
+    process.env.BACKEND_PUBLIC_URL ||
+    process.env.RENDER_EXTERNAL_URL ||
+    `http://localhost:${process.env.PORT || 3000}`;
+  return raw.replace(/\/$/, '');
+}
+
 
 const signingKey = process.env.JWT_SECRET || 'dev_jwt_secret_change_me'
 
@@ -31,7 +41,7 @@ const register = async (req, res) => {
 
     const verificationCode = await createToken(newUser._id);
     await newUser.save();
-    const link = `http://localhost:3000/auth/verify-email?code=${verificationCode}&email=${newUser.email}`;
+    const link = `${getPublicBackendBaseUrl()}/auth/verify-email?code=${verificationCode}&email=${newUser.email}`;
     await sendEmailVerificationEmail(newUser.email,newUser.name,link)
 
     const payload = {
@@ -111,7 +121,7 @@ const verify= async (req,res)=>{
         user.verificationCode = null;
         await createCart(user._id);
         await user.save()
-        res.status(200).json('email verified please login')
+      return res.redirect(302, 'https://odogwu-bites.vercel.app/login');
     }else{
         return res.status(400).json('Invalid link')
     }
@@ -130,7 +140,7 @@ const requestPasswordReset=async(req,res)=>{
       return res.status(400).json('No User with this email')
     }
     const Token=await createResetToken(user._id);
-    const link = `http://localhost:3000/auth/reset-password?token=${Token}&email=${user.email}`;
+    const link = `${getPublicBackendBaseUrl()}/auth/reset-password?token=${Token}&email=${user.email}`;
     await sendPasswordResetEmail(user.email,user.name,link)
 
     res.status(200).json('Chech your email')
