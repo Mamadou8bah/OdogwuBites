@@ -14,7 +14,7 @@ const signingKey = process.env.JWT_SECRET || 'dev_jwt_secret_change_me'
 
 const register = async (req, res) => {
   try {
-    const existingEmail = req.body.email;
+    const existingEmail = req.body.email.trim().toLowerCase();
 
     const existingUser = await User.findOne({ email: existingEmail })
     if (existingUser) {
@@ -52,7 +52,8 @@ const register = async (req, res) => {
 
 const login = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    let { email, password } = req.body;
+    email= email.trim().toLowerCase();
 
     console.log(req.body)
     const user = await User.findOne({ email });

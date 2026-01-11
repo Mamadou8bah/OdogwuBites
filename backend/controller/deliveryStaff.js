@@ -3,6 +3,19 @@ const User = require('../model/Users');
 
 const PER_ASSIGNED_ORDER_EARNING = 50;
 
+const normalizeEmail = (value) => {
+    if (typeof value !== 'string') return '';
+    return value.trim().toLowerCase();
+};
+
+const escapeRegExp = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+const findUserByEmail = async (email) => {
+    const normalized = normalizeEmail(email);
+    if (!normalized) return null;
+    return User.findOne({ email: new RegExp(`^${escapeRegExp(normalized)}$`, 'i') });
+};
+
 const syncStaffEarningsToUserBalance = async (staffDoc) => {
     if (!staffDoc) return { assignedOrdersCount: 0, totalEarnings: 0, newlyCredited: 0 };
 
@@ -32,7 +45,7 @@ const createDeliveryStaff = async (req, res) => {
     try {
         const { email } = req.body;
         
-        const user = await User.findOne({ email });
+        const user = await findUserByEmail(email);
         if (!user) {
             return res.status(404).json({ message: 'User with this email not found' });
         }
