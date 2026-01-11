@@ -133,7 +133,7 @@ export class LoginPage {
       address: this.form.value.address,
       phone: this.form.value.phone
     };
-
+    console.log(userData);
     this.authService.register(userData).subscribe({
       next: (res: any) => {
         this.successMessage = 'Registration successful! Please check your email to verify your account.';

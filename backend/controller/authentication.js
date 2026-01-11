@@ -79,7 +79,7 @@ const register = async (req, res) => {
     const message = error?.message || 'Registration failed';
     const payload = { message };
     if (process.env.NODE_ENV !== 'production') {
-      payload.details = error;
+      payload.details = error?.details || { code: error?.code };
     }
     res.status(400).json(payload);
   }
@@ -170,7 +170,13 @@ const requestPasswordReset=async(req,res)=>{
 
     res.status(200).json('Chech your email')
   }catch(error){
-    res.status(400).json(error);
+    const payload = {
+      message: error?.message || 'Password reset request failed',
+    };
+    if (process.env.NODE_ENV !== 'production') {
+      payload.details = error?.details || { code: error?.code };
+    }
+    res.status(400).json(payload);
   }
 }
 

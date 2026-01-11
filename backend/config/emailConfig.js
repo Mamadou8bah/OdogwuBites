@@ -5,22 +5,46 @@ require('dotenv').config();
 
 const enableDebug = process.env.SMTP_DEBUG === 'true';
 
+const smtpHost = process.env.SMTP_HOST || 'smtp.gmail.com';
+const smtpPort = Number.parseInt(process.env.SMTP_PORT || '587', 10);
+// If SMTP_SECURE isn't explicitly set, default based on port.
+const smtpSecure =
+  process.env.SMTP_SECURE != null
+    ? (process.env.SMTP_SECURE || '').toLowerCase() === 'true'
+    : smtpPort === 465;
+
+// Support both the new SMTP_* names and the legacy USER_* names.
+const smtpUser = process.env.SMTP_USER || process.env.USER_NAME;
+const smtpPass = process.env.SMTP_PASS || process.env.USER_PASSWORD;
+
+const smtpConfigSummary = {
+  host: smtpHost,
+  port: smtpPort,
+  secure: smtpSecure,
+};
+
 const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST || 'smtp.gmail.com',
-  port: Number.parseInt(process.env.SMTP_PORT || '465', 10),
-  secure: (process.env.SMTP_SECURE || 'true') === 'true',
+  host: smtpHost,
+  port: smtpPort,
+  secure: smtpSecure,
   auth: {
-    user: process.env.USER_NAME,
-    pass: process.env.USER_PASSWORD,
+    user: smtpUser,
+    pass: smtpPass,
+  },
+  // On port 587, ensure STARTTLS upgrade is required.
+  requireTLS: !smtpSecure,
+  tls: {
+    servername: smtpHost,
+    minVersion: 'TLSv1.2',
   },
   // Reduce latency for subsequent sends by keeping connections open.
   pool: true,
   maxConnections: Number.parseInt(process.env.SMTP_MAX_CONNECTIONS || '3', 10),
   maxMessages: Number.parseInt(process.env.SMTP_MAX_MESSAGES || '50', 10),
   // Prevent requests hanging forever in production.
-  connectionTimeout: Number.parseInt(process.env.SMTP_CONNECTION_TIMEOUT_MS || '10000', 10),
-  greetingTimeout: Number.parseInt(process.env.SMTP_GREETING_TIMEOUT_MS || '10000', 10),
-  socketTimeout: Number.parseInt(process.env.SMTP_SOCKET_TIMEOUT_MS || '15000', 10),
+  connectionTimeout: Number.parseInt(process.env.SMTP_CONNECTION_TIMEOUT_MS || '20000', 10),
+  greetingTimeout: Number.parseInt(process.env.SMTP_GREETING_TIMEOUT_MS || '20000', 10),
+  socketTimeout: Number.parseInt(process.env.SMTP_SOCKET_TIMEOUT_MS || '60000', 10),
   logger: enableDebug,
   debug: enableDebug,
 });
@@ -54,3 +78,5 @@ try {
 }
 
 module.exports = { transporter };
+
+module.exports.smtpConfigSummary = smtpConfigSummary;
