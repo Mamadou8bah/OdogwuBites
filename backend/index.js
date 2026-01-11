@@ -1,21 +1,20 @@
-const express=require('express')
+require('dotenv').config();
+const express = require('express');
 const cors = require('cors');
-const dotenv = require('dotenv');
-const {connectToDatabase}=require('./config/dbconfig')
+const { connectToDatabase } = require('./config/dbconfig');
 const { seedCategories } = require('./utils/seedCategories');
 
-const AuthRouter=require('./route/authentication')
-const MenuRouter=require('./route/menu')
-const CategoryRouter=require('./route/category')
-const CartRouter=require('./route/cart')
-const OrderRouter=require('./route/order')
-const PaymentRouter=require('./route/payment')
-const DeliveryStaffRouter=require('./route/deliveryStaff')
-const DashboardRouter=require('./route/dashboard')
-const UsersRouter=require('./route/users')
-const app=express()
+const AuthRouter = require('./route/authentication');
+const MenuRouter = require('./route/menu');
+const CategoryRouter = require('./route/category');
+const CartRouter = require('./route/cart');
+const OrderRouter = require('./route/order');
+const PaymentRouter = require('./route/payment');
+const DeliveryStaffRouter = require('./route/deliveryStaff');
+const DashboardRouter = require('./route/dashboard');
+const UsersRouter = require('./route/users');
 
-dotenv.config();
+const app = express();
 
 // Needed behind reverse proxies (Render, Nginx, etc.) so req.protocol reflects X-Forwarded-Proto.
 app.set('trust proxy', 1);

@@ -1,35 +1,44 @@
 const fs = require("fs");
 const path = require("path");
 const handlebars = require("handlebars");
-const { Resend } = require("resend");
+const { transporter } = require("../config/emailConfig");
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-const FROM = process.env.RESEND_FROM || "onboarding@resend.dev";
-let logoSrc = "";
+const FROM = process.env.SMTP_FROM || process.env.USER_NAME || "onboarding@resend.dev";
 const logoPath = path.join(__dirname, "logo.png");
-if (fs.existsSync(logoPath)) {
-  const base64 = fs.readFileSync(logoPath, "base64");
-  logoSrc = `data:image/png;base64,${base64}`;
-}
 
 function renderTemplate(name, context) {
   const filePath = path.join(__dirname, `../emails/${name}.html`);
   const source = fs.readFileSync(filePath, "utf8");
   const template = handlebars.compile(source);
-  return template({ ...context, logoSrc });
+  // We use cid:logo so the image is embedded in the email
+  return template({ ...context, logoSrc: "cid:logo" });
 }
 
 async function sendEmail({ to, subject, html }) {
-  if (!process.env.RESEND_API_KEY) {
-    throw new Error("RESEND_API_KEY not set");
-  }
-
-  await resend.emails.send({
+  const mailOptions = {
     from: FROM,
     to,
     subject,
     html,
-  });
+    attachments: []
+  };
+
+  if (fs.existsSync(logoPath)) {
+    mailOptions.attachments.push({
+      filename: 'logo.png',
+      path: logoPath,
+      cid: 'logo' // matches logoSrc in template
+    });
+  }
+
+  try {
+    const info = await transporter.sendMail(mailOptions);
+    console.log("Email sent successfully:", info.messageId);
+    return info;
+  } catch (error) {
+    console.error("Email delivery error:", error);
+    throw new Error(error.message || "Email delivery failed");
+  }
 }
 
 async function sendEmailVerificationEmail(to, name, link) {

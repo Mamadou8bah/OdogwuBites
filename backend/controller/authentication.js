@@ -1,11 +1,10 @@
+require('dotenv').config();
 const User = require('../model/Users')
 const bcrypt = require('bcryptjs')
-const dotenv = require('dotenv')
 const jwt = require('jsonwebtoken')
 const {createToken,findTokenByToken}=require('../controller/verificationToken')
 const {createResetToken,findResetTokenByToken}=require('../controller/resetToken')
 const {createCart}=require('../controller/cart')
-dotenv.config()
 
 const {sendEmailVerificationEmail,sendPasswordResetEmail}=require('../utils/emailSender')
 
@@ -19,10 +18,10 @@ function getPublicBackendBaseUrl(req) {
     process.env.APP_PUBLIC_URL;
 
   // Fall back to the current request host (works well on Render/most hosts).
-  if (!raw && req?.get) {
+  if (!raw && req && typeof req.get === 'function') {
     const host = req.get('host');
     if (host) {
-      const proto = req.protocol || 'http';
+      const proto = req.get('x-forwarded-proto') || req.protocol || 'http';
       raw = `${proto}://${host}`;
     }
   }
@@ -181,7 +180,7 @@ const verify= async (req,res)=>{
         user.verificationCode = null;
         await createCart(user._id);
         await user.save()
-      return res.redirect(302, 'https://odogwu-bites.vercel.app/login');
+      return res.redirect(302, process.env.PUBLIC_FRONTEND_URL || 'https://odogwu-bites.vercel.app/login');
     }else{
         return res.status(400).json('Invalid link')
     }
@@ -200,10 +199,10 @@ const requestPasswordReset=async(req,res)=>{
       return res.status(400).json('No User with this email')
     }
     const Token=await createResetToken(user._id);
-    const link = `${getPublicBackendBaseUrl()}/auth/reset-password?token=${Token}&email=${user.email}`;
+    const link = `${getPublicBackendBaseUrl(req)}/auth/reset-password?token=${Token}&email=${user.email}`;
     await sendPasswordResetEmail(user.email,user.name,link)
 
-    res.status(200).json('Chech your email')
+    res.status(200).json('Check your email')
   }catch(error){
     const payload = {
       message: error?.message || 'Password reset request failed',
