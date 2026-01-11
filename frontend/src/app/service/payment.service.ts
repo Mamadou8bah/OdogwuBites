@@ -24,4 +24,12 @@ export class PaymentService {
   getBalance(): Observable<any> {
     return this.http.get(`https://odogwubites.onrender.com/auth/profile`, { headers: this.getHeaders() });
   }
+
+  getAllPayments(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/all-payments`, { headers: this.getHeaders() });
+  }
+
+  getUserPayments(userId: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/user-payments/${userId}`, { headers: this.getHeaders() });
+  }
 }

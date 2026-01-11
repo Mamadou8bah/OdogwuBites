@@ -78,6 +78,7 @@ export class Cart {
       this.router.navigate(['/login']);
       return;
     }
+    this.cartService.closeCart();
     this.router.navigate(['/dashboard/checkout']);
   }
 }

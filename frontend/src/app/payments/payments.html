@@ -1,2 +1,46 @@
-<p>payments works!</p>
+<div class="payments-container">
+  <div class="header">
+    <h1>Payment History</h1>
+    <p *ngIf="user?.role === 'admin'">Viewing all system payments</p>
+    <p *ngIf="user?.role !== 'admin'">Viewing your transaction history</p>
+  </div>
+
+  <div *ngIf="isLoading" class="loading-state">
+    <div class="spinner"></div>
+    <p>Loading transactions...</p>
+  </div>
+
+  <div *ngIf="!isLoading && payments.length === 0" class="empty-state">
+    <p>No payments found.</p>
+  </div>
+
+  <div *ngIf="!isLoading && payments.length > 0" class="table-wrapper">
+    <table class="payments-table">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th *ngIf="user?.role === 'admin'">User ID</th>
+          <th>Amount (GMD)</th>
+          <th>Method</th>
+          <th>Status</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let payment of payments">
+          <td>{{ payment.createdAt | date:'medium' }}</td>
+          <td *ngIf="user?.role === 'admin'">{{ payment.userId }}</td>
+          <td class="amount">D {{ payment.amount | number:'1.2-2' }}</td>
+          <td>{{ payment.paymentMethod }}</td>
+          <td>
+            <span [class]="'status-badge ' + getStatusClass(payment.paymentStatus)">
+              {{ payment.paymentStatus }}
+            </span>
+          </td>
+          <td>{{ payment.notes || '-' }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
  

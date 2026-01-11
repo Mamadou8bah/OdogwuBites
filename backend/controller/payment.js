@@ -126,7 +126,7 @@ const getAllPayments=async(req,res)=>{
 const getUserPayments=async(req,res)=>{
     try{
         const userId=req.params.userId;
-        const payments=await Payment.find({userId:mongoose.Types.ObjectId(userId)});
+        const payments=await Payment.find({userId});
         res.status(200).json(payments);
     }catch(error){
         res.status(400).json({message:error.message})
