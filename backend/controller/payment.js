@@ -88,4 +88,23 @@ const verifyDeposit = async (req, res) => {
     }
 };
 
-module.exports = { deposit, verifyDeposit };
+const getAllPayments=async(req,res)=>{
+    try{
+        const payments=await Payment.find();
+        res.status(200).json(payments);
+    }catch(error){
+        res.status(400).json({message:error.message})
+    }
+}
+
+const getUserPayments=async(req,res)=>{
+    try{
+        const userId=req.params.userId;
+        const payments=await Payment.find({userId:mongoose.Types.ObjectId(userId)});
+        res.status(200).json(payments);
+    }catch(error){
+        res.status(400).json({message:error.message})
+    }
+}
+
+module.exports = { deposit, verifyDeposit, getAllPayments, getUserPayments };

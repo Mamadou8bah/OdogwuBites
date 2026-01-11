@@ -49,7 +49,7 @@ export type UserDetailsResponseDto = {
   providedIn: 'root'
 })
 export class UsersService {
-  private apiUrl = 'http://localhost:3000/users';
+  private apiUrl = 'https://odogwubites.onrender.com/users';
 
   constructor(private http: HttpClient) {}
 

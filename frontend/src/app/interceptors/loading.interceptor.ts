@@ -9,7 +9,7 @@ export const loadingInterceptor: HttpInterceptorFn = (req, next) => {
   const loadingService = inject(LoadingService);
 
   // Only track API calls; avoid showing loader for assets/CDN.
-  const isApiRequest = req.url.includes('localhost:3000');
+  const isApiRequest = req.url.includes('odogwubites.onrender.com');
   const skip = req.headers.has('x-skip-loading');
   const skipTimeout = req.headers.has('x-skip-timeout');
 

@@ -83,6 +83,18 @@
             <span class="text-lg font-medium">Delivery Men</span>
           </a>
         </li>
+
+        <li>
+           <a (click)="closeSidebar()" routerLink="payments" routerLinkActive="active-link bg-orange-500/10 text-orange-400" 
+             class="flex items-center gap-3 p-3 text-gray-400 rounded-xl transition-all hover:bg-white/5 hover:text-orange-400 focus-visible:ring-2 focus-visible:ring-orange-500 outline-none group">
+            <div class="w-8 h-8 flex-shrink-0">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" class="w-full h-full">
+                <path d="M3 10H21M7 15H11M5 5H19C20.1046 5 21 5.89543 21 7V17C21 18.1046 20.1046 19 19 19H5C3.89543 19 3 18.1046 3 17V7C3 5.89543 3.89543 5 5 5Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+              </svg>
+            </div>
+            <span class="text-lg font-medium">Payments</span>
+          </a>
+        </li>
       </ul>
     </nav>
 

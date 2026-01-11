@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class DeliveryService {
-  private apiUrl = 'http://localhost:3000/delivery-staff';
+  private apiUrl = 'https://odogwubites.onrender.com/delivery-staff';
 
   constructor(private http: HttpClient) {}
 

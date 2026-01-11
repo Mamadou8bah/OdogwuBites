@@ -11,7 +11,6 @@
     <div class="flex w-full flex-row items-center justify-center gap-7 mb-10 mt-20 flex-wrap">
         <div *ngIf="loadError" class="w-full flex flex-col items-center gap-3 text-center">
             <p class="text-red-300">{{ loadError }}</p>
-            <button type="button" class="px-6 py-2 bg-orange-400 rounded-2xl text-black" (click)="loadData()">Retry</button>
         </div>
 
         <ng-container *ngIf="isLoading; else homepageFeatured">

@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class MenuPageService {
-  private apiUrl = 'http://localhost:3000/menu';
+  private apiUrl = 'https://odogwubites.onrender.com/menu';
 
   constructor(private http: HttpClient) {}
 

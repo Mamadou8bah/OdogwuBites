@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class PaymentService {
-  private apiUrl = 'http://localhost:3000/payment';
+  private apiUrl = 'https://odogwubites.onrender.com/payment';
 
   constructor(private http: HttpClient) {}
 
@@ -22,6 +22,6 @@ export class PaymentService {
   }
 
   getBalance(): Observable<any> {
-    return this.http.get(`http://localhost:3000/auth/profile`, { headers: this.getHeaders() });
+    return this.http.get(`https://odogwubites.onrender.com/auth/profile`, { headers: this.getHeaders() });
   }
 }

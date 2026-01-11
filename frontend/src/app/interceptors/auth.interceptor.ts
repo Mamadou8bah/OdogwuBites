@@ -1,7 +1,7 @@
 import { HttpInterceptorFn } from '@angular/common/http';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
-  const isApiRequest = req.url.includes('localhost:3000');
+  const isApiRequest = req.url.includes('odogwubites.onrender.com');
 
   if (!isApiRequest) {
     return next(req);

@@ -7,7 +7,7 @@ import { Observable, tap } from 'rxjs';
 })
 export class AuthService {
   private _user: any = null;
-  private apiUrl = 'http://localhost:3000/auth';
+  private apiUrl = 'https://odogwubites.onrender.com/auth';
 
   constructor(private http: HttpClient) {
     const savedUser = localStorage.getItem('user');

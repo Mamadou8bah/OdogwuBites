@@ -18,7 +18,7 @@ export type MenuItemLike = {
 export class CartService {
   private _items: CartItem[] = [];
   public isCartOpen: boolean = false;
-  private apiUrl = 'http://localhost:3000/cart';
+  private apiUrl = 'https://odogwubites.onrender.com/cart';
 
   private didAttemptLocalToServerSync = false;
 

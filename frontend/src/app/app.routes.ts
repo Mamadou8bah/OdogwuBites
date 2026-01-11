@@ -19,6 +19,7 @@ import { CheckoutPage } from './checkout-page/checkout-page';
 import { authChildGuard, authGuard } from './guards/auth.guard';
 import { adminGuard } from './guards/role.guard';
 import { guestGuard } from './guards/guest.guard';
+import { Payments } from './payments/payments';
 export const routes: Routes = [
     { 
         path:'',
@@ -97,6 +98,10 @@ export const routes: Routes = [
             {
                 path: 'checkout',
                 component: CheckoutPage
+            },
+            {
+                path:'payments',
+                component:Payments
             }
         ]
     }
