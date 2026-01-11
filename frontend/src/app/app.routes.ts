@@ -20,6 +20,7 @@ import { authChildGuard, authGuard } from './guards/auth.guard';
 import { adminGuard } from './guards/role.guard';
 import { guestGuard } from './guards/guest.guard';
 import { Payments } from './payments/payments';
+import { Wildcard } from './wildcard/wildcard';
 export const routes: Routes = [
     { 
         path:'',
@@ -104,5 +105,9 @@ export const routes: Routes = [
                 component:Payments
             }
         ]
+    },
+    {
+        path:'**',
+        component:Wildcard
     }
 ];
