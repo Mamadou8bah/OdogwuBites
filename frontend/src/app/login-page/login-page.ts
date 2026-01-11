@@ -62,12 +62,25 @@ export class LoginPage {
     } else {
       username?.setValidators([Validators.required]);
       address?.setValidators([Validators.required]);
-      phone?.setValidators([Validators.required]);
+      // Accept digits only (helps both UX and compatibility with older backends that cast phone to Number)
+      phone?.setValidators([
+        Validators.required,
+        Validators.pattern(/^\d{7,15}$/)
+      ]);
     }
 
     username?.updateValueAndValidity({ emitEvent: false });
     address?.updateValueAndValidity({ emitEvent: false });
     phone?.updateValueAndValidity({ emitEvent: false });
+  }
+
+  private extractErrorMessage(err: any, fallback: string): string {
+    const payload = err?.error;
+    if (!payload) return fallback;
+    if (typeof payload === 'string') return payload;
+    if (typeof payload?.message === 'string') return payload.message;
+    if (typeof err?.message === 'string') return err.message;
+    return fallback;
   }
 
   onFileSelected(event: any) {
@@ -101,7 +114,7 @@ export class LoginPage {
         this.loading = false;
       },
       error: (err) => {
-        this.errorMessage = err.error || 'Login failed';
+        this.errorMessage = this.extractErrorMessage(err, 'Login failed');
         this.loading = false;
       }
     });
@@ -129,7 +142,7 @@ export class LoginPage {
         this.loading = false;
       },
       error: (err) => {
-        this.errorMessage = err.error.message || 'Registration failed';
+        this.errorMessage = this.extractErrorMessage(err, 'Registration failed');
         this.loading = false;
       }
     });

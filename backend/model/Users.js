@@ -27,8 +27,9 @@ const userSchema=new mongoose.Schema(
         default: 'customer'
         },
         phone:{
-            type:Number,
-            required:true
+            type:String,
+            required:true,
+            trim:true
         },
         createdAt:{
             type:Date, 

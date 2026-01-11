@@ -24,20 +24,35 @@ const signingKey = process.env.JWT_SECRET || 'dev_jwt_secret_change_me'
 
 const register = async (req, res) => {
   try {
-    const existingEmail = req.body.email.trim().toLowerCase();
+    const body = req.body || {};
+    const name = (body.name || body.username || '').toString().trim();
+    const address = (body.address || '').toString().trim();
+    const phone = (body.phone ?? '').toString().trim();
+    const password = (body.password || '').toString();
+    const existingEmail = (body.email || '').toString().trim().toLowerCase();
+
+    if (!name || !address || !phone || !existingEmail || !password) {
+      return res.status(400).json({
+        message: 'Please provide name, address, phone, email, and password.'
+      });
+    }
 
     const existingUser = await User.findOne({ email: existingEmail })
     if (existingUser) {
-      return res.status(400).json('There is a user with this email, please login');
+      return res.status(400).json({ message: 'There is a user with this email, please login' });
     }
 
-    const userPassword = req.body.password;
     const saltNumber = Number.parseInt(process.env.SALT_ROUNDS || '10', 10);
-    const hashedPassword = await bcrypt.hash(userPassword, saltNumber);
+    const hashedPassword = await bcrypt.hash(password, saltNumber);
 
-    const newUser = new User(req.body);
-    newUser.password = hashedPassword;
-    newUser.role = 'customer';
+    const newUser = new User({
+      name,
+      address,
+      phone,
+      email: existingEmail,
+      password: hashedPassword,
+      role: 'customer'
+    });
 
     const verificationCode = await createToken(newUser._id);
     await newUser.save();
@@ -46,7 +61,12 @@ const register = async (req, res) => {
 
     const payload = {
       message: "User Registered Successfully, please verify your email",
-      User: newUser
+      user: {
+        _id: newUser._id,
+        name: newUser.name,
+        email: newUser.email,
+        role: newUser.role
+      }
     };
 
     if (process.env.NODE_ENV !== 'production') {
@@ -56,7 +76,12 @@ const register = async (req, res) => {
     res.status(201).json(payload);
 
   } catch (error) {
-    res.status(400).json(error);
+    const message = error?.message || 'Registration failed';
+    const payload = { message };
+    if (process.env.NODE_ENV !== 'production') {
+      payload.details = error;
+    }
+    res.status(400).json(payload);
   }
 }
 

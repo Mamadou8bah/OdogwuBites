@@ -17,7 +17,7 @@
         </h2>
         <div class="w-20 h-1.5 bg-orange-400 mb-4 rounded-full shadow-sm"></div>
 
-        <form class="w-full max-w-sm space-y-2" [formGroup]="form" (ngSubmit)="onSubmit()">
+        <form class="w-full max-w-sm space-y-2" [formGroup]="form" (ngSubmit)="onSubmit()" autocomplete="on" method="post">
           <div *ngIf="errorMessage" class="w-full px-5 py-3 bg-white/20 text-red-200 rounded-2xl border border-white/20">
             {{ errorMessage }}
           </div>
@@ -25,19 +25,61 @@
             {{ successMessage }}
           </div>
 
-          <div *ngIf="!isLoginMode" class="transition-opacity duration-500">
-             <input type="text" placeholder="e.g. Ebrima Jallow" class="w-full px-5 py-3.5 bg-white/20 text-white placeholder-gray-300 rounded-2xl focus:outline-none focus:border-2 focus:border-orange-400" formControlName="username">
-          </div>
+           <div *ngIf="!isLoginMode" class="transition-opacity duration-500">
+             <input
+              id="register-name"
+              name="name"
+              autocomplete="name"
+              type="text"
+              placeholder="e.g. Ebrima Jallow"
+              class="w-full px-5 py-3.5 bg-white/20 text-white placeholder-gray-300 rounded-2xl focus:outline-none focus:border-2 focus:border-orange-400"
+              formControlName="username">
+           </div>
 
           <div *ngIf="!isLoginMode" class="transition-opacity duration-500">
-             <input type="text" placeholder="Address" class="w-full px-5 py-3.5 bg-white/20 text-white placeholder-gray-300 rounded-2xl focus:outline-none focus:border-2 focus:border-orange-400" formControlName="address">
+             <input
+               id="register-address"
+               name="address"
+               autocomplete="street-address"
+               type="text"
+               placeholder="Address"
+               class="w-full px-5 py-3.5 bg-white/20 text-white placeholder-gray-300 rounded-2xl focus:outline-none focus:border-2 focus:border-orange-400"
+               formControlName="address">
           </div>
           
-          <input type="email" placeholder="e.g. ebrima@example.gm" class="w-full px-5 py-3.5 bg-white/20 text-white placeholder-gray-300 rounded-2xl focus:outline-none focus:border-2 focus:border-orange-400" formControlName="email">
-          <input type="password" placeholder="Password" class="w-full px-5 py-3.5 bg-white/20 text-white placeholder-gray-300 rounded-2xl focus:outline-none focus:border-2 focus:border-orange-400" formControlName="password">
+          <input
+            id="auth-email"
+            name="email"
+            type="email"
+            inputmode="email"
+            autocapitalize="none"
+            spellcheck="false"
+            [attr.autocomplete]="isLoginMode ? 'username' : 'email'"
+            placeholder="e.g. ebrima@example.gm"
+            class="w-full px-5 py-3.5 bg-white/20 text-white placeholder-gray-300 rounded-2xl focus:outline-none focus:border-2 focus:border-orange-400"
+            formControlName="email">
+          <input
+            id="auth-password"
+            name="password"
+            type="password"
+            [attr.autocomplete]="isLoginMode ? 'current-password' : 'new-password'"
+            placeholder="Password"
+            class="w-full px-5 py-3.5 bg-white/20 text-white placeholder-gray-300 rounded-2xl focus:outline-none focus:border-2 focus:border-orange-400"
+            formControlName="password">
 
           <div *ngIf="!isLoginMode" class="transition-opacity duration-500">
-            <input type="tel" placeholder="Phone" class="w-full px-5 py-3.5 bg-white/20 text-white placeholder-gray-300 rounded-2xl focus:outline-none focus:border-2 focus:border-orange-400" formControlName="phone">
+            <input
+              id="register-phone"
+              name="tel"
+              autocomplete="tel"
+              type="tel"
+              inputmode="tel"
+              pattern="[0-9]*"
+              minlength="7"
+              maxlength="15"
+              placeholder="Phone"
+              class="w-full px-5 py-3.5 bg-white/20 text-white placeholder-gray-300 rounded-2xl focus:outline-none focus:border-2 focus:border-orange-400"
+              formControlName="phone">
           </div>
 
           <button *ngIf="!loading" type="submit" class="w-full sm:w-52 mx-auto bg-orange-400 hover:bg-yellow-500 text-black font-bold py-3.5 rounded-full mt-6 uppercase text-sm tracking-wider shadow-lg flex items-center justify-center">
