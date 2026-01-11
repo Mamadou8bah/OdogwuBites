@@ -3,15 +3,13 @@ const path = require("path");
 const handlebars = require("handlebars");
 const { transporter } = require("../config/emailConfig");
 
-const FROM = process.env.SMTP_FROM || process.env.USER_NAME || "onboarding@resend.dev";
-const logoPath = path.join(__dirname, "logo.png");
+const FROM = process.env.RESEND_FROM || "onboarding@resend.dev";
 
 function renderTemplate(name, context) {
   const filePath = path.join(__dirname, `../emails/${name}.html`);
   const source = fs.readFileSync(filePath, "utf8");
   const template = handlebars.compile(source);
-  // We use cid:logo so the image is embedded in the email
-  return template({ ...context, logoSrc: "cid:logo" });
+  return template(context);
 }
 
 async function sendEmail({ to, subject, html }) {
@@ -20,16 +18,7 @@ async function sendEmail({ to, subject, html }) {
     to,
     subject,
     html,
-    attachments: []
   };
-
-  if (fs.existsSync(logoPath)) {
-    mailOptions.attachments.push({
-      filename: 'logo.png',
-      path: logoPath,
-      cid: 'logo' // matches logoSrc in template
-    });
-  }
 
   try {
     const info = await transporter.sendMail(mailOptions);
