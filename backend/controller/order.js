@@ -7,14 +7,11 @@ const Cart = require('../model/Carts');
 
 const normalizeOrderForClient = (orderDoc) => {
     if (!orderDoc) return orderDoc;
-    // toObject({ virtuals: true }) ensures that virtual fields like 'total' are included,
-    // and that populated fields are converted to plain objects.
     const raw = typeof orderDoc.toObject === 'function' ? orderDoc.toObject({ virtuals: true }) : orderDoc;
 
     if (raw.items && Array.isArray(raw.items)) {
         raw.items = raw.items.map(item => ({
             ...item,
-            // Provide a fallback in case the population field name differs from the schema field name
             menuItemId: item.menuItemId || item.menuItem
         }));
     }
@@ -62,6 +59,9 @@ const assertOrderAccess = (reqUser, order) => {
 const createOrder=async(req,res)=>{
     try{
         const userId=req.user._id;
+        if(req.user.role!='customer'){
+            res.status(400).json({message: 'Only customers can place orders'})
+        }
         const {
             deliveryFee,
             paymentMethod,
@@ -76,15 +76,13 @@ const createOrder=async(req,res)=>{
 
         const method = ['Wallet', 'Online', 'Cash'].includes(paymentMethod) ? paymentMethod : 'Wallet';
         const type = ['Pickup', 'Delivery'].includes(deliveryType) ? deliveryType : 'Delivery';
-        const fee = Math.max(0, Number(deliveryFee || 0));
+        const fee = 100;
 
         if (type === 'Delivery') {
             if (!String(address || '').trim() || !String(phone || '').trim()) {
                 return res.status(400).json({ message: 'Delivery address and phone are required' });
             }
         }
-
-        // Optional idempotency: if the same request is repeated, return the existing order.
         if (clientRequestId) {
             const existing = await populateOrderQuery(Order.findOne({ userId, clientRequestId }));
             if (existing) {
@@ -125,7 +123,6 @@ const createOrder=async(req,res)=>{
             user.balance = (user.balance || 0) - totalOrderAmount;
             await user.save();
         }
-
         const order = new Order({
             userId,
             clientRequestId: clientRequestId ? String(clientRequestId) : undefined,
@@ -230,7 +227,6 @@ const cancelOrder=async(req,res)=>{
         order.status='Cancelled';
         await order.save();
 
-        // Refund wallet payments when cancelling.
         if (order.paymentMethod === 'Wallet') {
             const payment = await Payment.findOne({ orderId: order._id, paymentMethod: 'Wallet' }).sort({ createdAt: -1 });
             if (payment && (payment.paymentStatus === 'Completed' || payment.paymentStatus === 'Paid')) {
@@ -281,7 +277,6 @@ const deliverOrder=async(req,res)=>{
             return res.status(400).json({ message: `Cannot deliver order in status ${order.status}` });
         }
 
-        // Staff can only deliver orders assigned to them.
         if (req.user.role !== 'admin') {
             const staff = await DeliveryStaff.findOne({ userId: req.user._id });
             if (!staff || !order.deliveryStaffId || String(staff._id) !== String(order.deliveryStaffId)) {
@@ -291,8 +286,6 @@ const deliverOrder=async(req,res)=>{
 
         order.status='Delivered';
         await order.save();
-
-        // Mark cash payments as completed on delivery.
         if (order.paymentMethod === 'Cash') {
             const payment = await Payment.findOne({ orderId: order._id, paymentMethod: 'Cash' }).sort({ createdAt: -1 });
             if (payment && payment.paymentStatus === 'Pending') {

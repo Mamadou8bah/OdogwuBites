@@ -29,11 +29,12 @@ export class NavigationHistoryService {
   }
 
   consumeReturnUrl(fallback: string = '/'): string {
-    const prev = this._previousUrl;
+    let prev = this._previousUrl;
     this._previousUrl = null;
 
     if (!prev) return fallback;
     if (prev.startsWith('/login')) return fallback;
     return prev;
   }
+
 }

@@ -5,9 +5,9 @@ import { Observable, map } from 'rxjs';
 @Injectable({
   providedIn: 'root',
 })
-export class Homepage {
+export class HomepageService {
   private apiUrl = 'http://localhost:3000/menu';
-
+ 
   constructor(private http: HttpClient) {}
 
   getMenuItems(): Observable<any[]> {

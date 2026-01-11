@@ -12,4 +12,4 @@ router.post('/accept/:id',isLoggedIn,isAdmin,acceptOrder);
 router.post('/deliver/:id',isLoggedIn,isStaff,deliverOrder);
 router.get('/',isLoggedIn,isAdmin,getAllOrders);
 
-module.exports=router; 
+module.exports=router;  

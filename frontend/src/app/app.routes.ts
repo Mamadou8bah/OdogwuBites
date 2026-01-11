@@ -4,7 +4,6 @@ import { MenuPage } from './menu-page/menu-page';
 import { AboutPage } from './about-page/about-page';
 import { LoginPage } from './login-page/login-page';
 import { Dashboard } from './dashboard/dashboard';
-import { Cart } from './cart/cart';
 import { DashboardPage } from './dashboard-page/dashboard-page';
 import { Users } from './users/users';
 import { Orders } from './orders/orders';
@@ -21,7 +20,7 @@ import { authChildGuard, authGuard } from './guards/auth.guard';
 import { adminGuard } from './guards/role.guard';
 import { guestGuard } from './guards/guest.guard';
 export const routes: Routes = [
-    {
+    { 
         path:'',
         component:Homepage
     },
@@ -45,7 +44,8 @@ export const routes: Routes = [
         children:[
             {
                 path:'',
-                component:DashboardPage
+                component:DashboardPage,
+                canActivate:[adminGuard]
             },
             {
                 path:'users',

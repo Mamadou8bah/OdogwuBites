@@ -7,7 +7,7 @@ import { AuthService } from '../service/auth.service';
 
 @Component({
   selector: 'app-orders',
-  standalone: true,
+  standalone: true, 
   imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './orders.html',
   styleUrl: './orders.css',

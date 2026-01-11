@@ -17,7 +17,7 @@
                     loading="lazy"
                     class="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                 />
-            </ng-container>
+            </ng-container> 
             <ng-template #noImage>
                 <div class="h-full w-full bg-white/5 flex items-center justify-center">
                     <div class="text-center px-10">
@@ -114,7 +114,7 @@
                     <button
                         type="button"
                         (click)="addToCart()"
-                        [disabled]="!menuItem || !isAvailable"
+                        [disabled]="!menuItem || !isAvailable || !isCustomer "
                         [attr.aria-label]="isAvailable ? 'Add to order' : 'Unavailable'"
                         class="bg-orange-400 text-black rounded-2xl font-black uppercase hover:bg-white transition-all transform active:scale-95 flex items-center justify-center disabled:bg-white/10 disabled:text-white/50 disabled:hover:bg-white/10 disabled:active:scale-100 h-12 w-12 sm:h-14 sm:w-full sm:tracking-[0.2em] sm:gap-3 gap-0"
                     >

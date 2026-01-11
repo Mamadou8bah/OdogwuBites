@@ -26,7 +26,7 @@ export class App {
     this.router.events
       .pipe(filter(event => event instanceof NavigationEnd))
       .subscribe((event: NavigationEnd) => {
-        this.isLoginRoute = event.url === '/login' || event.url === '/dashboard' || event.url.startsWith('/dashboard/');
+        this.isLoginRoute = event.url === '/login' || event.url === '/dashboard' || event.url.startsWith('/dashboard/') ||event.url.includes('/login');
       });
   }
 }

@@ -12,13 +12,17 @@ import { AuthService } from '../service/auth.service';
   styleUrl: './header.css',
 })
 export class Header {
-  isMenuOpen: boolean = false;
+  isMenuOpen: boolean = false; 
+
+
 
   constructor(
     public cartService: CartService,
     public authService: AuthService,
     private router: Router
-  ) {}
+  ) {
+   
+  }
 
   toggleMenu() {
     this.isMenuOpen = !this.isMenuOpen;
@@ -27,5 +31,15 @@ export class Header {
   logout() {
     this.authService.logout();
     this.router.navigate(['/login']);
+  }
+
+  get isCustomer(){
+    const details = this.authService.currentUserDetails;
+    const user = this.authService.currentUser;
+    if (!details || !user) return true;
+    return details.role !== 'admin' && user.role !== 'staff';
+  }
+  get isAdmin(){
+    return this.authService.currentUserDetails?.role === 'admin';
   }
 }

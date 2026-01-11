@@ -28,7 +28,7 @@
                 </div>
             </div>
         </ng-container>
-
+ 
         <ng-template #homepageFeatured>
         <div 
             class="w-[280px] mb-[5rem] p-4 bg-black/10 rounded-xl flex flex-col items-center relative hover:scale-105 transition-all duration-300 ease-in-out"
@@ -216,7 +216,9 @@
                 <p class=" h-[4rem]">{{item.description}}</p>
                 <div class="flex flex-row gap-23 md:gap-30 items-center mt-4 mb-0">
                     <p class="text-[1.1rem] font-bold">D{{item.price}}</p>
-                    <button type="button" class="py-2 px-3 rounded-3xl hover:cursor-pointer border-[1px] border-amber-400" (click)="addToCart(item); $event.stopPropagation()">
+                    <button type="button" class="py-2 px-3 rounded-3xl hover:cursor-pointer border-[1px] border-amber-400" (click)="addToCart(item); $event.stopPropagation()"
+                    [disabled]="!isCustomer"
+                    >
                         Add To Cart
                     </button>
                 </div>

@@ -34,7 +34,7 @@ export class Dashboard {
 
   logout(): void {
     this.closeSidebar();
-    this.authService.logout();
+    this.authService.logout(); 
     this.router.navigate(['/']);
   }
   ngOnInit(): void {

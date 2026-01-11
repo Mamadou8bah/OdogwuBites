@@ -71,9 +71,10 @@ export class Cart {
 
   checkout(): void {
     if (this.cartItems.length === 0) return;
-    if(!this.isLoggedIn){
+    if(!this.authService.isLoggedIn){
       alert('Please log in to proceed to checkout.');
       this.cartService.closeCart();
+      this.navigationHistory.previousUrl
       this.router.navigate(['/login']);
       return;
     }

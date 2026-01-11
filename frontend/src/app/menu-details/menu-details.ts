@@ -13,7 +13,7 @@ type MenuItem = {
   isAvailable?: boolean;
   discount?: number;
 };
-
+ 
 @Component({
   selector: 'app-menu-details',
   imports: [CommonModule],
@@ -82,5 +82,9 @@ export class MenuDetails {
 
   get lineTotal(): number {
     return this.displayPrice * this.quantity;
+  }
+
+  get isCustomer(){
+    return this.cartService.isCustomer;
   }
 }

@@ -24,10 +24,6 @@ export class AuthService {
     return !!this._user;
   }
 
-  /**
-   * Full user details as currently stored (may be partial right after login).
-   * Prefer calling getProfile() to refresh from the server.
-   */
   get currentUserDetails() {
     if (!this._user) return null;
     return {

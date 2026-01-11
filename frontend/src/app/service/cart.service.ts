@@ -72,7 +72,7 @@ export class CartService {
   refreshFromServer(): void {
     if (!localStorage.getItem('token')) return;
 
-    // If the user just logged in and has a local cart, try to sync it once.
+    
     const shouldSyncLocal = this.authService.isLoggedIn && !this.didAttemptLocalToServerSync;
     const localSnapshot = [...this._items];
 
@@ -123,15 +123,23 @@ export class CartService {
   }
 
   toggleCart(): void {
+    if(!this.isCustomer)return;
     this.isCartOpen = !this.isCartOpen;
   }
 
   openCart(): void {
+    if(!this.isCustomer)return;
     this.isCartOpen = true;
   }
 
   closeCart(): void {
     this.isCartOpen = false;
+  }
+
+  get isCustomer(){
+    const user = this.authService.currentUserDetails;
+    if (!user) return true; // Assume customer if not logged in, or change logic as needed.
+    return user.role !== 'admin' && user.role !== 'staff';
   }
 
   addMenuItem(menuItem: MenuItemLike, quantity: number = 1): void {
