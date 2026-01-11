@@ -9,6 +9,9 @@ const transporter = nodemailer.createTransport({
     user: process.env.USER_NAME,
     pass: process.env.USER_PASSWORD,
   },
+  host: 'smtp.gmail.com',
+  port: 465,
+  secure: true,
 });
 
 const viewPath = path.resolve(__dirname, '../emails');

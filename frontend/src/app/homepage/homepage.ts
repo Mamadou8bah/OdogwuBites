@@ -3,9 +3,7 @@ import { CommonModule } from '@angular/common';
 import { HomepageService } from '../service/homepage';
 import { CartService } from '../service/cart.service';
 import { MenuDetails } from '../menu-details/menu-details';
-import { Subscription, catchError, finalize, of, timeout } from 'rxjs';
-
-const HOMEPAGE_REQUEST_TIMEOUT_MS = 15_000;
+import { Subscription, catchError, finalize, of } from 'rxjs';
 
 @Component({
   selector: 'app-homepage',
@@ -51,13 +49,9 @@ export class Homepage implements OnInit, OnDestroy {
     this.loadSubscription = this.homepageService
       .getMenuItems()
       .pipe(
-        timeout(HOMEPAGE_REQUEST_TIMEOUT_MS),
         catchError((err) => {
           console.error('Homepage load error:', err);
-          this.loadError =
-            err?.name === 'TimeoutError'
-              ? 'Request timed out. Please check your connection and try again.'
-              : 'Failed to load menu items. Please try again.';
+          this.loadError = 'Failed to load menu items. Please try again.';
           return of([] as any[]);
         }),
         finalize(() => {
