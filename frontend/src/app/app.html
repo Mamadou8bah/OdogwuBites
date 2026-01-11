@@ -8,10 +8,10 @@
   </div>
   <!-- Cart Backdrop -->
   <div *ngIf="cartService.isCartOpen" 
-       class="fixed inset-0 bg-black/50 backdrop-blur-sm z-[49999] transition-opacity duration-300"
+      class="fixed inset-0 bg-black/50 backdrop-blur-sm z-49999 transition-opacity duration-300"
        (click)="cartService.closeCart()">
   </div>
-  <div class="cart flex flex-col items-center fixed top-0 z-[50000] right-0 h-full w-[400px] transition-transform duration-300 shadow-2xl"
+    <div class="cart flex flex-col items-center fixed top-0 z-50000 right-0 h-full w-full sm:w-100 max-w-full transition-transform duration-300 shadow-2xl"
        [class.translate-x-full]="!cartService.isCartOpen"
        [class.translate-x-0]="cartService.isCartOpen">
    <app-cart class="w-full h-full"></app-cart>

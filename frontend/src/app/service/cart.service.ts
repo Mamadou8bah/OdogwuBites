@@ -151,7 +151,6 @@ export class CartService {
         .pipe(catchError(() => of(null)))
         .subscribe((cart) => {
           if (cart) this.setFromApiCart(cart);
-          this.openCart();
         });
       return;
     }
@@ -159,7 +158,6 @@ export class CartService {
     const existing = this._items.find(i => (menuItem._id ? i.menuItemId === menuItem._id : i.name === menuItem.title));
     if (existing) {
       existing.quantity += normalizedQuantity;
-      this.openCart();
       return;
     }
 
@@ -177,7 +175,6 @@ export class CartService {
         imageUrl: menuItem.imageUrl,
       },
     ];
-    this.openCart();
   }
 
   increment(itemId: number): void {
