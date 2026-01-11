@@ -12,10 +12,11 @@
   "license": "ISC",
   "dependencies": {
     "bcryptjs": "^2.4.3",
-    "cors": "^2.8.5",
     "cloudinary": "^1.41.3",
+    "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^4.19.2",
+    "express-handlebars": "^8.0.3",
     "handlebars": "^4.7.8",
     "jsonwebtoken": "^9.0.2",
     "modem-pay": "^1.1.1",
