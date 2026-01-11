@@ -8,7 +8,7 @@
       style="background: rgba(255,255,255,0.07);"
     >
       <div class="flex flex-col justify-center items-center mb-3">
-        <h1 *ngIf="isLoginMode" class="logo-text font-bold text-4xl md:text-5xl font-lobster text-orange-400 drop-shadow-md">OdogwuBites</h1>
+        <h1  class="logo-text font-bold text-4xl md:text-5xl font-lobster text-orange-400 drop-shadow-md">OdogwuBites</h1>
       </div>  
 
       <div class="flex-grow flex flex-col justify-center items-center text-center">
@@ -16,15 +16,6 @@
           {{ isLoginMode ? 'Sign in to Your Account' : 'Create Account' }}
         </h2>
         <div class="w-20 h-1.5 bg-orange-400 mb-4 rounded-full shadow-sm"></div>
-          <div *ngIf="!isLoginMode" class="flex flex-col items-center mb-2">
-            <div class="relative group cursor-pointer">
-              <div class="w-20 h-20 bg-white/20 rounded-full border-2 border-dashed border-yellow-400 flex items-center justify-center overflow-hidden">
-                <img *ngIf="profileImage" [src]="profileImage" class="absolute inset-0 w-full h-full object-cover rounded-full">
-                <span *ngIf="!profileImage" class="text-[1.8rem] text-yellow-500 font-bold uppercase">+</span>
-              </div>
-              <input type="file" (change)="onFileSelected($event)" class="absolute inset-0 opacity-0 cursor-pointer" accept="image/*">
-            </div>
-          </div>
 
         <form class="w-full max-w-sm space-y-2" [formGroup]="form" (ngSubmit)="onSubmit()">
           <div *ngIf="errorMessage" class="w-full px-5 py-3 bg-white/20 text-red-200 rounded-2xl border border-white/20">
