@@ -99,10 +99,59 @@ const verifyDeposit = async (req, res) => {
     try {
         const { userId, amount } = req.query;
         
+        // Find the most recent pending payment for this user and amount
+        const paymentRecord = await Payment.findOne({
+            userId: new mongoose.Types.ObjectId(userId),
+            amount: Number(amount),
+            paymentStatus: 'Pending',
+            paymentMethod: 'Online'
+        }).sort({ createdAt: -1 });
+
+        if (!paymentRecord) {
+            // Check if it was already completed recently to avoid error if user refreshes
+            const completedPayment = await Payment.findOne({
+                userId: new mongoose.Types.ObjectId(userId),
+                amount: Number(amount),
+                paymentStatus: 'Completed',
+                paymentMethod: 'Online'
+            }).sort({ createdAt: -1 });
+
+            if (completedPayment) {
+                 return res.send("<h1>Payment already processed. Your balance is up to date.</h1><script>setTimeout(() => window.close(), 3000)</script>");
+            }
+
+            return res.status(404).send("<h1>Payment session not found or already processed.</h1>");
+        }
+
         const user = await User.findById(userId);
         if (!user) {
             return res.status(404).json({ message: "User not found" });
         }
+
+        // Verify with ModemPay if configured
+        if (modempay && paymentRecord.transactionId) {
+            try {
+                const intent = await modempay.paymentIntents.retrieve(paymentRecord.transactionId);
+                const status = (intent.data?.status || intent.status || "").toLowerCase();
+                
+                const successfulStatuses = ['succeeded', 'completed', 'successful', 'paid'];
+                if (!successfulStatuses.includes(status)) {
+                     // Update local status if provider says it failed/cancelled
+                     if (status === 'failed' || status === 'cancelled') {
+                        paymentRecord.paymentStatus = 'Failed';
+                        await paymentRecord.save();
+                     }
+                     return res.status(400).send(`<h1>Payment was not successful. Status: ${status || 'Unknown'}</h1>`);
+                }
+            } catch (err) {
+                console.error("ModemPay Retrieval Error:", err);
+                return res.status(500).send("<h1>Error verifying payment with provider.</h1>");
+            }
+        }
+
+        // Successfully verified or in dev mode without modempay
+        paymentRecord.paymentStatus = 'Completed';
+        await paymentRecord.save();
 
         user.balance = (user.balance || 0) + Number(amount);
         await user.save();

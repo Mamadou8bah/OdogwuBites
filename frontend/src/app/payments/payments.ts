@@ -58,10 +58,15 @@ export class Payments implements OnInit {
 
   getStatusClass(status: string): string {
     switch (status.toLowerCase()) {
-      case 'completed': return 'status-completed';
-      case 'pending': return 'status-pending';
-      case 'failed': return 'status-failed';
-      default: return '';
+      case 'paid':
+      case 'completed': 
+        return 'bg-green-500/10 text-green-500';
+      case 'pending': 
+        return 'bg-orange-500/10 text-orange-400';
+      case 'failed': 
+        return 'bg-red-500/10 text-red-500';
+      default: 
+        return 'bg-gray-500/10 text-gray-400';
     }
   }
 }

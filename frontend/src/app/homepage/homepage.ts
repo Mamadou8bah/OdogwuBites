@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { HomepageService } from '../service/homepage';
 import { CartService } from '../service/cart.service';
 import { MenuDetails } from '../menu-details/menu-details';
@@ -8,7 +9,7 @@ import { Subscription, catchError, finalize, of } from 'rxjs';
 @Component({
   selector: 'app-homepage',
   standalone: true,
-  imports: [CommonModule, MenuDetails],
+  imports: [CommonModule, MenuDetails, RouterModule],
   templateUrl: './homepage.html',
   styleUrl: './homepage.css',
 })
