@@ -4,7 +4,7 @@
   "scripts": {
     "ng": "node ./node_modules/@angular/cli/bin/ng.js",
     "start": "node ./node_modules/@angular/cli/bin/ng.js serve",
-    "build": "node ./node_modules/@angular/cli/bin/ng.js build",
+    "build": "node ./node_modules/@angular/cli/bin/ng.js build && node move-build-output.js",
     "watch": "node ./node_modules/@angular/cli/bin/ng.js build --watch --configuration development",
     "test": "node ./node_modules/@angular/cli/bin/ng.js test",
     "tw:init": "tailwindcss init",
