@@ -3,6 +3,32 @@ const mongoose = require('mongoose');
 const Payment = require('../model/Payments');
 const User = require('../model/Users');
 
+function getPublicFrontendBaseUrl(req) {
+    // Prefer explicit env in deployments.
+    let raw =
+        process.env.PUBLIC_FRONTEND_URL ||
+        process.env.FRONTEND_PUBLIC_URL ||
+        process.env.FRONTEND_URL;
+
+    // Vercel provides VERCEL_URL without protocol.
+    if (!raw && process.env.VERCEL_URL) {
+        raw = `https://${process.env.VERCEL_URL}`;
+    }
+
+    // Fall back to request origin when API is called from the browser.
+    if (!raw && req?.get) {
+        const origin = req.get('origin');
+        if (origin) raw = origin;
+    }
+
+    // Final fallback for local dev.
+    if (!raw) {
+        raw = 'http://localhost:4200';
+    }
+
+    return raw.replace(/\/$/, '');
+}
+
 const modempay = process.env.MODEM_PAY_SECRET_KEY
     ? new ModemPay(process.env.MODEM_PAY_SECRET_KEY)
     : null;
@@ -41,8 +67,8 @@ const deposit = async (req, res) => {
         const intent = await modempay.paymentIntents.create({
             amount: amount,
             currency: "GMD",
-            return_url: `http://localhost:3000/payment/verify-deposit?userId=${userId}&amount=${amount}`,
-            cancel_url: "http://localhost:3000/payment-failed",
+            return_url: `${getPublicFrontendBaseUrl(req)}/payment/verify-deposit?userId=${userId}&amount=${amount}`,
+            cancel_url: `${getPublicFrontendBaseUrl(req)}/payment-failed`,
             metadata: {
                 userId: userId.toString(),
                 type: 'DEPOSIT'

@@ -17,6 +17,9 @@ const app=express()
 
 dotenv.config();
 
+// Needed behind reverse proxies (Render, Nginx, etc.) so req.protocol reflects X-Forwarded-Proto.
+app.set('trust proxy', 1);
+
 app.use(cors({
     origin: process.env.CORS_ORIGIN || true,
 }));

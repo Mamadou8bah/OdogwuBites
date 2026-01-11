@@ -9,13 +9,29 @@ dotenv.config()
 
 const {sendEmailVerificationEmail,sendPasswordResetEmail}=require('../utils/emailSender')
 
-function getPublicBackendBaseUrl() {
-  // Render exposes the public URL via RENDER_EXTERNAL_URL.
-  const raw =
+function getPublicBackendBaseUrl(req) {
+  // Prefer explicit env in deployments.
+  let raw =
     process.env.PUBLIC_BACKEND_URL ||
     process.env.BACKEND_PUBLIC_URL ||
     process.env.RENDER_EXTERNAL_URL ||
-    `http://localhost:${process.env.PORT || 3000}`;
+    process.env.PUBLIC_URL ||
+    process.env.APP_PUBLIC_URL;
+
+  // Fall back to the current request host (works well on Render/most hosts).
+  if (!raw && req?.get) {
+    const host = req.get('host');
+    if (host) {
+      const proto = req.protocol || 'http';
+      raw = `${proto}://${host}`;
+    }
+  }
+
+  // Final fallback for local dev.
+  if (!raw) {
+    raw = `http://localhost:${process.env.PORT || 3000}`;
+  }
+
   return raw.replace(/\/$/, '');
 }
 
@@ -56,11 +72,23 @@ const register = async (req, res) => {
 
     const verificationCode = await createToken(newUser._id);
     await newUser.save();
-    const link = `${getPublicBackendBaseUrl()}/auth/verify-email?code=${verificationCode}&email=${newUser.email}`;
-    await sendEmailVerificationEmail(newUser.email,newUser.name,link)
+    const link = `${getPublicBackendBaseUrl(req)}/auth/verify-email?code=${verificationCode}&email=${encodeURIComponent(newUser.email)}`;
+
+    let emailSent = false;
+    let emailError;
+    try {
+      await sendEmailVerificationEmail(newUser.email, newUser.name, link);
+      emailSent = true;
+    } catch (err) {
+      emailError = err;
+      // Don't fail registration if SMTP is not configured or temporarily down.
+      console.error('Verification email send failed:', err?.message || err);
+    }
 
     const payload = {
-      message: "User Registered Successfully, please verify your email",
+      message: emailSent
+        ? "User Registered Successfully, please verify your email"
+        : "User Registered Successfully, but we couldn't send a verification email. Please try again later or contact support.",
       user: {
         _id: newUser._id,
         name: newUser.name,
@@ -71,6 +99,13 @@ const register = async (req, res) => {
 
     if (process.env.NODE_ENV !== 'production') {
       payload.verificationLink = link;
+      if (emailError) {
+        payload.emailError = {
+          message: emailError?.message,
+          details: emailError?.details,
+          code: emailError?.code,
+        };
+      }
     }
 
     res.status(201).json(payload);
