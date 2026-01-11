@@ -1,144 +1,56 @@
-const path = require('path');
-const fs = require('fs');
+const fs = require("fs");
+const path = require("path");
+const handlebars = require("handlebars");
+const { Resend } = require("resend");
 
-const { transporter, smtpConfigSummary } = require('../config/emailConfig');
-
-const DEFAULT_SEND_TIMEOUT_MS = Number.parseInt(
-  process.env.EMAIL_SEND_TIMEOUT_MS || '60000',
-  10
-);
-
-const EMAIL_DISABLED = (process.env.EMAIL_DISABLED || '').toLowerCase() === 'true';
-
-class EmailSendError extends Error {
-  constructor(message, details) {
-    super(message);
-    this.name = 'EmailSendError';
-    this.details = details;
-  }
+const resend = new Resend(process.env.RESEND_API_KEY);
+const FROM = process.env.RESEND_FROM || "onboarding@resend.dev";
+let logoSrc = "";
+const logoPath = path.join(__dirname, "logo.png");
+if (fs.existsSync(logoPath)) {
+  const base64 = fs.readFileSync(logoPath, "base64");
+  logoSrc = `data:image/png;base64,${base64}`;
 }
 
-function getFromAddress() {
-  // Gmail and most SMTP providers behave much better when `from` contains a real mailbox.
-  // Allow overriding via env for deployments.
-  const mailbox = process.env.MAIL_FROM || process.env.USER_NAME;
-  if (!mailbox) return 'Odogwu Bites';
-  return `"Odogwu Bites" <${mailbox}>`;
+function renderTemplate(name, context) {
+  const filePath = path.join(__dirname, `../emails/${name}.html`);
+  const source = fs.readFileSync(filePath, "utf8");
+  const template = handlebars.compile(source);
+  return template({ ...context, logoSrc });
 }
 
-function getLogoAttachment() {
-  const logoPath = path.join(__dirname, 'logo.png');
-  if (!fs.existsSync(logoPath)) return [];
-  return [
-    {
-      filename: 'logo.png',
-      path: logoPath,
-      cid: 'logo',
-    },
-  ];
-}
-
-let verifyOncePromise;
-async function ensureTransporterReady() {
-  if (EMAIL_DISABLED) return;
-  if (!verifyOncePromise) {
-    verifyOncePromise = transporter
-      .verify()
-      .catch((error) => {
-        throw new EmailSendError('SMTP verification failed', {
-          smtp: smtpConfigSummary,
-          code: error?.code,
-          message: error?.message,
-          response: error?.response,
-          command: error?.command,
-        });
-      });
-  }
-  return verifyOncePromise;
-}
-
-async function sendMailWithTimeout(mailOptions, timeoutMs = DEFAULT_SEND_TIMEOUT_MS) {
-  if (EMAIL_DISABLED) {
-    return {
-      messageId: 'email-disabled',
-      accepted: [mailOptions?.to].filter(Boolean),
-      rejected: [],
-    };
+async function sendEmail({ to, subject, html }) {
+  if (!process.env.RESEND_API_KEY) {
+    throw new Error("RESEND_API_KEY not set");
   }
 
-  await ensureTransporterReady();
-
-  const sendPromise = transporter.sendMail(mailOptions);
-  const timeoutPromise = new Promise((_, reject) => {
-    const timer = setTimeout(() => {
-      reject(
-        new EmailSendError(`Email send timed out after ${timeoutMs}ms`, {
-          smtp: smtpConfigSummary,
-          timeoutMs,
-        })
-      );
-    }, timeoutMs);
-    // best-effort: avoid keeping event loop alive if send finishes
-    timer.unref?.();
-  });
-
-  // If the timeout wins the race, make sure the send promise doesn't become an unhandled rejection later.
-  sendPromise.catch(() => {});
-
-  let info;
-  try {
-    info = await Promise.race([sendPromise, timeoutPromise]);
-  } catch (error) {
-    if (error instanceof EmailSendError) throw error;
-    throw new EmailSendError(error?.message || 'Email send failed', {
-      smtp: smtpConfigSummary,
-      code: error?.code,
-      message: error?.message,
-      response: error?.response,
-      command: error?.command,
-    });
-  }
-
-  if (info?.rejected?.length) {
-    throw new EmailSendError(`Email rejected by SMTP server: ${info.rejected.join(', ')}`, {
-      smtp: smtpConfigSummary,
-      rejected: info.rejected,
-    });
-  }
-  return info;
-}
-
-const sendEmailVerificationEmail = async (to, name, link) => {
-  const info = await sendMailWithTimeout({
-    from: getFromAddress(),
+  await resend.emails.send({
+    from: FROM,
     to,
-    subject: 'Verify your Email!',
-    template: 'verification',
-    context: {
-      name,
-      link,
-    },
-    attachments: getLogoAttachment(),
+    subject,
+    html,
   });
+}
 
-  return info;
-};
-
-const sendPasswordResetEmail = async (to, name, link) => {
-  const info = await sendMailWithTimeout({
-    from: getFromAddress(),
+async function sendEmailVerificationEmail(to, name, link) {
+  const html = renderTemplate("verification", { name, link });
+  return sendEmail({
     to,
-    subject: 'Reset Your password',
-    template: 'reset',
-    context: {
-      name,
-      link,
-    },
-    attachments: getLogoAttachment(),
+    subject: "Verify your email",
+    html,
   });
+}
 
-  return info;
+async function sendPasswordResetEmail(to, name, link) {
+  const html = renderTemplate("reset", { name, link });
+  return sendEmail({
+    to,
+    subject: "Reset your password",
+    html,
+  });
+}
+
+module.exports = {
+  sendEmailVerificationEmail,
+  sendPasswordResetEmail,
 };
-
-module.exports = { sendEmailVerificationEmail, sendPasswordResetEmail, EmailSendError };
-
