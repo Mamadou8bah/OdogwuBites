@@ -6,7 +6,6 @@ const resendFrom = process.env.RESEND_FROM || 'onboarding@resend.dev';
 
 const resend = new Resend(resendApiKey);
 
-// Create a transporter-like object that mimics nodemailer interface
 const transporter = {
   sendMail: async (mailOptions) => {
     try {
@@ -28,7 +27,7 @@ const transporter = {
       throw error;
     }
   }
-};
+}; 
 
 const smtpConfigSummary = {
   provider: 'Resend',

@@ -42,7 +42,7 @@ export class CustomerDetails implements OnDestroy {
   ngOnDestroy(): void {
     this.routeSub.unsubscribe();
   }
-
+  
   private loadCustomer(userId: string): void {
     this.isLoading = true;
     this.loadError = null;

@@ -9,7 +9,6 @@ const getCartByUserId = async (req, res) => {
     try {
         const requestedUserId = req.params.userId ? String(req.params.userId) : String(req.user._id);
 
-        // Only admins can fetch carts that aren't theirs.
         if (req.params.userId && String(req.user._id) !== requestedUserId && req.user.role !== 'admin') {
             return res.status(403).json({ message: 'Forbidden' });
         }

@@ -16,7 +16,7 @@ const UsersRouter = require('./route/users');
 
 const app = express();
 
-// Needed behind reverse proxies (Render, Nginx, etc.) so req.protocol reflects X-Forwarded-Proto.
+
 app.set('trust proxy', 1);
 
 const allowedOrigins = [
@@ -26,7 +26,6 @@ const allowedOrigins = [
 
 app.use(cors({
     origin: (origin, callback) => {
-        // Allow requests with no origin (like mobile apps or curl requests)
         if (!origin) return callback(null, true);
         if (allowedOrigins.indexOf(origin) !== -1 || process.env.NODE_ENV !== 'production') {
             return callback(null, true);

@@ -34,7 +34,7 @@ export class DashboardPage implements OnInit, AfterViewInit, OnDestroy {
     results: any[];
     scheme: Color;
   }> = [];
-
+ 
   revenueComparisonResults: any[] = [];
   productStatusResults: any[] = [];
   topCustomersResults: any[] = [];
@@ -102,7 +102,6 @@ export class DashboardPage implements OnInit, AfterViewInit, OnDestroy {
 
   ngAfterViewInit(): void {
     if (typeof ResizeObserver === 'undefined') {
-      // Fallback to window sizing only.
       this.setViews();
       return;
     }
@@ -112,7 +111,6 @@ export class DashboardPage implements OnInit, AfterViewInit, OnDestroy {
     if (this.pieContainer?.nativeElement) this.resizeObserver.observe(this.pieContainer.nativeElement);
     if (this.barContainer?.nativeElement) this.resizeObserver.observe(this.barContainer.nativeElement);
 
-    // Initial pass once DOM is measured.
     this.setViews();
   }
 
@@ -218,12 +216,11 @@ export class DashboardPage implements OnInit, AfterViewInit, OnDestroy {
 
   private setViews(): void {
     const w = window.innerWidth || 1200;
-    // Account for sidebar on md+ and padding.
+   
     const content = w < 768 ? w - 32 : w - 256 - 64;
     const safe = Math.max(320, content);
 
-    // Mini cards are full-width on mobile, half-width on md, quarter on xl.
-    // Keep sparkline compact but scale down on small screens.
+  
     const sparkWidth = Math.max(200, Math.min(280, safe - 80));
     const revenueHeight = w < 480 ? 280 : 360;
     const barHeight = w < 480 ? 300 : 260;

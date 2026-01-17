@@ -17,7 +17,7 @@ function getPublicBackendBaseUrl(req) {
     process.env.PUBLIC_URL ||
     process.env.APP_PUBLIC_URL;
 
-  // Fall back to the current request host (works well on Render/most hosts).
+
   if (!raw && req && typeof req.get === 'function') {
     const host = req.get('host');
     if (host) {
@@ -26,7 +26,6 @@ function getPublicBackendBaseUrl(req) {
     }
   }
 
-  // Final fallback for local dev.
   if (!raw) {
     raw = `http://localhost:${process.env.PORT || 3000}`;
   }
@@ -35,7 +34,7 @@ function getPublicBackendBaseUrl(req) {
 }
 
 
-const signingKey = process.env.JWT_SECRET || 'dev_jwt_secret_change_me'
+const signingKey = process.env.JWT_SECRET 
 
 const register = async (req, res) => {
   try {
@@ -80,7 +79,6 @@ const register = async (req, res) => {
       emailSent = true;
     } catch (err) {
       emailError = err;
-      // Don't fail registration if SMTP is not configured or temporarily down.
       console.error('Verification email send failed:', err?.message || err);
     }
 
