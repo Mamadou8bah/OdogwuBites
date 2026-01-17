@@ -47,7 +47,7 @@ const register = async (req, res) => {
 
     if (!name || !address || !phone || !existingEmail || !password) {
       return res.status(400).json({
-        message: 'Please provide name, address, phone, email, and password.'
+        message: 'Please provide name, address, phone, email, and password. No field should be empty'
       });
     }
 
