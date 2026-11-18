@@ -1,3 +1,4 @@
+import { environment } from '../../environments/environment';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
@@ -7,7 +8,7 @@ import { Observable, tap } from 'rxjs';
 })
 export class AuthService {
   private _user: any = null;
-  private apiUrl = 'https://odogwubites.onrender.com/auth';
+  private apiUrl = `${environment.apiUrl}/auth`;
 
   constructor(private http: HttpClient) {
     const savedUser = localStorage.getItem('user');

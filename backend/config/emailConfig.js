@@ -1,13 +1,19 @@
 const { Resend } = require('resend');
 require('dotenv').config();
 
-const resendApiKey = process.env.RESEND_API_KEY;
+const resendApiKey = process.env.RESEND_API_KEY?.trim();
 const resendFrom = process.env.RESEND_FROM || 'onboarding@resend.dev';
 
-const resend = new Resend(resendApiKey);
+const resend = resendApiKey ? new Resend(resendApiKey) : null;
 
 const transporter = {
   sendMail: async (mailOptions) => {
+    if (!resend) {
+      const error = new Error('Email delivery is unavailable: email provider is not configured.');
+      error.code = 'EMAIL_UNAVAILABLE';
+      error.statusCode = 503;
+      throw error;
+    }
     try {
       const response = await resend.emails.send({
         from: mailOptions.from,
@@ -31,6 +37,7 @@ const transporter = {
 
 const smtpConfigSummary = {
   provider: 'Resend',
+  available: Boolean(resend),
   from: resendFrom,
 };
 

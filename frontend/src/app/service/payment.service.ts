@@ -1,3 +1,4 @@
+import { environment } from '../../environments/environment';
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -6,7 +7,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class PaymentService {
-  private apiUrl = 'https://odogwubites.onrender.com/payment';
+  private apiUrl = `${environment.apiUrl}/payment`;
 
   constructor(private http: HttpClient) {}
 
@@ -22,7 +23,7 @@ export class PaymentService {
   }
 
   getBalance(): Observable<any> {
-    return this.http.get(`https://odogwubites.onrender.com/auth/profile`, { headers: this.getHeaders() });
+    return this.http.get(`${environment.apiUrl}/auth/profile`, { headers: this.getHeaders() });
   }
 
   getAllPayments(): Observable<any> {

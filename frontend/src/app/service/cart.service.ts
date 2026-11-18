@@ -1,3 +1,4 @@
+import { environment } from '../../environments/environment';
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { CartItem } from '../data/cartItems';
@@ -18,7 +19,7 @@ export type MenuItemLike = {
 export class CartService {
   private _items: CartItem[] = [];
   public isCartOpen: boolean = false;
-  private apiUrl = 'https://odogwubites.onrender.com/cart';
+  private apiUrl = `${environment.apiUrl}/cart`;
 
   private didAttemptLocalToServerSync = false;
 
