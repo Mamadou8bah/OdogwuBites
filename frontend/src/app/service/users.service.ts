@@ -1,3 +1,4 @@
+import { environment } from '../../environments/environment';
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -49,7 +50,7 @@ export type UserDetailsResponseDto = {
   providedIn: 'root'
 })
 export class UsersService {
-  private apiUrl = 'https://odogwubites.onrender.com/users';
+  private apiUrl = `${environment.apiUrl}/users`;
 
   constructor(private http: HttpClient) {}
 

@@ -83,6 +83,7 @@ const register = async (req, res) => {
     }
 
     const payload = {
+      emailSent,
       message: emailSent
         ? "User Registered Successfully, please verify your email"
         : "User Registered Successfully, but we couldn't send a verification email. Please try again later or contact support.",
@@ -122,9 +123,7 @@ const login = async (req, res) => {
     let { email, password } = req.body;
     email= email.trim().toLowerCase();
 
-    console.log(req.body)
     const user = await User.findOne({ email });
-    console.log(user);
 
     if (user==null) {
       return res.status(400).json('Invalid Credentials');
@@ -208,7 +207,7 @@ const requestPasswordReset=async(req,res)=>{
     if (process.env.NODE_ENV !== 'production') {
       payload.details = error?.details || { code: error?.code };
     }
-    res.status(400).json(payload);
+    res.status(error.statusCode === 503 ? 503 : 400).json(payload);
   }
 }
 

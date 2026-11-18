@@ -1,7 +1,8 @@
+import { isConfiguredApiRequest } from '../config/api';
 import { HttpInterceptorFn } from '@angular/common/http';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
-  const isApiRequest = req.url.includes('odogwubites.onrender.com');
+  const isApiRequest = isConfiguredApiRequest(req.url);
 
   if (!isApiRequest) {
     return next(req);

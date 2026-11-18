@@ -27,7 +27,7 @@ async function sendEmail({ to, subject, html, text }) {
     return info;
   } catch (error) {
     console.error("Email delivery error:", error);
-    throw new Error(error.message || "Email delivery failed");
+    throw error;
   }
 }
 

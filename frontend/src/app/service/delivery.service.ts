@@ -1,3 +1,4 @@
+import { environment } from '../../environments/environment';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -6,7 +7,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class DeliveryService {
-  private apiUrl = 'https://odogwubites.onrender.com/delivery-staff';
+  private apiUrl = `${environment.apiUrl}/delivery-staff`;
 
   constructor(private http: HttpClient) {}
 

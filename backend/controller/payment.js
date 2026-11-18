@@ -35,33 +35,14 @@ const modempay = process.env.MODEM_PAY_SECRET_KEY
 
 const deposit = async (req, res) => {
     try {
+        if (!modempay) {
+            return res.status(503).json({ message: 'Payments are unavailable: payment provider is not configured.' });
+        }
         const userId = req.user._id;
         const { amount } = req.body;
 
-        if (!amount || amount <= 0) {
+        if (typeof amount !== 'number' || !Number.isFinite(amount) || amount <= 0) {
             return res.status(400).json({ message: "Invalid amount" });
-        }
-
-        // Local/dev fallback when ModemPay isn't configured.
-        if (!modempay) {
-            const user = await User.findById(userId);
-            if (!user) return res.status(404).json({ message: "User not found" });
-
-            user.balance = (user.balance || 0) + Number(amount);
-            await user.save();
-
-            await Payment.create({
-                userId,
-                amount,
-                paymentMethod: 'Wallet',
-                paymentStatus: 'Completed',
-                notes: 'Wallet Deposit (dev)'
-            });
-
-            return res.status(200).json({
-                message: "Deposit completed (dev)",
-                balance: user.balance
-            });
         }
 
         const intent = await modempay.paymentIntents.create({
@@ -97,7 +78,14 @@ const deposit = async (req, res) => {
 
 const verifyDeposit = async (req, res) => {
     try {
+        if (!modempay) {
+            return res.status(503).json({ message: 'Payments are unavailable: payment provider is not configured.' });
+        }
         const { userId, amount } = req.query;
+        if (!mongoose.isObjectIdOrHexString(userId) || typeof amount !== 'string' ||
+            !Number.isFinite(Number(amount)) || Number(amount) <= 0) {
+            return res.status(400).json({ message: 'Invalid payment verification parameters' });
+        }
         
         // Find the most recent pending payment for this user and amount
         const paymentRecord = await Payment.findOne({
@@ -128,8 +116,11 @@ const verifyDeposit = async (req, res) => {
             return res.status(404).json({ message: "User not found" });
         }
 
-        // Verify with ModemPay if configured
-        if (modempay && paymentRecord.transactionId) {
+        if (!paymentRecord.transactionId) {
+            return res.status(409).json({ message: 'Payment has no provider transaction to verify.' });
+        }
+        // A provider transaction must be verified before any credit is applied.
+        {
             try {
                 const intent = await modempay.paymentIntents.retrieve(paymentRecord.transactionId);
                 const status = (intent.data?.status || intent.status || "").toLowerCase();
@@ -149,7 +140,7 @@ const verifyDeposit = async (req, res) => {
             }
         }
 
-        // Successfully verified or in dev mode without modempay
+        // Successfully verified with the provider.
         paymentRecord.paymentStatus = 'Completed';
         await paymentRecord.save();
 
@@ -184,6 +175,9 @@ const getUserPayments=async(req,res)=>{
 
 const confirmPayment = async (req, res) => {
     try {
+        if (!modempay) {
+            return res.status(503).json({ message: 'Payments are unavailable: payment provider is not configured.' });
+        }
         const { paymentId } = req.params;
         const payment = await Payment.findById(paymentId);
 

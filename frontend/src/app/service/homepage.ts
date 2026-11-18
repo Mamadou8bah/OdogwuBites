@@ -1,3 +1,4 @@
+import { environment } from '../../environments/environment';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
@@ -6,7 +7,7 @@ import { Observable, map } from 'rxjs';
   providedIn: 'root',
 })
 export class HomepageService {
-  private apiUrl = 'https://odogwubites.onrender.com/menu';
+  private apiUrl = `${environment.apiUrl}/menu`;
  
   constructor(private http: HttpClient) {}
 
